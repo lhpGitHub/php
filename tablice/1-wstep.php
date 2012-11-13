@@ -11,7 +11,13 @@ displayArray($b);
 
 print '<br/>listowanie tablicy do zmiennych<br/>';
 list($a, $b) = array('poziomka', 'truskawka');
-print "$a, $b";
+print "$a, $b<br/>";
+
+print '<br/>zmiana zmiennych bez uzywanie zmiennych tymczasowych<br/>';
+$a = 'zmiennaA'; $b='zmiennaB';
+print "przed: $a, $b<br/>";
+list($b, $a) = array($a, $b);
+print "po: $a, $b<br/>";
 
 
 function displayArray($a) {
