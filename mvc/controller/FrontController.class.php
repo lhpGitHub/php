@@ -1,5 +1,4 @@
 <?php
-
 class FrontController {
 	
 	private $controlerName;
@@ -7,7 +6,7 @@ class FrontController {
 	private $params;
 	
 	function go() {
-		
+
 		$this->parse();
 		
 		try {
@@ -47,5 +46,3 @@ class FrontController {
 		}
 	}
 }
-
-?>

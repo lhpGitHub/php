@@ -1,5 +1,4 @@
 <?php
-
 class PersonDAO {
 	
 	static private $instance;
@@ -68,5 +67,3 @@ class PersonDAO {
 	}
 	
 }
-
-?>

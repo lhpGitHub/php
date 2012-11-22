@@ -1,6 +1,5 @@
 <?php
-
-class PersonController extends BaseController {
+class PersonController {
 	
 	function do_create(array $params) {
 		$personTO = new PersonTO();
@@ -16,14 +15,13 @@ class PersonController extends BaseController {
 	
 	function do_read(array $params) {
 		$dao = PersonDAO::getInstance();
-		$personTO = $dao->getPersons();
-		$personIterator = $personTO->getIterator();
-		$views = array();
+		$personIterator = $dao->getPersons()->getIterator();
+		$viewManager = new ViewManager;
 		
 		foreach($personIterator as $person)
-			$views[] = $this->getView('personListItem', array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']));
+			$viewManager->bindView('personListItem', array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']));
 		
-		$this->render($views);
+		$viewManager->render();
 	}
 	
 	function do_update(array $params) {
@@ -41,5 +39,3 @@ class PersonController extends BaseController {
 	}
 		
 }
-
-?>

@@ -1,18 +1,21 @@
 <?php
 
 error_reporting(E_ALL);
-define('DEBUG', FALSE);
-
-function ctrl_autoloader($class) {
-	@include 'controller/' . $class . '.class.php';
-}
-spl_autoload_register('ctrl_autoloader');
-
-function domain_autoloader($class) {
-	@include 'domain/' . $class . '.class.php';
-}
-spl_autoload_register('domain_autoloader');
+define('DEBUG', TRUE);
+setIncludePath('controller', 'domain', 'view');
+spl_autoload_register('autoloader');
 
 $fc = new FrontController;
 $fc->go();
-?>
+
+function autoloader($class) {
+	require_once $class . '.class.php';
+}
+
+function setIncludePath() {
+	$include_path = get_include_path().PATH_SEPARATOR;
+	foreach(func_get_args() as $path) {
+		$include_path .= $path.PATH_SEPARATOR;
+	}
+	set_include_path($include_path);
+}

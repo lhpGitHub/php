@@ -1,5 +1,4 @@
 <?php
-
 class PersonTO {
 	
 	private $data;
@@ -16,5 +15,3 @@ class PersonTO {
 		return new ArrayIterator($this->data);
 	}
 }
-
-?>
