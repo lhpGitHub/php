@@ -12,15 +12,19 @@ class FrontController {
 		try {
 			$c = new ReflectionClass($this->controlerName);
 			$m = new ReflectionMethod($this->controlerName, $this->actionName);
-			$m->invoke($c->newInstanceArgs(), $this->params);
-		} catch(Exception $err) {
-			$this->error($err);
-			return;
+		} catch(ReflectionException $err) {
+			header($header);
+			echo $header;
+			exit();
 		}
+		
+		$response = $this->getResponseObject();
+		$m->invoke($c->newInstance($response), $this->params);
+		$response->send();
 	}
 	
 	private function parse() {
-		$ele = explode('/', substr($_SERVER["PATH_INFO"], 1));
+		$ele = explode('/', trim($_SERVER["PATH_INFO"], "/"));
 		$controlerName = array_shift($ele);
 		$actionName = array_shift($ele);
 		$this->params = $ele;
@@ -28,21 +32,7 @@ class FrontController {
 		$this->actionName = (empty($actionName)) ? 'do_read' : 'do_'.$actionName;  
 	}
 	
-	function error($err) {
-		
-		if(DEBUG) {
-			//echo ($err instanceof ReflectionException);
-			echo $err->getMessage();
-		} else {
-			
-			if($err instanceof ReflectionException)
-				$header = 'HTTP/1.1 404 Not Found';
-			else if($err instanceof DomainException)
-				$header = 'HTTP/1.1 500 Internal Server Error';
-			
-			header($header);
-			echo $header;
-			exit();
-		}
+	private function getResponseObject() {
+		return new HttpResponse;
 	}
 }

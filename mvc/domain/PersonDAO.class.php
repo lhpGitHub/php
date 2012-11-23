@@ -11,11 +11,10 @@ class PersonDAO {
 			throw new DomainException( __METHOD__ . ' ' . $err->getMessage());
 		}
 	}
-	
+
 	function __destruct() {
 		$this->dbh = null;
 	}
-
 
 	function getInstance() {
 		if(!self::$instance)
@@ -23,26 +22,32 @@ class PersonDAO {
 		
 		return self::$instance;
 	}
-	
-	function getPersons() {
+
+	function getAllPersons() {
 		$stmt = $this->dbh->prepare("SELECT * FROM PERSON");
-		
+		return $this->getPersons($stmt);
+	}
+
+	function getPersonById(PersonTO $personTO) {
+		$stmt = $this->dbh->prepare("SELECT * FROM PERSON WHERE id = :id");
+		$person = $personTO->getIterator()->current();
+		$stmt->bindParam(':id', $person['id']);
+		return $this->getPersons($stmt);
+	}
+	
+	private function getPersons($stmt) {
 		if($stmt->execute()) {
 			$personTO = new PersonTO();
 
-			while ($row = $stmt->fetch())
-				$personTO->addPerson($row[0], $row[1], $row[2]);
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+				$personTO->addPerson($row['id'], $row['fName'], $row['lName']);
 
 			return $personTO;
 		} else {
 			throw new DomainException( __METHOD__ . ' DB Error');
 		}
 	}
-	
-	function getPerson(PersonTO $personTO) {
-		
-	}
-	
+
 	function addPerson(PersonTO $personTO) {
 		$stmt = $this->dbh->prepare("INSERT INTO person (fName, lName) VALUES (:fName, :lName)");
 		$stmt->bindParam(':fName', $fName);
@@ -57,13 +62,13 @@ class PersonDAO {
 				throw new DomainException( __METHOD__ . ' DB Error');
 		}
 	}
-	
+
 	function updatePerson(PersonTO $personTO) {
 		
 	}
-	
+
 	function removePerson(PersonTO $personTO) {
 		
 	}
-	
+
 }

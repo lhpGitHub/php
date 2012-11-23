@@ -9,7 +9,7 @@ $fc = new FrontController;
 $fc->go();
 
 function autoloader($class) {
-	require_once $class . '.class.php';
+	@include_once $class . '.class.php';
 }
 
 function setIncludePath() {
