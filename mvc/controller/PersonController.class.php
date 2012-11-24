@@ -1,61 +1,71 @@
 <?php
 class PersonController {
 	
-	private $response;
-	
-	function __construct($response) {
-		$this->response = $response;
-	}
-	
-	function do_create(array $params) {
-		if($this->do_create_ValidateParams(&$params)) {
-			$personTO = new PersonTO(null, $params[0], $params[1]);
+	function do_create(Request $request) {
+		$fName = $request->getParam(0);
+		$lName = $request->getParam(1);
+
+		$fName = 'aaaa';
+		$lName = 'bbbbb';
+
+		//var_dump($this->validateString(&$fName));
+		//var_dump($this->validateString(&$lName));
+		var_dump($this->do_create_ValidateParams(&$fName, &$lName));
+		//var_dump($fName, $lName);
+
+		return;
+		
+		if($this->do_create_ValidateParams(&$fName, &$lName)) {
+			$personTO = new PersonTO(null, $fName, $lName);
 			try {
 				$dao = PersonDAO::getInstance();
 				$dao->addPerson($personTO);
-				$this->response->setSuccess(1);
-				$this->do_read(array());
+				$request->setSuccess(1);
+				//$this->do_read(array());
 			} catch(DomainException $err) {
-				$this->response->setError(2, $err);
+				$request->setError(2, $err);
 			} 
 		} else {
-			$this->response->setError(1);
+			$request->setError(1);
 		}
 	}
 	
-	private function do_create_ValidateParams(&$params) {
-		$err = false;
+	private function do_create_ValidateParams(&$fName, &$lName) {
+
+		var_dump($fName, $this->validateString(&$fName));
+		var_dump($lName, $this->validateString(&$lfName));
+
+
+		if(!$this->validateString(&$fName))
+			return false;
 		
-		if(!$this->validateString($params[0]))
-			$err = true;
+		if(!$this->validateString(&$lfName))
+			return false;
 		
-		if(!$this->validateString($params[1]))
-			$err = true;
-		
-		return !$err;
+		return true;
 	}
 	
-	function do_read(array $params) {
+	function do_read(Request $request) {
 		try {
 			$dao = PersonDAO::getInstance();
-			
-			if($this->validateInteger($params[0])) {
-				$personTO = new PersonTO($params[0], null, null);
+			$id = $request->getParam(0);
+			if($this->validateInteger(&$id)) {
+				$personTO = new PersonTO($id);
 				$personIterator = $dao->getPersonById($personTO)->getIterator();
 			} else {
 				$personIterator = $dao->getAllPersons()->getIterator();
 			}
 			
 			if($personIterator->count() > 0) {
-				$this->response->setSuccess(4);
+				$request->setSuccess(4);
 				foreach($personIterator as $person) {
-					$this->response->setData(array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']), 'personListItem');
+					$request->setData(array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']), 'personListItem');
 				}
 			} else {
-				$this->response->setSuccess(5);
+				$request->setSuccess(5);
 			}
 		} catch(DomainException $err) {
-			$this->response->setError(2, $err);
+			$request->setError(2, $err);
 		} 
 	}
 	

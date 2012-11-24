@@ -1,38 +1,22 @@
 <?php
 class FrontController {
-	
-	private $controlerName;
-	private $actionName;
-	private $params;
-	
+
 	function go() {
 
-		$this->parse();
-		
+		$request = new HttpRequest;
+
 		try {
-			$c = new ReflectionClass($this->controlerName);
-			$m = new ReflectionMethod($this->controlerName, $this->actionName);
+			$c = new ReflectionClass($request->getControlerName());
+			$m = new ReflectionMethod($request->getControlerName(), $request->getActionName());
 		} catch(ReflectionException $err) {
+			$header = 'HTTP/1.1 404 Not Found';
 			header($header);
 			echo $header;
 			exit();
 		}
-		
-		$response = $this->getResponseObject();
-		$m->invoke($c->newInstance($response), $this->params);
-		$response->send();
+
+		$m->invoke($c->newInstance(), $request);
+		$request->send();
 	}
-	
-	private function parse() {
-		$ele = explode('/', trim($_SERVER["PATH_INFO"], "/"));
-		$controlerName = array_shift($ele);
-		$actionName = array_shift($ele);
-		$this->params = $ele;
-		$this->controlerName = (empty($controlerName)) ? 'PersonController' : $controlerName.'Controller';  
-		$this->actionName = (empty($actionName)) ? 'do_read' : 'do_'.$actionName;  
-	}
-	
-	private function getResponseObject() {
-		return new HttpResponse;
-	}
+
 }
