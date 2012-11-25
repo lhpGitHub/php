@@ -5,41 +5,28 @@ class PersonController {
 		$fName = $request->getParam(0);
 		$lName = $request->getParam(1);
 
-		$fName = 'aaaa';
-		$lName = 'bbbbb';
-
-		//var_dump($this->validateString(&$fName));
-		//var_dump($this->validateString(&$lName));
-		var_dump($this->do_create_ValidateParams(&$fName, &$lName));
-		//var_dump($fName, $lName);
-
-		return;
-		
 		if($this->do_create_ValidateParams(&$fName, &$lName)) {
 			$personTO = new PersonTO(null, $fName, $lName);
 			try {
 				$dao = PersonDAO::getInstance();
 				$dao->addPerson($personTO);
-				$request->setSuccess(1);
-				//$this->do_read(array());
+				$request->setSuccess(Request::RECORD_ADD);
+				$request->setParam(0, null);
+				$this->do_read($request);
 			} catch(DomainException $err) {
-				$request->setError(2, $err);
+				$request->setError(Request::DB_ERROR, $err);
 			} 
 		} else {
-			$request->setError(1);
+			$request->setError(Request::WRONG_PARAM);
+			$request->setData(array('action'=>$request->getAbsolutePath().'/person/create/', 'fName'=>$fName, 'lName'=>$lName), 'personForm');
 		}
 	}
 	
 	private function do_create_ValidateParams(&$fName, &$lName) {
-
-		var_dump($fName, $this->validateString(&$fName));
-		var_dump($lName, $this->validateString(&$lfName));
-
-
 		if(!$this->validateString(&$fName))
 			return false;
 		
-		if(!$this->validateString(&$lfName))
+		if(!$this->validateString(&$lName))
 			return false;
 		
 		return true;
@@ -57,26 +44,79 @@ class PersonController {
 			}
 			
 			if($personIterator->count() > 0) {
-				$request->setSuccess(4);
+				$request->setSuccess(Request::RECORD_READ);
 				foreach($personIterator as $person) {
 					$request->setData(array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']), 'personListItem');
 				}
 			} else {
-				$request->setSuccess(5);
+				$request->setSuccess(Request::RECORD_EMPTY);
 			}
 		} catch(DomainException $err) {
-			$request->setError(2, $err);
+			$request->setError(Request::DB_ERROR, $err);
 		} 
 	}
 	
-	function do_update(array $params) {
-		echo __METHOD__;
-		print_r($params);
+	function do_update(Request $request) {
+		$id = $request->getParam(0);
+		$fName = $request->getParam(1);
+		$lName = $request->getParam(2);
+		$fSend = $this->validateInteger($request->getParam(3));
+		
+		try
+		{
+			$dao = PersonDAO::getInstance();
+			$personTO = new PersonTO($id);
+			$personIterator = $dao->getPersonById($personTO)->getIterator();
+			$person = $personIterator->current();	
+			
+			if($this->validateInteger(&$id) && !is_null($person)) {
+				
+				if($this->validateString(&$fName) && $this->validateString(&$lName)) {
+					$personUpd = new PersonTO($id, $fName, $lName);
+					$dao->updatePerson($personUpd);
+					$request->setSuccess(Request::RECORD_UPD);
+					$request->setParam(0, null);
+					$this->do_read($request);
+				} else {
+					$request->setError(Request::WRONG_PARAM);
+					if(!$fSend) extract($person);
+					$request->setData(array('action'=>$request->getAbsolutePath().'/person/update/'.$id.'/', 'fName'=>$fName, 'lName'=>$lName), 'personForm');
+				}
+				
+			} else {
+				$request->setError(Request::WRONG_PARAM);
+			}
+			
+		} catch (DomainException $err) {
+			$request->setError(Request::DB_ERROR);
+		}
+		
 	}
 	
-	function do_delete(array $params) {
-		echo __METHOD__;
-		print_r($params);
+	function do_delete(Request $request) {
+		$id = $request->getParam(0);
+		
+		try
+		{
+			if($this->validateInteger(&$id)) {
+				$dao = PersonDAO::getInstance();
+				$personTO = new PersonTO($id);
+				
+				if($dao->removePerson($personTO) == 1) {
+					$request->setSuccess(Request::RECORD_DEL);
+					$request->setParam(0, null);
+					$this->do_read($request);
+				} else {
+					$request->setError(Request::WRONG_PARAM);
+				}
+				
+			} else {
+				$request->setError(Request::WRONG_PARAM);
+			}
+			
+		} catch (DomainException $err) {
+			$request->setError(Request::DB_ERROR);
+		}
 	}
 	
 	private function validateString(&$var) {

@@ -1,0 +1,22 @@
+<div>
+	<form name="person" action="<?= $action ?>" method="get">
+    <p>
+		<label for="firstname">first name: </label>
+		<input type="text" id="fName" value="<?= $fName ?>"><br>
+		<label for="lastname">last name: </label>
+		<input type="text" id="lName" value="<?= $lName ?>"><br>
+		<input type="hidden" id="fSend" value="1"><br>
+		<input type="submit" id="submit" value="send" onclick="return send()">
+	</p>
+ </form>
+</div>
+
+<script>
+	function send() {
+		var form = document.forms["person"];
+		var fName = form["fName"].value;
+		var lName = form["lName"].value;
+		var fSend = form["fSend"].value;
+		form.action += fName + '/' + lName + '/' + fSend;
+	}
+</script>

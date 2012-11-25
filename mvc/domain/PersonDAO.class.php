@@ -24,7 +24,7 @@ class PersonDAO {
 	}
 
 	function getAllPersons() {
-		$stmt = $this->dbh->prepare("SELECT * FROM PERSON");
+		$stmt = $this->dbh->prepare("SELECT * FROM PERSON ORDER BY id");
 		return $this->getPersons($stmt);
 	}
 
@@ -61,14 +61,32 @@ class PersonDAO {
 			if(!$stmt->execute())
 				throw new DomainException( __METHOD__ . ' DB Error');
 		}
+		
+		return $stmt->rowCount();
 	}
 
 	function updatePerson(PersonTO $personTO) {
+		$person = $personTO->getIterator()->current();
+		$stmt = $this->dbh->prepare("UPDATE person SET fName=:fName, lName=:lName WHERE id=:id");
+		$stmt->bindParam(':id', $person['id']);
+		$stmt->bindParam(':fName', $person['fName']);
+		$stmt->bindParam(':lName', $person['lName']);
 		
+		if(!$stmt->execute())
+			throw new DomainException( __METHOD__ . ' DB Error');
+		
+		return $stmt->rowCount();
 	}
 
 	function removePerson(PersonTO $personTO) {
+		$person = $personTO->getIterator()->current();
+		$stmt = $this->dbh->prepare("DELETE FROM person WHERE id = :id");
+		$stmt->bindParam(':id', $person['id']);
 		
+		if(!$stmt->execute())
+			throw new DomainException( __METHOD__ . ' DB Error');
+		
+		return $stmt->rowCount();
 	}
 
 }
