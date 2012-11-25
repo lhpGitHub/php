@@ -4,7 +4,8 @@ class FrontController {
 	function go() {
 
 		$request = new HttpRequest;
-
+		RequestRegistry::setRequest($request);
+		
 		try {
 			$c = new ReflectionClass($request->getControlerName());
 			$m = new ReflectionMethod($request->getControlerName(), $request->getActionName());
@@ -15,7 +16,7 @@ class FrontController {
 			exit();
 		}
 
-		$m->invoke($c->newInstance(), $request);
+		$m->invoke($c->newInstance());
 		$request->send();
 	}
 

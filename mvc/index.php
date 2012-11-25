@@ -2,7 +2,7 @@
 
 error_reporting(E_ALL);
 define('DEBUG', TRUE);
-setIncludePath('controller', 'domain', 'view');
+setIncludePath('base', 'controller', 'domain', 'view');
 spl_autoload_register('autoloader');
 
 $fc = new FrontController;

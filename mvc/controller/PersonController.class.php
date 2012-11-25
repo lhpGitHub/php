@@ -1,11 +1,12 @@
 <?php
 class PersonController {
 	
-	function do_create(Request $request) {
-		$fName = $request->getParam(0);
-		$lName = $request->getParam(1);
+	function do_create() {
+		$request = RequestRegistry::getRequest();
+		$fName = $this->validateString($request->getParam(0));
+		$lName = $this->validateString($request->getParam(1));
 
-		if($this->do_create_ValidateParams(&$fName, &$lName)) {
+		if($this->isNotNull($fName, $lName)) {
 			$personTO = new PersonTO(null, $fName, $lName);
 			try {
 				$dao = PersonDAO::getInstance();
@@ -27,21 +28,12 @@ class PersonController {
 		}
 	}
 	
-	private function do_create_ValidateParams(&$fName, &$lName) {
-		if(!$this->validateString(&$fName))
-			return false;
-		
-		if(!$this->validateString(&$lName))
-			return false;
-		
-		return true;
-	}
-	
-	function do_read(Request $request) {
+	function do_read() {
+		$request = RequestRegistry::getRequest();
 		try {
 			$dao = PersonDAO::getInstance();
-			$id = $request->getParam(0);
-			if($this->validateInteger(&$id)) {
+			$id = $this->validateInteger($request->getParam(0));
+			if($this->isNotNull($id)) {
 				$personTO = new PersonTO($id);
 				$personIterator = $dao->getPersonById($personTO)->getIterator();
 			} else {
@@ -70,10 +62,11 @@ class PersonController {
 		} 
 	}
 	
-	function do_update(Request $request) {
-		$id = $request->getParam(0);
-		$fName = $request->getParam(1);
-		$lName = $request->getParam(2);
+	function do_update() {
+		$request = RequestRegistry::getRequest();
+		$id = $this->validateInteger($request->getParam(0));
+		$fName = $this->validateString($request->getParam(1));
+		$lName = $this->validateString($request->getParam(2));
 		$fSend = $this->validateInteger($request->getParam(3));
 		
 		try
@@ -83,9 +76,9 @@ class PersonController {
 			$personIterator = $dao->getPersonById($personTO)->getIterator();
 			$person = $personIterator->current();	
 			
-			if($this->validateInteger(&$id) && !is_null($person)) {
+			if($this->isNotNull($id, $person)) {
 				
-				if($this->validateString(&$fName) && $this->validateString(&$lName)) {
+				if($this->isNotNull($fName, $lName)) {
 					$person = new PersonTO($id, $fName, $lName);
 					$dao->updatePerson($person);
 					$request->setSuccess(Request::RECORD_UPD);
@@ -93,7 +86,7 @@ class PersonController {
 					$this->do_read($request);
 				} else {
 					$request->setError(Request::WRONG_PARAM);
-					if(!$fSend) extract($person);
+					if(!$this->isNotNull($fSend)) extract($person);
 					$request->setData(array(
 						'action'=>$request->getAbsolutePath().'/person/update/'.$id.'/',
 						'fName'=>$fName,
@@ -112,12 +105,13 @@ class PersonController {
 		
 	}
 	
-	function do_delete(Request $request) {
-		$id = $request->getParam(0);
+	function do_delete() {
+		$request = RequestRegistry::getRequest();
+		$id = $this->validateInteger($request->getParam(0));
 		
 		try
 		{
-			if($this->validateInteger(&$id)) {
+			if($this->isNotNull($id)) {
 				$dao = PersonDAO::getInstance();
 				$personTO = new PersonTO($id);
 				
@@ -138,24 +132,34 @@ class PersonController {
 		}
 	}
 	
-	private function validateString(&$var) {
+	private function validateString($var) {
 		if(isset($var) && !empty($var)) {
 			settype($var, 'string');
-			return true;
+			return $var;
 		}
 		else {
-			return false;
+			return NULL;
 		}
 	}
 	
-	private function validateInteger(&$var) {
+	private function validateInteger($var) {
 		if(isset($var)) {
 			settype($var, 'integer');
-			return true;
+			return $var;
 		}
 		else {
-			return false;
+			return NULL;
 		}
+	}
+	
+	private function isNotNull() {
+		$args = func_get_args();
+		
+		foreach ($args as $var)
+			if(is_null($var))
+				return false;
+		
+		return true;
 	}
 		
 }
