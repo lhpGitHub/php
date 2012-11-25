@@ -18,7 +18,12 @@ class PersonController {
 			} 
 		} else {
 			$request->setError(Request::WRONG_PARAM);
-			$request->setData(array('action'=>$request->getAbsolutePath().'/person/create/', 'fName'=>$fName, 'lName'=>$lName), 'personForm');
+			$request->setData(array(
+				'action'=>$request->getAbsolutePath().'/person/create/',
+				'fName'=>$fName,
+				'lName'=>$lName,
+				'aRead'=>$request->getAbsolutePath().'/person/read/'
+			), 'personForm');
 		}
 	}
 	
@@ -46,11 +51,20 @@ class PersonController {
 			if($personIterator->count() > 0) {
 				$request->setSuccess(Request::RECORD_READ);
 				foreach($personIterator as $person) {
-					$request->setData(array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']), 'personListItem');
+					$request->setData(array(
+						'aUpdate'=>$request->getAbsolutePath().'/person/update/'.$person['id'].'/',
+						'aDelete'=>$request->getAbsolutePath().'/person/delete/'.$person['id'].'/',
+						'id'=>$person['id'],
+						'fName'=>$person['fName'],
+						'lName'=>$person['lName']
+					),'personListItem');
 				}
 			} else {
 				$request->setSuccess(Request::RECORD_EMPTY);
 			}
+
+			$request->setData(array('aCreate'=>$request->getAbsolutePath().'/person/create/'),'personList');
+
 		} catch(DomainException $err) {
 			$request->setError(Request::DB_ERROR, $err);
 		} 
@@ -72,15 +86,20 @@ class PersonController {
 			if($this->validateInteger(&$id) && !is_null($person)) {
 				
 				if($this->validateString(&$fName) && $this->validateString(&$lName)) {
-					$personUpd = new PersonTO($id, $fName, $lName);
-					$dao->updatePerson($personUpd);
+					$person = new PersonTO($id, $fName, $lName);
+					$dao->updatePerson($person);
 					$request->setSuccess(Request::RECORD_UPD);
 					$request->setParam(0, null);
 					$this->do_read($request);
 				} else {
 					$request->setError(Request::WRONG_PARAM);
 					if(!$fSend) extract($person);
-					$request->setData(array('action'=>$request->getAbsolutePath().'/person/update/'.$id.'/', 'fName'=>$fName, 'lName'=>$lName), 'personForm');
+					$request->setData(array(
+						'action'=>$request->getAbsolutePath().'/person/update/'.$id.'/',
+						'fName'=>$fName,
+						'lName'=>$lName,
+						'aRead'=>$request->getAbsolutePath().'/person/read/'
+					), 'personForm');
 				}
 				
 			} else {
