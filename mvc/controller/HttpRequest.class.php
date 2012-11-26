@@ -1,8 +1,6 @@
 <?php
 class HttpRequest extends Request {
 
-	private $views = array();
-	
 	function __construct() {
 		parent::__construct();
 	}
@@ -19,13 +17,6 @@ class HttpRequest extends Request {
 		$this->actionName = (empty($actionName)) ? 'do_read' : 'do_'.$actionName;
 	}
 
-	function setData($data, $viewName = null) {
-		extract($data);
-		ob_start();
-		include('viewHtml/' . $viewName . '.html');
-		$this->views[] = ob_get_clean();
-	}
-	
 	function setSuccess($sucessCode) {
 		$sucessCodes = array (
 			1 => 'success add record',
@@ -36,10 +27,8 @@ class HttpRequest extends Request {
 		);
 		
 		$successMsg = $sucessCodes[$sucessCode];
-
-		ob_start();
-		include('viewHtml/success.html');
-		$this->views[] = ob_get_clean();
+		
+		SessionRegistry::setFlashVars('msg', $successMsg);
 	}
 	
 	function setError($errCode, $exception = null) {
@@ -50,16 +39,10 @@ class HttpRequest extends Request {
 		
 		$errMsg = $errCodes[$errCode];
 		
-		if(!DEBUG)
-			$exception = null;
-			
-		ob_start();
-		include('viewHtml/error.html');
-		$this->views[] = ob_get_clean();
+		if(DEBUG)
+			$errMsg .= ' ' . $exception;
+		
+		SessionRegistry::setFlashVars('msg', $errMsg);
 	}
 
-	function send() {
-		$views = join('', $this->views);
-		include('viewHtml/layout.html');
-	}
 }

@@ -29,10 +29,13 @@ class PersonController {
 	}
 	
 	function do_read() {
+
 		$request = RequestRegistry::getRequest();
+		
 		try {
 			$dao = PersonDAO::getInstance();
 			$id = $this->validateInteger($request->getParam(0));
+			
 			if($this->isNotNull($id)) {
 				$personTO = new PersonTO($id);
 				$personIterator = $dao->getPersonById($personTO)->getIterator();
@@ -42,24 +45,22 @@ class PersonController {
 			
 			if($personIterator->count() > 0) {
 				$request->setSuccess(Request::RECORD_READ);
-				foreach($personIterator as $person) {
-					$request->setData(array(
-						'aUpdate'=>$request->getAbsolutePath().'/person/update/'.$person['id'].'/',
-						'aDelete'=>$request->getAbsolutePath().'/person/delete/'.$person['id'].'/',
-						'id'=>$person['id'],
-						'fName'=>$person['fName'],
-						'lName'=>$person['lName']
-					),'personListItem');
-				}
+				$persons = array();
+				
+				foreach($personIterator as $person)
+					$persons[] = array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']);
+				
+				$request->setData('persons', $persons);
+				
 			} else {
 				$request->setSuccess(Request::RECORD_EMPTY);
 			}
 
-			$request->setData(array('aCreate'=>$request->getAbsolutePath().'/person/create/'),'personList');
-
 		} catch(DomainException $err) {
 			$request->setError(Request::DB_ERROR, $err);
-		} 
+		}
+		
+		return 'personList';
 	}
 	
 	function do_update() {

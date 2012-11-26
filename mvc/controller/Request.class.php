@@ -10,20 +10,31 @@ abstract class Request {
 	const WRONG_PARAM	= 1;
 	const DB_ERROR		= 2;
 	
-	protected $controlerName;
-	protected $actionName;
-	protected $params;
+	protected $controlerName,
+			$actionName,
+			$params;
+	
+	private $data = array();
 
 	function __construct() {
 		$this->ini();
 	}
 	
 	abstract protected function ini();
-	abstract function setData($data, $viewName = null);
 	abstract function setSuccess($sucessCode);
 	abstract function setError($errCode, $exception = null);
-	abstract function send();
-
+	
+	function setData($key, $val) {
+		$this->data[$key] = $val;
+	}
+	
+	function getData($key) {
+		if(isset($this->data[$key]))
+			return $this->data[$key];
+		
+		return NULL;
+	}
+	
 	function getAbsolutePath() {
 		$pathinfo = pathinfo($_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']);
 		return 'http://'.$pathinfo['dirname'];
