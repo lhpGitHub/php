@@ -16,9 +16,9 @@ class PersonDAO {
 		$this->dbh = null;
 	}
 
-	function getInstance() {
+	static function getInstance() {
 		if(!self::$instance)
-			self::$instance = new PersonDAO;
+			self::$instance = new self;
 		
 		return self::$instance;
 	}

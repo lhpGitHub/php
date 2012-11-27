@@ -14,7 +14,7 @@ class RequestRegistry {
 		return self::$instance;
 	}
 	
-	static function setRequest(Request $request) {
+	static function setRequest(BaseRequest $request) {
 		self::$request = $request;
 	}
 	

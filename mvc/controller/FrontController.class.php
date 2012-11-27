@@ -1,33 +1,58 @@
 <?php
 class FrontController {
-
+	
+	static private $instance;
+	
+	static function getInstance() {
+		if(!self::$instance)
+			self::$instance = new self;
+		
+		return self::$instance;
+	}
+	
+	private function __construct() {}
+	
 	function go() {
 
 		session_start();
-		$request = new HttpRequest;
+		$request = new HtmlRequest;
 		RequestRegistry::setRequest($request);
 		
+		$viewName = $this->forward($request->getControlerName(), $request->getActionName());
+		$request->sendView($viewName);
+		
+		SessionRegistry::clearFlashVars();
+	}
+	
+	function forward($controllerName, $actionName) {
+		
+		//html - action
+		//json - jsonAction
+		$mode = 'html';
+		$prefix;
+		
+		switch ($mode) {
+			case 'json':
+				$prefix = 'jsonAction';
+				break;	
+			
+			default:
+				$prefix = 'action';
+		}
+		
+		$controllerName	= $controllerName.'Controller';
+		$actionName	= $prefix.ucfirst($actionName);
+
 		try {
-			$c = new ReflectionClass($request->getControlerName());
-			$m = new ReflectionMethod($request->getControlerName(), $request->getActionName());
+			$c = new ReflectionClass($controllerName);
+			$m = new ReflectionMethod($controllerName, $actionName);
 		} catch(ReflectionException $err) {
 			$header = 'HTTP/1.1 404 Not Found';
 			header($header);
 			echo $header;
 			exit();
 		}
-
-		$viewName = $m->invoke($c->newInstance());
-		$this->sendView($request, $viewName);
 		
-		SessionRegistry::clearFlashVars();
-	}
-	
-	private function sendView($request, $viewName) {
-		ob_start();
-		include('viewHtml/' . $viewName . '.html');
-		$content = ob_get_clean();
-		include('viewHtml/layout.html');
-	}
-
+		return $m->invoke($c->newInstance());
+	}	
 }

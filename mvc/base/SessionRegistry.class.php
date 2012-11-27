@@ -13,11 +13,16 @@ class SessionRegistry {
 		return self::$instance;
 	}
 	
-	static function setFlashVars($key, $var) {
-		if(!isset($_SESSION['flashVars']));
+	static function setFlashVars($key, $var, $overwrite) {
+		if(!isset($_SESSION['flashVars']))
 			$_SESSION['flashVars'] = array();
 		
-		$_SESSION['flashVars'][$key] = $var;
+		if($overwrite) {
+			$_SESSION['flashVars'][$key] = $var;
+		} else {
+			if(!isset($_SESSION['flashVars'][$key]))
+				$_SESSION['flashVars'][$key] = $var;
+		}
 	}
 	
 	static function getFlashVars($key) {

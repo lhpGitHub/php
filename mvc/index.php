@@ -6,7 +6,7 @@ define('DEBUG', TRUE);
 setIncludePath('base', 'controller', 'domain', 'view');
 spl_autoload_register('autoloader');
 
-$fc = new FrontController;
+$fc = FrontController::getInstance();
 $fc->go();
 
 function autoloader($class) {

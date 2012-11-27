@@ -1,3 +1,22 @@
+<?php 
+$msg = SessionRegistry::getFlashVars('msg');
+if($msg) {
+	echo "<div>$msg</div><br/>";
+}
+
+$person = $request->getData('person');
+extract($person);
+
+if($request->getActionName() == 'update')
+	$action = $request->getAbsolutePath().'/person/update/'.$id.'/';
+else
+	$action = $request->getAbsolutePath().'/person/create/';
+
+$back = $request->getAbsolutePath().'/person/read/';
+
+
+?>
+
 <div>
 	<form name="person" action="<?= $action ?>" method="get">
     <p>
@@ -10,7 +29,7 @@
 	</p>
  </form>
 </div>
-<div><a href="<?= $aRead ?>">BACK</a></div>
+<div><a href="<?= $back ?>">BACK</a></div>
 
 <script>
 	function send() {

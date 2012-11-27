@@ -1,18 +1,9 @@
 <?php
-abstract class Request {
+abstract class BaseRequest {
 
-	const RECORD_ADD	= 1;
-	const RECORD_DEL	= 2;
-	const RECORD_UPD	= 3;
-	const RECORD_READ	= 4;
-	const RECORD_EMPTY	= 5;
-
-	const WRONG_PARAM	= 1;
-	const DB_ERROR		= 2;
-	
-	protected $controlerName,
-			$actionName,
-			$params;
+	protected $controlerName, 
+			  $actionName, 
+			  $params;
 	
 	private $data = array();
 
@@ -21,8 +12,6 @@ abstract class Request {
 	}
 	
 	abstract protected function ini();
-	abstract function setSuccess($sucessCode);
-	abstract function setError($errCode, $exception = null);
 	
 	function setData($key, $val) {
 		$this->data[$key] = $val;
