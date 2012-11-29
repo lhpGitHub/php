@@ -7,173 +7,183 @@ class PersonController extends BaseController {
 	const RECORD_READ	= 'success read record';
 	const RECORD_EMPTY	= 'no record found';
 
+	const WRONG_ID	= 'wrong id';
 	const WRONG_PARAM	= 'wrong parameters';
 	const DB_ERROR		= 'database error';
 	
+	function __construct() {
+		parent::__construct();
+	}
+
+
 	function actionCreate() {
 		try {
 			$request = RequestRegistry::getRequest();
-			$this->create($request);
+			$fName = self::validateString($request->getParam(0));
+			$lName = self::validateString($request->getParam(1));
+			if(!self::isNotNullAll($fName, $lName)) throw new InvalidParamException;
+			$this->create($fName, $lName);
 			$this->setFlashBlockOverride('msg', self::RECORD_ADD);
 			$this->redirect('/person/read');
 			
-		} catch(DomainException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR);
-			
-		} catch(InvalidArgumentException $err) {
+		} catch(InvalidParamException $err) {
 			$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
-		}  
+			$this->view->setViewVar('personForm', 'action', $request->getAbsolutePath().'/person/create/');
+			$this->view->setViewVar('personForm', 'fName', $fName);
+			$this->view->setViewVar('personForm', 'lName', $lName);
+			$this->view->menu= "<br/><a href=\"{$request->getAbsolutePath()}/person/read/\">BACK</a>";
+			$this->view->content = $this->view->getViewAsVar('personForm');
+			
+		} catch(DataBaseException $err) {
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+		}
 	
-		return 'personForm';
+		$this->view->render();
 	}
 	
 	function jsonActionCreate() {
-		return self::VIEW_NONE;
+		
 	}
 	
-	private function create($request) {
-		$fName = self::validateString($request->getParam(0));
-		$lName = self::validateString($request->getParam(1));
-		
-		if(self::isNotNull($fName, $lName)) {
-			$dao = PersonDAO::getInstance();
-			$dao->addPerson(new PersonTO(null, $fName, $lName));
-		} else {
-			$request->setData('person', array('fName'=>$fName, 'lName'=>$lName));
-			throw new InvalidArgumentException;
-		}
+	private function create($fName, $lName) {
+		$dao = PersonDAO::getInstance();
+		$dao->addPerson(new PersonTO(null, $fName, $lName));
 	}
 
 
 	function actionRead() {
 		try {
 			$request = RequestRegistry::getRequest();
-			$this->read($request);
+			$id = $this->validateInteger($request->getParam(0));
+			$persons = $this->read($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_READ);
 			
-		} catch(DomainException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR);
+			$html = '';
+			foreach($persons as $person) {
+				$this->view->setViewVar('personListItem', 'id', $person['id']);
+				$this->view->setViewVar('personListItem', 'fName', $person['fName']);
+				$this->view->setViewVar('personListItem', 'lName', $person['lName']);
+				$this->view->setViewVar('personListItem', 'aUpdate', $request->getAbsolutePath().'/person/update/'.$person['id'].'/');
+				$this->view->setViewVar('personListItem', 'aDelete', $request->getAbsolutePath().'/person/delete/'.$person['id'].'/');
+				$this->view->menu= "<br/><a href=\"{$request->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
+				$html .= $this->view->getViewAsVar('personListItem');
+			}
 			
-		} catch(LengthException $err) {
+			$this->view->content = $html;
+			
+		} catch(NoRecordException $err) {
 			$this->setFlashBlockOverride('msg', self::RECORD_EMPTY);
-		}  
+			
+		} catch(DataBaseException $err) {
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+		}
 		
-		return 'personList';
+		$this->view->render();
 	}
 	
 	function jsonActionRead() {
-		return self::VIEW_NONE;
+		
 	}
 	
-	private function read($request) {
+	private function read($id) {
 		$dao = PersonDAO::getInstance();
-		$id = $this->validateInteger($request->getParam(0));
-		
-		if(self::isNotNull($id)) {
+
+		if(self::isNotNullAll($id)) {
 			$personIterator = $dao->getPersonById(new PersonTO($id))->getIterator();
 		} else {
 			$personIterator = $dao->getAllPersons()->getIterator();
 		}
 		
 		if($personIterator->count() > 0) {
-			$persons = array();
-
-			foreach($personIterator as $person)
-				$persons[] = array('id'=>$person['id'], 'fName'=>$person['fName'], 'lName'=>$person['lName']);
-
-			$request->setData('persons', $persons);
-
+			return $personIterator;
 		} else {
-			throw new LengthException;
+			throw new NoRecordException;
 		}
 	}
-
 
 	function actionUpdate() {
 		$request = RequestRegistry::getRequest();
 		$id = $this->validateInteger($request->getParam(0));
+		$fName = $this->validateString($request->getParam(1));
+		$lName = $this->validateString($request->getParam(2));
 		$fSend = $this->validateInteger($request->getParam(3));
 		
-		try { //check id
-			if(self::isNull($id)) throw new LengthException;
-			$this->read($request);
-		} catch(LengthException $err) {
-			$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
-			$this->redirect('/person/read');
-		}
-		
 		try {
-			if(self::isNull($fSend)) {
-				$request->setData('person', array_pop($request->getData('persons')));
-			} else {
-				$this->update($id, $request);
-				$this->setFlashBlockOverride('msg', self::RECORD_UPD);
-				$this->redirect('/person/read');
+			if(self::isNullAll($id)) {
+				throw new InvalidIdException;
 			}
 			
-		} catch(DomainException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR);
+			try {
+				$person = $this->read($id)->current();
+			} catch (NoRecordException $err) {
+				throw new InvalidIdException;
+			}
 			
-		} catch(InvalidArgumentException $err) {
+			if(!self::isNotNullAll($fName, $lName)) {
+				throw new InvalidParamException;
+			}
+			
+			$this->update($id, $fName, $lName);
+			$this->setFlashBlockOverride('msg', self::RECORD_UPD);
+			$this->redirect('/person/read');
+			
+		} catch(InvalidIdException $err) {
+			$this->setFlashBlockOverride('msg', self::WRONG_ID);
+			$this->redirect('/person/read');
+			
+		} catch(InvalidParamException $err) {
+			if(self::isNullAll($fSend)) extract($person);
 			$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
-		}	
+			$this->view->setViewVar('personForm', 'action', $request->getAbsolutePath().'/person/update/'.$id.'/');
+			$this->view->setViewVar('personForm', 'fName', $fName);
+			$this->view->setViewVar('personForm', 'lName', $lName);
+			$this->view->menu= "<br/><a href=\"{$request->getAbsolutePath()}/person/read/\">BACK</a>";
+			$this->view->content = $this->view->getViewAsVar('personForm');
+			
+		} catch(DataBaseException $err) {
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+			
+		}
 		
-		return 'personForm';
+		$this->view->render();
 	}
 	
 	function jsonActionUpdate() {
-		$request = RequestRegistry::getRequest();
-		$id = $this->validateInteger($request->getParam(0));
 		
-		try { //check id
-			if(self::isNull($id)) throw new LengthException;
-			$this->read($request);
-		} catch(LengthException $err) {
-
-		}
-		
-		return self::VIEW_NONE;
 	}
 	
-	private function update($id, $request) {
-		$fName = $this->validateString($request->getParam(1));
-		$lName = $this->validateString($request->getParam(2));
-
-		if(self::isNotNull($fName, $lName)) {
-			$dao = PersonDAO::getInstance();
-			$dao->updatePerson(new PersonTO($id, $fName, $lName));
-		} else {
-			$request->setData('person', array('id'=>$id, 'fName'=>$fName, 'lName'=>$lName));
-			throw new InvalidArgumentException;
-		}
+	private function update($id, $fName, $lName) {
+		$dao = PersonDAO::getInstance();
+		$dao->updatePerson(new PersonTO($id, $fName, $lName));
 	}
 
 	function actionDelete() {
 		try {
 			$request = RequestRegistry::getRequest();
-			$this->delete($request);
+			$id = self::validateInteger($request->getParam(0));
+			$this->delete($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			
-		} catch(DomainException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR);
+		} catch(InvalidIdException $err) {
+			$this->setFlashBlockOverride('msg', self::WRONG_ID);
 			
-		} catch(InvalidArgumentException $err) {
-			$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
-		} 
+		} catch(DataBaseException $err) {
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+			
+		}
 		
 		$this->redirect('/person/read');
 	}
 	
 	function jsonActionDelete() {
-		return self::VIEW_NONE;
+		
 	}
 	
-	private function delete($request) {
+	private function delete($id) {
 		$dao = PersonDAO::getInstance();
-		$id = self::validateInteger($request->getParam(0));
 		
-		if(self::isNull($id) || $dao->removePerson(new PersonTO($id)) == 0) {
-			throw new InvalidArgumentException;
+		if(self::isNullAll($id) || $dao->removePerson(new PersonTO($id)) == 0) {
+			throw new InvalidIdException;
 		}
 	}
 }

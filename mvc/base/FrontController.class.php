@@ -17,9 +17,13 @@ class FrontController {
 		session_start();
 		$request = new HtmlRequest;
 		RequestRegistry::setRequest($request);
+		$view = new View;
+		RequestRegistry::setView($view);
+				
+		$this->forward($request->getControlerName(), $request->getActionName());
 		
-		$viewName = $this->forward($request->getControlerName(), $request->getActionName());
-		$request->sendView($viewName);
+		//$viewName = $this->forward($request->getControlerName(), $request->getActionName());
+		//$request->sendView($viewName);
 		
 		SessionRegistry::clearFlashVars();
 	}

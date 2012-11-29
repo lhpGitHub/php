@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1); 
 define('DEBUG', TRUE);
-setIncludePath('base', 'controller', 'domain', 'view');
+setIncludePath('base', 'base/registry', 'base/controller', 'base/view' , 'base/exception', 'controller', 'domain', 'view');
 spl_autoload_register('autoloader');
 
 $fc = FrontController::getInstance();

@@ -17,12 +17,4 @@ class HtmlRequest extends BaseRequest {
 		$this->actionName = (empty($actionName)) ? 'read' : $actionName;
 	}
 	
-	function sendView($viewName) {
-		$request = $this;
-		ob_start();
-		include('view/' . $viewName . '.php');
-		$content = ob_get_clean();
-		include('view/layout.html');
-	}
-
 }

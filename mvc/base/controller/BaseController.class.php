@@ -1,8 +1,12 @@
 <?php
 class BaseController {
 	
-	const VIEW_NONE	= 'view_none';
-	
+	protected $view;
+
+	function __construct() {
+		$this->view = RequestRegistry::getView();
+	}
+
 	protected function redirect($uri) {
 		$request = RequestRegistry::getRequest();
 		header('Location: ' . $request->getAbsolutePath() . $uri);
@@ -45,7 +49,7 @@ class BaseController {
 		}
 	}
 	
-	static function isNull() {
+	static function isNullAll() {
 		$args = func_get_args();
 		
 		foreach ($args as $var)
@@ -55,7 +59,7 @@ class BaseController {
 		return true;
 	}
 	
-	static function isNotNull() {
+	static function isNotNullAll() {
 		$args = func_get_args();
 		
 		foreach ($args as $var)
