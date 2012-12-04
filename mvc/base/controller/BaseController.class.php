@@ -6,10 +6,13 @@ class BaseController {
 	function __construct() {
 		$this->view = RequestRegistry::getView();
 	}
-
+	
+	protected function getRequest() {
+		return RequestRegistry::getRequest();
+	}
+	
 	protected function redirect($uri) {
-		$request = RequestRegistry::getRequest();
-		header('Location: ' . $request->getAbsolutePath() . $uri);
+		header('Location: ' . $this->getRequest()->getAbsolutePath() . $uri);
 		die;
 	}
 	
@@ -49,21 +52,29 @@ class BaseController {
 		}
 	}
 	
-	static function isNullAll() {
+	static function isNull($var) {
+		return is_null($var);
+	}
+
+	static function isNotNull($var) {
+		return !is_null($var);
+	}
+
+	static function isAllNull() {
 		$args = func_get_args();
 		
 		foreach ($args as $var)
-			if(!is_null($var))
+			if(self::isNotNull($var))
 				return false;
 		
 		return true;
 	}
 	
-	static function isNotNullAll() {
+	static function isAllNotNull() {
 		$args = func_get_args();
 		
 		foreach ($args as $var)
-			if(is_null($var))
+			if(self::isNull($var))
 				return false;
 		
 		return true;

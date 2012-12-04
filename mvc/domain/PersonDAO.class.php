@@ -9,7 +9,7 @@ class PersonDAO {
 			$this->dbh = new PDO('mysql:host=localhost;dbname=mvc;charset=UTF-8', 'root', '');
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
 		} catch(PDOException $err) {
-			throw new DomainException( __METHOD__ . ' ' . $err->getMessage());
+			throw new DataBaseException( __METHOD__ . ' ' . $err->getMessage());
 		}
 	}
 

@@ -18,20 +18,21 @@ class PersonController extends BaseController {
 
 	function actionCreate() {
 		try {
-			$request = RequestRegistry::getRequest();
+			$request = $this->getRequest();
 			$fName = self::validateString($request->getParam(0));
 			$lName = self::validateString($request->getParam(1));
+			$fSend = self::validateInteger($request->getParam(2));
 			if(!self::isNotNullAll($fName, $lName)) throw new InvalidParamException;
 			$this->create($fName, $lName);
 			$this->setFlashBlockOverride('msg', self::RECORD_ADD);
 			$this->redirect('/person/read');
 			
 		} catch(InvalidParamException $err) {
-			$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
+			if(self::isNotNullAll($fSend)) $this->setFlashBlockOverride('msg', self::WRONG_PARAM);
 			$this->view->setViewVar('personForm', 'action', $request->getAbsolutePath().'/person/create/');
 			$this->view->setViewVar('personForm', 'fName', $fName);
 			$this->view->setViewVar('personForm', 'lName', $lName);
-			$this->view->menu= "<br/><a href=\"{$request->getAbsolutePath()}/person/read/\">BACK</a>";
+			$this->view->menu = "<br/><a href=\"{$request->getAbsolutePath()}/person/read/\">BACK</a>";
 			$this->view->content = $this->view->getViewAsVar('personForm');
 			
 		} catch(DataBaseException $err) {
@@ -50,26 +51,24 @@ class PersonController extends BaseController {
 		$dao->addPerson(new PersonTO(null, $fName, $lName));
 	}
 
-
 	function actionRead() {
 		try {
-			$request = RequestRegistry::getRequest();
-			$id = $this->validateInteger($request->getParam(0));
-			$persons = $this->read($id);
+			$request = $this->getRequest();
+			$id = self::validateInteger($request->getParam(0));
+			$personData = $this->read($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_READ);
 			
-			$html = '';
-			foreach($persons as $person) {
-				$this->view->setViewVar('personListItem', 'id', $person['id']);
-				$this->view->setViewVar('personListItem', 'fName', $person['fName']);
-				$this->view->setViewVar('personListItem', 'lName', $person['lName']);
-				$this->view->setViewVar('personListItem', 'aUpdate', $request->getAbsolutePath().'/person/update/'.$person['id'].'/');
-				$this->view->setViewVar('personListItem', 'aDelete', $request->getAbsolutePath().'/person/delete/'.$person['id'].'/');
-				$this->view->menu= "<br/><a href=\"{$request->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
-				$html .= $this->view->getViewAsVar('personListItem');
+			$htmlCode = '';
+			
+			if($personData instanceof PersonCollection) {
+				foreach($personData as $personObj)
+					$this->readViewHelper(&$htmlCode, $personObj, $request);
+			} else {
+				$this->readViewHelper(&$htmlCode, $personData, $request);
 			}
 			
-			$this->view->content = $html;
+			$this->view->menu = "<br/><a href=\"{$request->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
+			$this->view->content = $htmlCode;
 			
 		} catch(NoRecordException $err) {
 			$this->setFlashBlockOverride('msg', self::RECORD_EMPTY);
@@ -81,32 +80,40 @@ class PersonController extends BaseController {
 		$this->view->render();
 	}
 	
+	private function readViewHelper(&$html, $personObject, $request) {
+		$this->view->setViewVar('personListItem', 'id', $personObject->id);
+		$this->view->setViewVar('personListItem', 'fName', $personObject->fName);
+		$this->view->setViewVar('personListItem', 'lName', $personObject->lName);
+		$this->view->setViewVar('personListItem', 'aUpdate', $request->getAbsolutePath().'/person/update/'.$personObject->id.'/');
+		$this->view->setViewVar('personListItem', 'aDelete', $request->getAbsolutePath().'/person/delete/'.$personObject->id.'/');
+		$html .= $this->view->getViewAsVar('personListItem');
+	}
+	
 	function jsonActionRead() {
 		
 	}
 	
 	private function read($id) {
-		$dao = PersonDAO::getInstance();
+		
+		$mapper = RequestRegistry::getMapper('person');
 
-		if(self::isNotNullAll($id)) {
-			$personIterator = $dao->getPersonById(new PersonTO($id))->getIterator();
+		if(self::isNotNull($id)) {
+			$person = $mapper->find($id);
 		} else {
-			$personIterator = $dao->getAllPersons()->getIterator();
+			$person = $mapper->findAll();
 		}
 		
-		if($personIterator->count() > 0) {
-			return $personIterator;
-		} else {
-			throw new NoRecordException;
-		}
+		if(is_null($person)) throw new NoRecordException;
+		
+		return $person;
 	}
 
 	function actionUpdate() {
-		$request = RequestRegistry::getRequest();
-		$id = $this->validateInteger($request->getParam(0));
-		$fName = $this->validateString($request->getParam(1));
-		$lName = $this->validateString($request->getParam(2));
-		$fSend = $this->validateInteger($request->getParam(3));
+		$request = $this->getRequest();
+		$id = self::validateInteger($request->getParam(0));
+		$fName = self::validateString($request->getParam(1));
+		$lName = self::validateString($request->getParam(2));
+		$fSend = self::validateInteger($request->getParam(3));
 		
 		try {
 			if(self::isNullAll($id)) {
@@ -132,8 +139,11 @@ class PersonController extends BaseController {
 			$this->redirect('/person/read');
 			
 		} catch(InvalidParamException $err) {
-			if(self::isNullAll($fSend)) extract($person);
-			$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
+			if(self::isNullAll($fSend)) {
+				extract($person);
+			} else {
+				$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
+			}
 			$this->view->setViewVar('personForm', 'action', $request->getAbsolutePath().'/person/update/'.$id.'/');
 			$this->view->setViewVar('personForm', 'fName', $fName);
 			$this->view->setViewVar('personForm', 'lName', $lName);
@@ -159,7 +169,7 @@ class PersonController extends BaseController {
 
 	function actionDelete() {
 		try {
-			$request = RequestRegistry::getRequest();
+			$request = $this->getRequest();
 			$id = self::validateInteger($request->getParam(0));
 			$this->delete($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);

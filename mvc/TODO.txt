@@ -1,0 +1,21 @@
+- dokonczyc mapper o uslugi dodawania, modyfikowania, usuwania i przekodowac kontroler
+
+- obsluzyc sytuacje gdy nastapi proba dodania nowego rekordu z id istniejacym juz w bazie danych (obsluzyc taka sytuacje)
+
+- dodac druga tabele w BD
+
+- opoznienie tworzenia obiektow DomainObject do momentu az zostana zazadane z zewnatrz
+
+- dodac join w zapytania do bazy
+
+- klasy z hierarchi mapper (wraz z klasa DAO) sa tworzone i dodawane do rejestru w FrontController
+
+	nie jest to poprawne miejsce, klasa FronController powinna byc ogolna, potrzebna refaktoryzacja
+
+- klasa DataBaseAccess ma zaszyte dane do bazy
+
+	dane do bazy powinny byc umieszczone w pliku konfiguracyjnym
+
+- wprowadzic przestrzenie nazw i zmodyfikowac system autoload
+
+	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce

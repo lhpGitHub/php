@@ -19,6 +19,8 @@ class FrontController {
 		RequestRegistry::setRequest($request);
 		$view = new View;
 		RequestRegistry::setView($view);
+		
+		RequestRegistry::setMapper('person', new PersonMapper(new DataBaseAccessPDO()));
 				
 		$this->forward($request->getControlerName(), $request->getActionName());
 		
