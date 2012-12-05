@@ -5,6 +5,15 @@ class PersonMapper extends Mapper {
 		parent::__construct($dba);
 	}
 	
+	function createObject(array $raw) {
+		$obj = new PersonObject();
+		$obj->id = $raw['id'];
+		$obj->fName = $raw['fName'];
+		$obj->lName = $raw['lName'];
+		
+		return $obj;
+	}
+	
 	function find($id) {
 		$sql = "SELECT * FROM person WHERE id = :id";
 		$value = array('id' => $id);
@@ -35,25 +44,25 @@ class PersonMapper extends Mapper {
 		}
 	}
 	
-	function createObject(array $raw) {
-		$obj = new PersonObject();
-		$obj->id = $raw['id'];
-		$obj->fName = $raw['fName'];
-		$obj->lName = $raw['lName'];
-		
-		return $obj;
-	}
-	
 	function insert(DomainObject $dmObj) {
-		
+		$sql = "INSERT INTO person (fName, lName) VALUES (:fName, :lName)";
+		$values = array('fName' => $dmObj->fName, 'lName' => $dmObj->lName);
+		$this->dba->execute($sql, $values);
+		$dmObj->id = $this->dba->getLastInsertId();
 	}
 	
 	function update(DomainObject $dmObj) {
-		
+		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
+		$values = array('id' => $dmObj->id, 'fName' => $dmObj->fName, 'lName' => $dmObj->lName);
+		$this->dba->execute($sql, $values);
+		return $this->dba->getLastRowCount();
 	}
 	
-	function delete($id) {
-		
+	function delete(DomainObject $dmObj) {
+		$sql = "DELETE FROM person WHERE id = :id";
+		$values = array('id' => $dmObj->id);
+		$this->dba->execute($sql, $values);
+		return $this->dba->getLastRowCount();
 	}
 	
 }

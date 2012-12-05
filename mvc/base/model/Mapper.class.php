@@ -12,5 +12,5 @@ abstract class Mapper {
 	abstract function createObject(array $raw);
 	abstract function insert(DomainObject $dmObj);
 	abstract function update(DomainObject $dmObj);
-	abstract function delete($id);
+	abstract function delete(DomainObject $dmObj);
 }

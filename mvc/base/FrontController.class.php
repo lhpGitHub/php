@@ -24,9 +24,6 @@ class FrontController {
 				
 		$this->forward($request->getControlerName(), $request->getActionName());
 		
-		//$viewName = $this->forward($request->getControlerName(), $request->getActionName());
-		//$request->sendView($viewName);
-		
 		SessionRegistry::clearFlashVars();
 	}
 	

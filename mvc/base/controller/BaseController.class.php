@@ -32,6 +32,19 @@ class BaseController {
 		return SessionRegistry::getFlashVars($key);
 	}
 	
+	protected function getSanitizeParam() {
+		$request = $this->getRequest();
+		$sanitizeParams = array();
+		$i = 0;
+		
+		foreach(func_get_args() as $type) {
+			$func = 'validate'.$type;
+			$sanitizeParams[] = call_user_func(array(__CLASS__, $func), $request->getParam($i++));
+		}
+		
+		return $sanitizeParams;
+	}
+	
 	static function validateString($var) {
 		if(isset($var) && !empty($var)) {
 			settype($var, 'string');

@@ -18,21 +18,19 @@ class PersonController extends BaseController {
 
 	function actionCreate() {
 		try {
-			$request = $this->getRequest();
-			$fName = self::validateString($request->getParam(0));
-			$lName = self::validateString($request->getParam(1));
-			$fSend = self::validateInteger($request->getParam(2));
-			if(!self::isNotNullAll($fName, $lName)) throw new InvalidParamException;
-			$this->create($fName, $lName);
+			list($fName, $lName, $fSend) = $this->getSanitizeParam('String' , 'String' , 'Integer');
+			
+			if(!self::isAllNotNull($fName, $lName)) throw new InvalidParamException;
+			$this->insert($fName, $lName);
 			$this->setFlashBlockOverride('msg', self::RECORD_ADD);
 			$this->redirect('/person/read');
 			
 		} catch(InvalidParamException $err) {
-			if(self::isNotNullAll($fSend)) $this->setFlashBlockOverride('msg', self::WRONG_PARAM);
-			$this->view->setViewVar('personForm', 'action', $request->getAbsolutePath().'/person/create/');
+			if(self::isNotNull($fSend)) $this->setFlashBlockOverride('msg', self::WRONG_PARAM);
+			$this->view->setViewVar('personForm', 'action', $this->getRequest()->getAbsolutePath().'/person/create/');
 			$this->view->setViewVar('personForm', 'fName', $fName);
 			$this->view->setViewVar('personForm', 'lName', $lName);
-			$this->view->menu = "<br/><a href=\"{$request->getAbsolutePath()}/person/read/\">BACK</a>";
+			$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/read/\">BACK</a>";
 			$this->view->content = $this->view->getViewAsVar('personForm');
 			
 		} catch(DataBaseException $err) {
@@ -46,28 +44,31 @@ class PersonController extends BaseController {
 		
 	}
 	
-	private function create($fName, $lName) {
-		$dao = PersonDAO::getInstance();
-		$dao->addPerson(new PersonTO(null, $fName, $lName));
+	private function insert($fName, $lName) {
+		$personObject = new PersonObject();
+		$personObject->fName = $fName;
+		$personObject->lName = $lName;
+		
+		$mapper = RequestRegistry::getMapper('person');
+		$mapper->insert($personObject);
 	}
 
 	function actionRead() {
 		try {
-			$request = $this->getRequest();
-			$id = self::validateInteger($request->getParam(0));
-			$personData = $this->read($id);
+			list($id) = $this->getSanitizeParam('Integer');
+			
+			$personData = $this->find($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_READ);
 			
 			$htmlCode = '';
 			
 			if($personData instanceof PersonCollection) {
 				foreach($personData as $personObj)
-					$this->readViewHelper(&$htmlCode, $personObj, $request);
+					$this->readViewHelper(&$htmlCode, $personObj);
 			} else {
-				$this->readViewHelper(&$htmlCode, $personData, $request);
+				$this->readViewHelper(&$htmlCode, $personData);
 			}
 			
-			$this->view->menu = "<br/><a href=\"{$request->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
 			$this->view->content = $htmlCode;
 			
 		} catch(NoRecordException $err) {
@@ -77,15 +78,16 @@ class PersonController extends BaseController {
 			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
 		}
 		
+		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
 		$this->view->render();
 	}
 	
-	private function readViewHelper(&$html, $personObject, $request) {
+	private function readViewHelper(&$html, $personObject) {
 		$this->view->setViewVar('personListItem', 'id', $personObject->id);
 		$this->view->setViewVar('personListItem', 'fName', $personObject->fName);
 		$this->view->setViewVar('personListItem', 'lName', $personObject->lName);
-		$this->view->setViewVar('personListItem', 'aUpdate', $request->getAbsolutePath().'/person/update/'.$personObject->id.'/');
-		$this->view->setViewVar('personListItem', 'aDelete', $request->getAbsolutePath().'/person/delete/'.$personObject->id.'/');
+		$this->view->setViewVar('personListItem', 'aUpdate', $this->getRequest()->getAbsolutePath().'/person/update/'.$personObject->id.'/');
+		$this->view->setViewVar('personListItem', 'aDelete', $this->getRequest()->getAbsolutePath().'/person/delete/'.$personObject->id.'/');
 		$html .= $this->view->getViewAsVar('personListItem');
 	}
 	
@@ -93,44 +95,37 @@ class PersonController extends BaseController {
 		
 	}
 	
-	private function read($id) {
+	private function find($id) {
 		
 		$mapper = RequestRegistry::getMapper('person');
 
 		if(self::isNotNull($id)) {
-			$person = $mapper->find($id);
+			$personData = $mapper->find($id);
 		} else {
-			$person = $mapper->findAll();
+			$personData = $mapper->findAll();
 		}
 		
-		if(is_null($person)) throw new NoRecordException;
+		if(is_null($personData)) throw new NoRecordException;
 		
-		return $person;
+		return $personData;
 	}
 
 	function actionUpdate() {
-		$request = $this->getRequest();
-		$id = self::validateInteger($request->getParam(0));
-		$fName = self::validateString($request->getParam(1));
-		$lName = self::validateString($request->getParam(2));
-		$fSend = self::validateInteger($request->getParam(3));
+		list($id, $fName, $lName, $fSend) = $this->getSanitizeParam('Integer', 'String' , 'String' , 'Integer');
 		
 		try {
-			if(self::isNullAll($id)) {
-				throw new InvalidIdException;
-			}
+			if(self::isNull($id)) throw new InvalidIdException;
 			
-			try {
-				$person = $this->read($id)->current();
-			} catch (NoRecordException $err) {
-				throw new InvalidIdException;
-			}
+			$mapper = RequestRegistry::getMapper('person');
+			$personObject = $mapper->find($id);
 			
-			if(!self::isNotNullAll($fName, $lName)) {
-				throw new InvalidParamException;
-			}
+			if(is_null($personObject)) throw new InvalidIdException;
 			
-			$this->update($id, $fName, $lName);
+			if(!self::isAllNotNull($fName, $lName)) throw new InvalidParamException;
+			
+			$personObject->fName = $fName;
+			$personObject->lName = $lName;
+			$mapper->update($personObject);
 			$this->setFlashBlockOverride('msg', self::RECORD_UPD);
 			$this->redirect('/person/read');
 			
@@ -139,15 +134,18 @@ class PersonController extends BaseController {
 			$this->redirect('/person/read');
 			
 		} catch(InvalidParamException $err) {
-			if(self::isNullAll($fSend)) {
-				extract($person);
+			if(self::isNull($fSend)) {
+				$id = $personObject->id;
+				$fName = $personObject->fName;
+				$lName = $personObject->lName;
 			} else {
 				$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
 			}
-			$this->view->setViewVar('personForm', 'action', $request->getAbsolutePath().'/person/update/'.$id.'/');
+			
+			$this->view->setViewVar('personForm', 'action', $this->getRequest()->getAbsolutePath().'/person/update/'.$id.'/');
 			$this->view->setViewVar('personForm', 'fName', $fName);
 			$this->view->setViewVar('personForm', 'lName', $lName);
-			$this->view->menu= "<br/><a href=\"{$request->getAbsolutePath()}/person/read/\">BACK</a>";
+			$this->view->menu= "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/read/\">BACK</a>";
 			$this->view->content = $this->view->getViewAsVar('personForm');
 			
 		} catch(DataBaseException $err) {
@@ -157,21 +155,21 @@ class PersonController extends BaseController {
 		
 		$this->view->render();
 	}
-	
+
 	function jsonActionUpdate() {
 		
 	}
 	
-	private function update($id, $fName, $lName) {
-		$dao = PersonDAO::getInstance();
-		$dao->updatePerson(new PersonTO($id, $fName, $lName));
-	}
-
 	function actionDelete() {
 		try {
-			$request = $this->getRequest();
-			$id = self::validateInteger($request->getParam(0));
-			$this->delete($id);
+			list($id) = $this->getSanitizeParam('Integer');
+			if(self::isNull($id)) throw new InvalidIdException;
+			
+			$personObject = new PersonObject();
+			$personObject->id = $id;
+			$mapper = RequestRegistry::getMapper('person');
+			if($mapper->delete($personObject) !== 1) throw new InvalidIdException;
+			
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			
 		} catch(InvalidIdException $err) {
@@ -187,13 +185,5 @@ class PersonController extends BaseController {
 	
 	function jsonActionDelete() {
 		
-	}
-	
-	private function delete($id) {
-		$dao = PersonDAO::getInstance();
-		
-		if(self::isNullAll($id) || $dao->removePerson(new PersonTO($id)) == 0) {
-			throw new InvalidIdException;
-		}
 	}
 }

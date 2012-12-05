@@ -1,6 +1,6 @@
-- dokonczyc mapper o uslugi dodawania, modyfikowania, usuwania i przekodowac kontroler
+- instancje kolekcji sa tworzone w mapper
 
-- obsluzyc sytuacje gdy nastapi proba dodania nowego rekordu z id istniejacym juz w bazie danych (obsluzyc taka sytuacje)
+	czy to jest poprawne miejsce? Matt Z tworzy je w fabryce
 
 - dodac druga tabele w BD
 
@@ -8,7 +8,7 @@
 
 - dodac join w zapytania do bazy
 
-- klasy z hierarchi mapper (wraz z klasa DAO) sa tworzone i dodawane do rejestru w FrontController
+- obiekty klas z hierarchi mapper (wraz z klasa DAO) sa tworzone i dodawane do rejestru w FrontController
 
 	nie jest to poprawne miejsce, klasa FronController powinna byc ogolna, potrzebna refaktoryzacja
 
