@@ -4,22 +4,21 @@ class DataBaseAccessPDO extends DataBaseAccess {
 	private $dbh;
 	private $stmt;
 	
-	function __construct() {
-		try {
-			$this->dbh = new PDO('mysql:host=localhost;dbname=mvc;charset=UTF-8', 'root', '');
-			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
-		} catch(PDOException $err) {
-			throw new DataBaseException( __METHOD__ . ' ' . $err->getMessage());
-		}
-	}
-
 	function __destruct() {
 		$this->dbh = null;
 	}
 	
+	private function connect() {
+		if(is_null($this->dbh)) {
+			$this->dbh = new PDO('mysql:host=localhost;dbname=mvc;charset=UTF-8', 'root', '');
+			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		}
+	}
+
+
 	function execute($sqlQuery, $values = null) {
 		try {
-			
+			$this->connect();
 			$stmt = $this->dbh->prepare($sqlQuery);
 			
 			if(is_array($values))

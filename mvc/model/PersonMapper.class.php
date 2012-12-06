@@ -32,13 +32,7 @@ class PersonMapper extends Mapper {
 		$this->dba->execute($sql);
 		
 		if($this->dba->getLastRowCount() > 0) {
-			$collection = new PersonCollection();
-			
-			foreach($this->dba->getResult() as $raw)
-				$collection->add($this->createObject($raw));
-
-			return $collection;
-			
+			return PersonObject::getCollection($this->dba->getResult(), $this);
 		} else {
 			return NULL;
 		}
