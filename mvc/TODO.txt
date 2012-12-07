@@ -1,10 +1,4 @@
-- instancje kolekcji sa tworzone w metodzie getCollection implementowanej w kazdej konkretnej klasie DomainObject
 
-	czy to jest poprawne miejsce? Matt Z tworzy je w fabryce
-
-	mechanizm tworzenia powinien byc zdefiniowany w warstwie base, zeby nie trzeba go byle definiowac dla kazdej aplikacji
-	powinno sie rowniez zapewnic mozliwosc latwej wymiany tego mechanizmu np poprzez zastosowanie fabryki
-	
 - obiekty klas z hierarchi mapper (wraz z klasa DAO) sa tworzone i dodawane do rejestru w FrontController
 
 	nie jest to poprawne miejsce, klasa FronController powinna byc ogolna, potrzebna refaktoryzacja

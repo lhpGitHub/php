@@ -32,7 +32,7 @@ class PersonMapper extends Mapper {
 		$this->dba->execute($sql);
 		
 		if($this->dba->getLastRowCount() > 0) {
-			return PersonObject::getCollection($this->dba->getResult(), $this);
+			return HelperFactory::getCollection('Person', $this->dba->getResult(), $this);
 		} else {
 			return NULL;
 		}
