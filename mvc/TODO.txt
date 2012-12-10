@@ -13,7 +13,7 @@
 
 - dodac mechanizm ktory zapewni ze obiekty domenowe ktore nie sa zmienione nie beda wstawiane/odczytywane do/z bazy
 
-- dodac join w zapytania do bazy
+- dodac join w zapytania do bazy (druga tabela telefony)
 
 - wprowadzic przestrzenie nazw i zmodyfikowac system autoload
 
