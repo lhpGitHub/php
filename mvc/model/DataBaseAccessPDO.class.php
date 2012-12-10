@@ -10,11 +10,11 @@ class DataBaseAccessPDO extends DataBaseAccess {
 	
 	private function connect() {
 		if(is_null($this->dbh)) {
-			$this->dbh = new PDO('mysql:host=localhost;dbname=mvc;charset=UTF-8', 'root', '');
+			extract(Settings::dbSett());
+			$this->dbh = new PDO("mysql:host=$host;dbname=$db;charset=UTF-8", $user, $pass);
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 	}
-
 
 	function execute($sqlQuery, $values = null) {
 		try {

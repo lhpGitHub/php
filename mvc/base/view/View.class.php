@@ -26,7 +26,7 @@ class View {
 			extract($this->viewsData[$viewName]);
 		
 		ob_start();
-		include('view/' . $viewName . '.html');
+		include(Settings::$view['dir'] . '/' . $viewName . Settings::$view['ext']);
 		return ob_get_clean();
 	}
 	
@@ -41,6 +41,6 @@ class View {
 		if(is_array($this->templateData))
 			extract($this->templateData);
 		
-		include('view/layout.html');
+		include(Settings::$view['dir'] . '/' . Settings::$view['layout'] . Settings::$view['ext']);
 	}
 }

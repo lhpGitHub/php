@@ -11,22 +11,26 @@ class PersonController extends BaseController {
 	const WRONG_PARAM	= 'wrong parameters';
 	const DB_ERROR		= 'database error';
 	
+	private $personMapper;
+	private $view;
+
 	function __construct() {
 		parent::__construct();
+		$this->personMapper = new PersonMapper(new DataBaseAccessPDO());
+		$this->view = new View();
 	}
-
 
 	function actionCreate() {
 		try {
-			list($fName, $lName, $fSend) = $this->getSanitizeParam('String' , 'String' , 'Integer');
+			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'String' , 'String' , 'Integer');
 			
-			if(!self::isAllNotNull($fName, $lName)) throw new InvalidParamException;
+			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new InvalidParamException;
 			$this->insert($fName, $lName);
 			$this->setFlashBlockOverride('msg', self::RECORD_ADD);
 			$this->redirect('/person/read');
 			
 		} catch(InvalidParamException $err) {
-			if(self::isNotNull($fSend)) $this->setFlashBlockOverride('msg', self::WRONG_PARAM);
+			if(ParamsCleaner::isNotNull($fSend)) $this->setFlashBlockOverride('msg', self::WRONG_PARAM);
 			$this->view->setViewVar('personForm', 'action', $this->getRequest()->getAbsolutePath().'/person/create/');
 			$this->view->setViewVar('personForm', 'fName', $fName);
 			$this->view->setViewVar('personForm', 'lName', $lName);
@@ -49,13 +53,12 @@ class PersonController extends BaseController {
 		$personObject->fName = $fName;
 		$personObject->lName = $lName;
 		
-		$mapper = RequestRegistry::getMapper('person');
-		$mapper->insert($personObject);
+		$this->personMapper->insert($personObject);
 	}
 
 	function actionRead() {
 		try {
-			list($id) = $this->getSanitizeParam('Integer');
+			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer');
 			
 			$personData = $this->find($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_READ);
@@ -97,12 +100,10 @@ class PersonController extends BaseController {
 	
 	private function find($id) {
 		
-		$mapper = RequestRegistry::getMapper('person');
-
-		if(self::isNotNull($id)) {
-			$personData = $mapper->find($id);
+		if(ParamsCleaner::isNotNull($id)) {
+			$personData = $this->personMapper->find($id);
 		} else {
-			$personData = $mapper->findAll();
+			$personData = $this->personMapper->findAll();
 		}
 		
 		if(is_null($personData)) throw new NoRecordException;
@@ -111,21 +112,20 @@ class PersonController extends BaseController {
 	}
 
 	function actionUpdate() {
-		list($id, $fName, $lName, $fSend) = $this->getSanitizeParam('Integer', 'String' , 'String' , 'Integer');
+		list($id, $fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer', 'String' , 'String' , 'Integer');
 		
 		try {
-			if(self::isNull($id)) throw new InvalidIdException;
+			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
 			
-			$mapper = RequestRegistry::getMapper('person');
-			$personObject = $mapper->find($id);
+			$personObject = $this->personMapper->find($id);
 			
 			if(is_null($personObject)) throw new InvalidIdException;
 			
-			if(!self::isAllNotNull($fName, $lName)) throw new InvalidParamException;
+			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new InvalidParamException;
 			
 			$personObject->fName = $fName;
 			$personObject->lName = $lName;
-			$mapper->update($personObject);
+			$this->personMapper->update($personObject);
 			$this->setFlashBlockOverride('msg', self::RECORD_UPD);
 			$this->redirect('/person/read');
 			
@@ -134,7 +134,7 @@ class PersonController extends BaseController {
 			$this->redirect('/person/read');
 			
 		} catch(InvalidParamException $err) {
-			if(self::isNull($fSend)) {
+			if(ParamsCleaner::isNull($fSend)) {
 				$id = $personObject->id;
 				$fName = $personObject->fName;
 				$lName = $personObject->lName;
@@ -162,13 +162,12 @@ class PersonController extends BaseController {
 	
 	function actionDelete() {
 		try {
-			list($id) = $this->getSanitizeParam('Integer');
-			if(self::isNull($id)) throw new InvalidIdException;
+			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer');
+			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
 			
 			$personObject = new PersonObject();
 			$personObject->id = $id;
-			$mapper = RequestRegistry::getMapper('person');
-			if($mapper->delete($personObject) !== 1) throw new InvalidIdException;
+			if($this->personMapper->delete($personObject) !== 1) throw new InvalidIdException;
 			
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			

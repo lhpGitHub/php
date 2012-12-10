@@ -2,8 +2,10 @@
 
 error_reporting(E_ALL); 
 define('DEBUG', TRUE);
-setIncludePath('base', 'base/registry', 'base/controller', 'base/view', 'base/exception', 'base/model', 'controller', 'view', 'model');
+setIncludePath('base', 'base/registry', 'base/controller', 'base/view', 'base/exception', 'base/model', 'config', 'controller', 'view', 'model');
 spl_autoload_register('autoloader');
+
+Settings::$mode = Settings::DEVE;
 
 $fc = FrontController::getInstance();
 $fc->go();

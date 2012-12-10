@@ -17,4 +17,11 @@ class HtmlRequest extends BaseRequest {
 		$this->actionName = (empty($actionName)) ? 'read' : $actionName;
 	}
 	
+	function error() {
+		$header = 'HTTP/1.1 404 Not Found';
+		header($header);
+		echo $header;
+		exit();
+	}
+	
 }

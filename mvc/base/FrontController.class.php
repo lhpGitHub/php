@@ -1,7 +1,14 @@
 <?php
 class FrontController {
 	
+	const HTML		= 'html';
+	const JSON		= 'json';
+	const CONSOLE	= 'console';
+	
 	static private $instance;
+	
+	private $actionPrefix;
+	private $request;
 	
 	static function getInstance() {
 		if(!self::$instance)
@@ -10,52 +17,41 @@ class FrontController {
 		return self::$instance;
 	}
 	
-	private function __construct() {}
+	private function __construct() {
+		switch ($this->detectRequestSource()) {
+			case self::JSON:
+				$this->actionPrefix = 'jsonAction';
+				$this->request = NULL;
+				break;	
+			
+			default:
+				$this->actionPrefix = 'action';
+				$this->request = new HtmlRequest();
+		}
+		
+		RequestRegistry::setRequest($this->request);
+	}
+	
+	private function detectRequestSource() {
+		return self::HTML;
+	}
 	
 	function go() {
-
 		session_start();
-		$request = new HtmlRequest;
-		RequestRegistry::setRequest($request);
-		$view = new View;
-		RequestRegistry::setView($view);
-		
-		RequestRegistry::setMapper('person', new PersonMapper(new DataBaseAccessPDO()));
-				
-		$this->forward($request->getControlerName(), $request->getActionName());
-		
+		$this->forward($this->request->getControlerName(), $this->request->getActionName());
 		SessionRegistry::clearFlashVars();
 	}
 	
 	function forward($controllerName, $actionName) {
-		
-		//html - action
-		//json - jsonAction
-		$mode = 'html';
-		$prefix;
-		
-		switch ($mode) {
-			case 'json':
-				$prefix = 'jsonAction';
-				break;	
-			
-			default:
-				$prefix = 'action';
-		}
-		
 		$controllerName	= $controllerName.'Controller';
-		$actionName	= $prefix.ucfirst($actionName);
+		$actionName	= $this->actionPrefix.ucfirst($actionName);
 
 		try {
 			$c = new ReflectionClass($controllerName);
 			$m = new ReflectionMethod($controllerName, $actionName);
+			$m->invoke($c->newInstance());
 		} catch(ReflectionException $err) {
-			$header = 'HTTP/1.1 404 Not Found';
-			header($header);
-			echo $header;
-			exit();
-		}
-		
-		return $m->invoke($c->newInstance());
+			$this->request->error();
+		}		
 	}	
 }

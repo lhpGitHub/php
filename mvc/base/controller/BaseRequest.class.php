@@ -5,24 +5,12 @@ abstract class BaseRequest {
 			  $actionName, 
 			  $params;
 	
-	/*private $data = array();*/
-
 	function __construct() {
 		$this->ini();
 	}
 	
 	abstract protected function ini();
-	
-	/*function setData($key, $val) {
-		$this->data[$key] = $val;
-	}
-	
-	function getData($key) {
-		if(isset($this->data[$key]))
-			return $this->data[$key];
-		
-		return NULL;
-	}*/
+	abstract function error();
 	
 	function getAbsolutePath() {
 		$pathinfo = pathinfo($_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']);
