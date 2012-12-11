@@ -7,10 +7,48 @@ abstract class Mapper {
 		$this->dba = $dba;
 	}
 	
-	abstract function find($id);
 	abstract function findAll();
-	abstract function createObject(array $raw);
-	abstract function insert(DomainObject $dmObj);
-	abstract function update(DomainObject $dmObj);
-	abstract function delete(DomainObject $dmObj);
+	abstract protected function doFindObject($id);
+	abstract protected function doCreateObject(array $raw);
+	abstract protected function doInsert(DomainObject $dmObj);
+	abstract protected function doUpdate(DomainObject $dmObj);
+	abstract protected function doDelete($id);
+	abstract protected function getTargetClass();
+	
+	function find($id) {
+		$dmObj = DomainObjectWatcher::getObject($this->getTargetClass(), $id);
+		
+		if(is_null($dmObj)) {
+			$dmObj = $this->doFindObject($id);
+			if(!is_null($dmObj)) DomainObjectWatcher::addObject($dmObj);
+		}
+		
+		return $dmObj;
+	}
+	
+	function createObject(array $raw) {
+		
+		$dmObj = DomainObjectWatcher::getObject($this->getTargetClass(), $raw['id']);
+		
+		if(is_null($dmObj)) {
+			$dmObj = $this->doCreateObject($raw);
+			DomainObjectWatcher::addObject($dmObj);
+		}
+		
+		return $dmObj;
+	}
+	
+	function insert(DomainObject $dmObj) {
+		DomainObjectWatcher::addObject($dmObj);
+		return $this->doInsert($dmObj);
+	}
+	
+	function update(DomainObject $dmObj) {
+		return $this->doUpdate($dmObj);
+	}
+	
+	function delete($id) {
+		DomainObjectWatcher::removeObject($this->getTargetClass(), $id);
+		return $this->doDelete($id);
+	}
 }

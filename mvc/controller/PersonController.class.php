@@ -86,11 +86,11 @@ class PersonController extends BaseController {
 	}
 	
 	private function readViewHelper(&$html, $personObject) {
-		$this->view->setViewVar('personListItem', 'id', $personObject->id);
+		$this->view->setViewVar('personListItem', 'id', $personObject->getId());
 		$this->view->setViewVar('personListItem', 'fName', $personObject->fName);
 		$this->view->setViewVar('personListItem', 'lName', $personObject->lName);
-		$this->view->setViewVar('personListItem', 'aUpdate', $this->getRequest()->getAbsolutePath().'/person/update/'.$personObject->id.'/');
-		$this->view->setViewVar('personListItem', 'aDelete', $this->getRequest()->getAbsolutePath().'/person/delete/'.$personObject->id.'/');
+		$this->view->setViewVar('personListItem', 'aUpdate', $this->getRequest()->getAbsolutePath().'/person/update/'.$personObject->getId().'/');
+		$this->view->setViewVar('personListItem', 'aDelete', $this->getRequest()->getAbsolutePath().'/person/delete/'.$personObject->getId().'/');
 		$html .= $this->view->getViewAsVar('personListItem');
 	}
 	
@@ -135,7 +135,7 @@ class PersonController extends BaseController {
 			
 		} catch(InvalidParamException $err) {
 			if(ParamsCleaner::isNull($fSend)) {
-				$id = $personObject->id;
+				$id = $personObject->getId();
 				$fName = $personObject->fName;
 				$lName = $personObject->lName;
 			} else {
@@ -164,11 +164,7 @@ class PersonController extends BaseController {
 		try {
 			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer');
 			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
-			
-			$personObject = new PersonObject();
-			$personObject->id = $id;
-			if($this->personMapper->delete($personObject) !== 1) throw new InvalidIdException;
-			
+			if($this->personMapper->delete($id) !== 1) throw new InvalidIdException;
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			
 		} catch(InvalidIdException $err) {
@@ -184,5 +180,29 @@ class PersonController extends BaseController {
 	
 	function jsonActionDelete() {
 		
+	}
+	
+	function actionTestFunctionality() {
+		echo 'actionTestFunctionality<br><br>';
+		
+		$personFirst = $this->helperTestFunctionality(119);
+		$personSecond = $this->personMapper->find(119);
+		
+		echo "$personFirst<br>";
+		echo "$personSecond<br>";
+		
+		$personFirst->lName = 'czlowiek';
+		
+		
+		echo '<pre>';
+		var_dump($personFirst, $personSecond, $this->personMapper->find(119));
+		var_dump($personFirst === $personSecond);
+		echo '</pre>';
+		
+		
+	}
+	
+	private function helperTestFunctionality($id) {
+		return $this->personMapper->find($id);
 	}
 }

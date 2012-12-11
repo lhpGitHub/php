@@ -16,3 +16,7 @@
 	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce
 
 - dodac inny sposob laczenia z baza danych (goly mysql)
+
+- wpisanie w polu formularza ciagu pustych spacji powoduje ERROR403, prawdopodobnie zmiana przesylania formularzy z GET na POST naprawi ten blad
+
+- testy jednostkowe

@@ -4,17 +4,19 @@ class PersonMapper extends Mapper {
 	function __construct(DataBaseAccess $dba) {
 		parent::__construct($dba);
 	}
-	
-	function createObject(array $raw) {
-		$obj = new PersonObject();
-		$obj->id = $raw['id'];
-		$obj->fName = $raw['fName'];
-		$obj->lName = $raw['lName'];
 		
-		return $obj;
+	function findAll() {
+		$sql = "SELECT * FROM person ORDER BY id";
+		$this->dba->execute($sql);
+		
+		if($this->dba->getLastRowCount() > 0) {
+			return HelperFactory::getCollection('Person', $this->dba->getResult(), $this);
+		} else {
+			return NULL;
+		}
 	}
-	
-	function find($id) {
+
+	protected function doFindObject($id) {
 		$sql = "SELECT * FROM person WHERE id = :id";
 		$value = array('id' => $id);
 		$this->dba->execute($sql, $value);
@@ -27,36 +29,37 @@ class PersonMapper extends Mapper {
 		}
 	}
 	
-	function findAll() {
-		$sql = "SELECT * FROM person ORDER BY id";
-		$this->dba->execute($sql);
+	protected function doCreateObject(array $raw) {
+		$obj = new PersonObject($raw['id']);
+		$obj->fName = $raw['fName'];
+		$obj->lName = $raw['lName'];
 		
-		if($this->dba->getLastRowCount() > 0) {
-			return HelperFactory::getCollection('Person', $this->dba->getResult(), $this);
-		} else {
-			return NULL;
-		}
+		return $obj;
 	}
 	
-	function insert(DomainObject $dmObj) {
+	protected function doInsert(DomainObject $dmObj) {
 		$sql = "INSERT INTO person (fName, lName) VALUES (:fName, :lName)";
 		$values = array('fName' => $dmObj->fName, 'lName' => $dmObj->lName);
 		$this->dba->execute($sql, $values);
-		$dmObj->id = $this->dba->getLastInsertId();
+		$dmObj->setId($this->dba->getLastInsertId());
 	}
 	
-	function update(DomainObject $dmObj) {
+	protected function doUpdate(DomainObject $dmObj) {
 		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
-		$values = array('id' => $dmObj->id, 'fName' => $dmObj->fName, 'lName' => $dmObj->lName);
+		$values = array('id' => $dmObj->getId(), 'fName' => $dmObj->fName, 'lName' => $dmObj->lName);
 		$this->dba->execute($sql, $values);
 		return $this->dba->getLastRowCount();
 	}
 	
-	function delete(DomainObject $dmObj) {
+	protected function doDelete($id) {
 		$sql = "DELETE FROM person WHERE id = :id";
-		$values = array('id' => $dmObj->id);
+		$values = array('id' => $id);
 		$this->dba->execute($sql, $values);
 		return $this->dba->getLastRowCount();
+	}
+	
+	protected function getTargetClass() {
+		return 'PersonObject';
 	}
 	
 }
