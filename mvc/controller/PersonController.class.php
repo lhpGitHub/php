@@ -188,6 +188,7 @@ class PersonController extends BaseController {
 		$personFirst = $this->helperTestFunctionality(119);
 		$personSecond = $this->personMapper->find(119);
 		
+		
 		echo "$personFirst<br>";
 		echo "$personSecond<br>";
 		

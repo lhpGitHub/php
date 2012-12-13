@@ -5,17 +5,13 @@
 
 - dodac druga tabele w BD
 
-- dodac mechanizm ktory zapewni brak wielokrotnego tworzenia identycznych obiektow domenowych
+- dodac join w zapytania do bazy (druga tabela telefony)
 
 - dodac mechanizm ktory zapewni ze obiekty domenowe ktore nie sa zmienione nie beda wstawiane/odczytywane do/z bazy
-
-- dodac join w zapytania do bazy (druga tabela telefony)
 
 - wprowadzic przestrzenie nazw i zmodyfikowac system autoload
 
 	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce
-
-- dodac inny sposob laczenia z baza danych (goly mysql)
 
 - wpisanie w polu formularza ciagu pustych spacji powoduje ERROR403, prawdopodobnie zmiana przesylania formularzy z GET na POST naprawi ten blad
 

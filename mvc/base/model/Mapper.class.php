@@ -40,15 +40,18 @@ abstract class Mapper {
 	
 	function insert(DomainObject $dmObj) {
 		DomainObjectWatcher::addObject($dmObj);
+		DomainObjectWatcher::addClean($dmObj);
 		return $this->doInsert($dmObj);
 	}
 	
 	function update(DomainObject $dmObj) {
+		DomainObjectWatcher::addClean($dmObj);
 		return $this->doUpdate($dmObj);
 	}
 	
 	function delete($id) {
 		DomainObjectWatcher::removeObject($this->getTargetClass(), $id);
+		DomainObjectWatcher::addClean($dmObj);
 		return $this->doDelete($id);
 	}
 }
