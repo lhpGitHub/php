@@ -31,29 +31,29 @@ class PersonMapper extends Mapper {
 	
 	protected function doCreateObject(array $raw) {
 		$obj = new PersonObject($raw['id']);
-		$obj->fName = $raw['fName'];
-		$obj->lName = $raw['lName'];
+		$obj->setFirstName($raw['fName']);
+		$obj->setLastName($raw['lName']);
 		
 		return $obj;
 	}
 	
 	protected function doInsert(DomainObject $dmObj) {
 		$sql = "INSERT INTO person (fName, lName) VALUES (:fName, :lName)";
-		$values = array('fName' => $dmObj->fName, 'lName' => $dmObj->lName);
+		$values = array('fName' => $dmObj->getFirstName(), 'lName' => $dmObj->getLastName());
 		$this->dba->execute($sql, $values);
 		$dmObj->setId($this->dba->getLastInsertId());
 	}
 	
 	protected function doUpdate(DomainObject $dmObj) {
 		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
-		$values = array('id' => $dmObj->getId(), 'fName' => $dmObj->fName, 'lName' => $dmObj->lName);
+		$values = array('id' => $dmObj->getId(), 'fName' => $dmObj->getFirstName(), 'lName' => $dmObj->getLastName());
 		$this->dba->execute($sql, $values);
 		return $this->dba->getLastRowCount();
 	}
 	
-	protected function doDelete($id) {
+	protected function doDelete(DomainObject $dmObj) {
 		$sql = "DELETE FROM person WHERE id = :id";
-		$values = array('id' => $id);
+		$values = array('id' => $dmObj->getId());
 		$this->dba->execute($sql, $values);
 		return $this->dba->getLastRowCount();
 	}

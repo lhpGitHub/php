@@ -1,4 +1,6 @@
 
+- dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() i potestowac Unity of Work
+
 - dodac obsluge z konsoli
 
 - dodac inny sposob laczenia z baza danych (goly mysql)
@@ -7,12 +9,12 @@
 
 - dodac join w zapytania do bazy (druga tabela telefony)
 
-- dodac mechanizm ktory zapewni ze obiekty domenowe ktore nie sa zmienione nie beda wstawiane/odczytywane do/z bazy
-
 - wprowadzic przestrzenie nazw i zmodyfikowac system autoload
 
 	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce
 
 - wpisanie w polu formularza ciagu pustych spacji powoduje ERROR403, prawdopodobnie zmiana przesylania formularzy z GET na POST naprawi ten blad
+
+- wpisanie 0 w polu formularza powoduje ze pole nie przechodzi walidacji
 
 - testy jednostkowe

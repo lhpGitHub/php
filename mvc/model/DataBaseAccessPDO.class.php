@@ -21,6 +21,8 @@ class DataBaseAccessPDO extends DataBaseAccess {
 			$this->connect();
 			$stmt = $this->dbh->prepare($sqlQuery);
 			
+			printf("SQL QUERY: %s, / params: %s<br>", $stmt->queryString, print_r($values, true));
+			
 			if(is_array($values))
 				$stmt->execute($values);
 			else

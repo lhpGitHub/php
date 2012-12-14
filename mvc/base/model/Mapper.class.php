@@ -12,7 +12,7 @@ abstract class Mapper {
 	abstract protected function doCreateObject(array $raw);
 	abstract protected function doInsert(DomainObject $dmObj);
 	abstract protected function doUpdate(DomainObject $dmObj);
-	abstract protected function doDelete($id);
+	abstract protected function doDelete(DomainObject $dmObj);
 	abstract protected function getTargetClass();
 	
 	function find($id) {
@@ -33,6 +33,7 @@ abstract class Mapper {
 		if(is_null($dmObj)) {
 			$dmObj = $this->doCreateObject($raw);
 			DomainObjectWatcher::addObject($dmObj);
+			$dmObj->markClean();
 		}
 		
 		return $dmObj;
@@ -49,9 +50,9 @@ abstract class Mapper {
 		return $this->doUpdate($dmObj);
 	}
 	
-	function delete($id) {
-		DomainObjectWatcher::removeObject($this->getTargetClass(), $id);
+	function delete(DomainObject $dmObj) {
+		DomainObjectWatcher::removeObject($dmObj);
 		DomainObjectWatcher::addClean($dmObj);
-		return $this->doDelete($id);
+		return $this->doDelete($dmObj);
 	}
 }

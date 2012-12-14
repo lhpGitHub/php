@@ -50,8 +50,8 @@ class PersonController extends BaseController {
 	
 	private function insert($fName, $lName) {
 		$personObject = new PersonObject();
-		$personObject->fName = $fName;
-		$personObject->lName = $lName;
+		$personObject->setFirstName($fName);
+		$personObject->setLastName($lName);
 		
 		$this->personMapper->insert($personObject);
 	}
@@ -87,8 +87,8 @@ class PersonController extends BaseController {
 	
 	private function readViewHelper(&$html, $personObject) {
 		$this->view->setViewVar('personListItem', 'id', $personObject->getId());
-		$this->view->setViewVar('personListItem', 'fName', $personObject->fName);
-		$this->view->setViewVar('personListItem', 'lName', $personObject->lName);
+		$this->view->setViewVar('personListItem', 'fName', $personObject->getFirstName());
+		$this->view->setViewVar('personListItem', 'lName', $personObject->getLastName());
 		$this->view->setViewVar('personListItem', 'aUpdate', $this->getRequest()->getAbsolutePath().'/person/update/'.$personObject->getId().'/');
 		$this->view->setViewVar('personListItem', 'aDelete', $this->getRequest()->getAbsolutePath().'/person/delete/'.$personObject->getId().'/');
 		$html .= $this->view->getViewAsVar('personListItem');
@@ -123,8 +123,8 @@ class PersonController extends BaseController {
 			
 			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new InvalidParamException;
 			
-			$personObject->fName = $fName;
-			$personObject->lName = $lName;
+			$personObject->setFirstName($fName);
+			$personObject->setLastName($lName);
 			$this->personMapper->update($personObject);
 			$this->setFlashBlockOverride('msg', self::RECORD_UPD);
 			$this->redirect('/person/read');
@@ -136,8 +136,8 @@ class PersonController extends BaseController {
 		} catch(InvalidParamException $err) {
 			if(ParamsCleaner::isNull($fSend)) {
 				$id = $personObject->getId();
-				$fName = $personObject->fName;
-				$lName = $personObject->lName;
+				$fName = $personObject->getFirstName();
+				$lName = $personObject->getLastName();
 			} else {
 				$this->setFlashBlockOverride('msg', self::WRONG_PARAM);
 			}
@@ -164,7 +164,7 @@ class PersonController extends BaseController {
 		try {
 			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer');
 			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
-			if($this->personMapper->delete($id) !== 1) throw new InvalidIdException;
+			if($this->personMapper->delete(new PersonObject($id)) !== 1) throw new InvalidIdException;
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			
 		} catch(InvalidIdException $err) {
@@ -185,25 +185,20 @@ class PersonController extends BaseController {
 	function actionTestFunctionality() {
 		echo 'actionTestFunctionality<br><br>';
 		
-		$personFirst = $this->helperTestFunctionality(119);
-		$personSecond = $this->personMapper->find(119);
+		
+		$personA = new PersonObject();
+		$personB = $this->personMapper->find(119);
+		$personB->setFirstName('A');
+		$personC = $this->personMapper->find(122);
+		$personC->setFirstName('A');
 		
 		
-		echo "$personFirst<br>";
-		echo "$personSecond<br>";
 		
-		$personFirst->lName = 'czlowiek';
-		
-		
-		echo '<pre>';
-		var_dump($personFirst, $personSecond, $this->personMapper->find(119));
-		var_dump($personFirst === $personSecond);
-		echo '</pre>';
+		DomainObjectWatcher::performOperations();
 		
 		
 	}
 	
 	private function helperTestFunctionality($id) {
-		return $this->personMapper->find($id);
 	}
 }

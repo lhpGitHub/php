@@ -22,8 +22,8 @@ class DomainObjectWatcher {
 			return NULL;
 	}
 	
-	static function removeObject($className, $id) {
-		$key = self::getKey($className, $id);
+	static function removeObject(DomainObject $dObj) {
+		$key = self::getKey($dObj);
 		unset(self::$all[$key]);
 	}
 	
@@ -51,7 +51,28 @@ class DomainObjectWatcher {
 		unset(self::$dirty[$key]);
 		unset(self::$delete[$key]);
 	}
-
+	
+	static function performOperations() {
+		
+		reset(self::$new);
+		reset(self::$dirty);
+		reset(self::$delete);
+		
+		while($dObj = current(self::$new)) {
+			printf("INSERT %s<br>", $dObj);
+			next(self::$new);
+		}
+		
+		while($dObj = current(self::$dirty)) {
+			printf("UPDATE %s<br>", $dObj);
+			next(self::$dirty);
+		}
+		
+		while($dObj = current(self::$delete)) {
+			printf("DELETE %s<br>", $dObj);
+			next(self::$delete);
+		}
+	}
 
 	static function getKey() {
 		$args = func_get_args();

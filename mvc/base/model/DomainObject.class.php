@@ -4,7 +4,10 @@ abstract class DomainObject {
 	private $id;
 	
 	public function __construct($id = null) {
-		$this->id = $id;
+		if(is_null($id))
+			$this->markNew();
+		else
+			$this->id = $id;
 	}
 	
 	static function getCollection($type, array $raw = null, Mapper $mapper = null) {
@@ -13,6 +16,22 @@ abstract class DomainObject {
 	
 	function collection(array $raw = null, Mapper $mapper = null) {
 		return self::getCollection(get_class($this), $raw, $mapper);
+	}
+	
+	function markNew() {
+		DomainObjectWatcher::addNew($this);
+	}
+	
+	function markDirty() {
+		DomainObjectWatcher::addDirty($this);
+	}
+	
+	function markDelete() {
+		DomainObjectWatcher::addDelete($this);
+	}
+	
+	function markClean() {
+		DomainObjectWatcher::addClean($this);
 	}
 	
 	function setId($id) {
