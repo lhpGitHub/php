@@ -1,6 +1,6 @@
 <?php
 
-class PogodaTest extends TestCase {
+class PogodaTest extends PHPUnit_Framework_TestCase {
 
 	private $pogoda;
 	

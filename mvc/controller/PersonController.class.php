@@ -67,10 +67,10 @@ class PersonController extends BaseController {
 			
 			if($personData instanceof PersonCollection) {
 				foreach($personData as $personObj)
-					$this->readViewHelper(&$htmlCode, $personObj);
+					$this->readViewHelper($htmlCode, $personObj);
 			} else {
 				$personObj = $personData;
-				$this->readViewHelper(&$htmlCode, $personObj);
+				$this->readViewHelper($htmlCode, $personObj);
 			}
 			
 			$this->view->content = $htmlCode;
