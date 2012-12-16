@@ -11,7 +11,7 @@ class DataBaseAccessPDO extends DataBaseAccess {
 	private function connect() {
 		if(is_null($this->dbh)) {
 			extract(Settings::dbSett());
-			$this->dbh = new PDO("mysql:host=$host;dbname=$db;charset=UTF-8", $user, $pass);
+			$this->dbh = new PDO("$type:host=$host;dbname=$db;charset=UTF-8", $user, $pass);
 			$this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		}
 	}
@@ -21,7 +21,7 @@ class DataBaseAccessPDO extends DataBaseAccess {
 			$this->connect();
 			$stmt = $this->dbh->prepare($sqlQuery);
 			
-			printf("SQL QUERY: %s, / params: %s<br>", $stmt->queryString, print_r($values, true));
+			//printf("SQL QUERY: %s, / params: %s<br>", $stmt->queryString, print_r($values, true));
 			
 			if(is_array($values))
 				$stmt->execute($values);

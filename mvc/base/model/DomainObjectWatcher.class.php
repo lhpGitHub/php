@@ -60,6 +60,9 @@ class DomainObjectWatcher {
 		
 		while($dObj = current(self::$new)) {
 			printf("INSERT %s<br>", $dObj);
+			
+			$dObj->mapper()->insert($dObj);
+			
 			next(self::$new);
 		}
 		

@@ -18,6 +18,14 @@ abstract class DomainObject {
 		return self::getCollection(get_class($this), $raw, $mapper);
 	}
 	
+	static function getMapper($type) {
+		return HelperFactory::getMapper($type);
+	}
+	
+	function mapper() {
+		return self::getMapper(get_class($this));
+	}
+	
 	function markNew() {
 		DomainObjectWatcher::addNew($this);
 	}

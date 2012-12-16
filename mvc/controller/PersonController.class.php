@@ -16,7 +16,7 @@ class PersonController extends BaseController {
 
 	function __construct() {
 		parent::__construct();
-		$this->personMapper = new PersonMapper(new DataBaseAccessPDO());
+		$this->personMapper = HelperFactory::getMapper('Person');
 		$this->view = new View();
 	}
 
@@ -69,7 +69,8 @@ class PersonController extends BaseController {
 				foreach($personData as $personObj)
 					$this->readViewHelper(&$htmlCode, $personObj);
 			} else {
-				$this->readViewHelper(&$htmlCode, $personData);
+				$personObj = $personData;
+				$this->readViewHelper(&$htmlCode, $personObj);
 			}
 			
 			$this->view->content = $htmlCode;
@@ -187,16 +188,33 @@ class PersonController extends BaseController {
 		
 		
 		$personA = new PersonObject();
-		$personB = $this->personMapper->find(119);
-		$personB->setFirstName('A');
-		$personC = $this->personMapper->find(122);
-		$personC->setFirstName('A');
+		$personA->setFirstName('unity');
+		$personA->setLastName('of work');
+		
+		$personA2 = new PersonObject();
+		$personA2->setFirstName('unity2');
+		$personA2->setLastName('of work2');
 		
 		
+//		$personB = $this->personMapper->find(1);
+//		$personB->setFirstName('A');
+//		$personB->setLastName('B');
+//		$personB = $this->personMapper->find(1);
+//		
+//		$personC = $this->personMapper->find(3);
+//		$personC->setFirstName('A');
 		
 		DomainObjectWatcher::performOperations();
 		
-		
+//		echo '<br><br>mapper test<br><br>';
+//		
+//		
+//		$m1 = HelperFactory::getMapper('Person');
+//		print_r($m1);
+//		$m2 = $personA->mapper();
+//		print_r($m2);
+//		
+//		var_dump($m1 === $m2);
 	}
 	
 	private function helperTestFunctionality($id) {

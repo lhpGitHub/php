@@ -1,6 +1,12 @@
 
 - dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() i potestowac Unity of Work
 
+	prawie dziala, okazuje sie ze przechodzenie w petli while polaczone z usuwaniem elementow z tablicy nie dziala tak jak oczekiwalem
+	przemyslec jeszcze raz kody petli w metodzie DomainObjectWatche::performOpertaions()
+
+
+- dodac obsluge transakcji
+
 - dodac obsluge z konsoli
 
 - dodac inny sposob laczenia z baza danych (goly mysql)

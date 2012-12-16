@@ -7,6 +7,8 @@ class Settings {
 	static $mode;
 	
 	private static $db_deve = array(
+		'drv'	=> DataBaseAccessFactory::PDO,
+		'type'	=> 'mysql',
 		'host'	=> 'localhost',
 		'db'	=> 'mvc',
 		'user'	=> 'root',
@@ -14,6 +16,8 @@ class Settings {
 	);
 	
 	private static $db_prod = array(
+		'drv'	=> DataBaseAccessFactory::PDO,
+		'type'	=> 'mysql',
 		'host'	=> 'localhost',
 		'db'	=> 'mvc',
 		'user'	=> 'root',
