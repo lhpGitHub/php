@@ -2,7 +2,6 @@
 class Pogoda {
 
 	function deszcz() {
-		$this->snieg();
 		return true;
 	}
 	
