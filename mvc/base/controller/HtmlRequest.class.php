@@ -7,9 +7,16 @@ class HtmlRequest extends BaseRequest {
 
 	protected function ini() {
 		
-		$absolutePath = $this->getRelativePath();
-		$uriRequest = substr($_SERVER['REQUEST_URI'], strlen($absolutePath));
-		$ele = explode('/', strtolower(trim($uriRequest, "/")));		
+		if(count($_GET) > 0) {
+			$ele = array_values($_GET);
+		} else {
+			$absolutePath = $this->getRelativePath();
+			$uriRequest = substr($_SERVER['REQUEST_URI'], strlen($absolutePath));
+			$ele = explode('/', strtolower(trim($uriRequest, "/")));
+		}
+		
+		if(count($_POST) > 0) $ele = array_merge($ele, array_values($_POST));
+		
 		$controlerName = array_shift($ele);
 		$actionName = array_shift($ele);
 		$this->params = $ele;

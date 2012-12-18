@@ -22,7 +22,7 @@ class PersonController extends BaseController {
 
 	function actionCreate() {
 		try {
-			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'String' , 'String' , 'Integer');
+			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
 			
 			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new InvalidParamException;
 			$this->insert($fName, $lName);
@@ -58,7 +58,7 @@ class PersonController extends BaseController {
 
 	function actionRead() {
 		try {
-			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer');
+			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
 			
 			$personData = $this->find($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_READ);
@@ -113,7 +113,7 @@ class PersonController extends BaseController {
 	}
 
 	function actionUpdate() {
-		list($id, $fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer', 'String' , 'String' , 'Integer');
+		list($id, $fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER, ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
 		
 		try {
 			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
@@ -163,7 +163,7 @@ class PersonController extends BaseController {
 	
 	function actionDelete() {
 		try {
-			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), 'Integer');
+			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
 			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
 			if($this->personMapper->delete(new PersonObject($id)) !== 1) throw new InvalidIdException;
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);

@@ -1,6 +1,11 @@
 <?php
 class ParamsCleaner {
 	
+	const STRING = 'String';
+	const STRING_TRIM = 'StringTrim';
+	const INTEGER = 'Integer';
+
+
 	static function getSanitizeParam() {
 		$arg = func_get_args();
 		$sanitizeParams = array();
@@ -15,8 +20,13 @@ class ParamsCleaner {
 	}
 
 	
+	static function validateStringTrim($var) {
+		$var = trim($var);
+		return self::validateString($var);
+	}
+	
 	static function validateString($var) {
-		if(isset($var) && !empty($var)) {
+		if(isset($var) && strlen($var)>0) {
 			settype($var, 'string');
 			return $var;
 		}
