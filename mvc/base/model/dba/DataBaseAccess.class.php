@@ -6,6 +6,7 @@ abstract class DataBaseAccess {
 	private $result;
 	
 	abstract function execute($sqlQuery, $values = null);
+	abstract protected function result($clearResult = true);
 	
 	protected function setLastInsertId($id) {
 		$this->lastInsertId = $id;
@@ -28,9 +29,9 @@ abstract class DataBaseAccess {
 	}
 
 	function getResult($clearResult = true) {
+		$this->result($clearResult);
 		$res = $this->result;
 		if($clearResult) $this->clearResult();
-		
 		return $res;
 	}
 	

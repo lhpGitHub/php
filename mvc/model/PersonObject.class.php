@@ -5,8 +5,10 @@ class PersonObject extends DomainObject {
 		    $lName;
 	
 	function setFirstName($val) {
-		$this->fName = $val;
-		$this->markDirty();
+		if($val !== $this->fName) {
+			$this->fName = $val;
+			$this->markDirty();
+		}
 	}
 	
 	function getFirstName() {
@@ -14,8 +16,10 @@ class PersonObject extends DomainObject {
 	}
 	
 	function setLastName($val) {
-		$this->lName = $val;
-		$this->markDirty();
+		if($val !== $this->lName) {
+			$this->lName = $val;
+			$this->markDirty();
+		}
 	}
 	
 	function getLastName() {

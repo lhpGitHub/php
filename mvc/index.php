@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL); 
 define('DEBUG', TRUE);
-setIncludePath('base', 'base/registry', 'base/controller', 'base/view', 'base/exception', 'base/model', 'config', 'controller', 'view', 'model');
+setIncludePath('base', 'base/registry', 'base/controller', 'base/view', 'base/exception', 'base/model/dba', 'base/model/domainObject', 'config', 'controller', 'view', 'model');
 spl_autoload_register('autoloader');
 
 Settings::$mode = Settings::DEVE;

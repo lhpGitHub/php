@@ -21,7 +21,7 @@ class DataBaseAccessPDO extends DataBaseAccess {
 			$this->connect();
 			$stmt = $this->dbh->prepare($sqlQuery);
 			
-			//printf("SQL QUERY: %s, / params: %s<br>", $stmt->queryString, print_r($values, true));
+			printf("SQL QUERY: %s, / params: %s<br>", $stmt->queryString, print_r($values, true));
 			
 			if(is_array($values))
 				$stmt->execute($values);
@@ -38,7 +38,7 @@ class DataBaseAccessPDO extends DataBaseAccess {
 		}
 	}
 	
-	function getResult($clearResult = true) {		
+	protected function result($clearResult = true) {		
 		try {
 			$res = $this->stmt->fetchAll(PDO::FETCH_ASSOC);
 			if(!empty($res)) $this->setResult($res);
@@ -46,7 +46,5 @@ class DataBaseAccessPDO extends DataBaseAccess {
 		} catch(PDOException $err) {
 			throw new DataBaseException( __METHOD__ . ' ' . $err->getMessage());
 		}
-		
-		return parent::getResult($clearResult);
 	}
 }

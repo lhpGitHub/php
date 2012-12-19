@@ -53,28 +53,18 @@ class DomainObjectWatcher {
 	}
 	
 	static function performOperations() {
+		$new	= array_merge(array(), self::$new);
+		$dirty	= array_merge(array(), self::$dirty);
+		$delete = array_merge(array(), self::$delete);
 		
-		reset(self::$new);
-		reset(self::$dirty);
-		reset(self::$delete);
-		
-		while($dObj = current(self::$new)) {
-			printf("INSERT %s<br>", $dObj);
-			
+		foreach($new as $dObj)
 			$dObj->mapper()->insert($dObj);
-			
-			next(self::$new);
-		}
 		
-		while($dObj = current(self::$dirty)) {
-			printf("UPDATE %s<br>", $dObj);
-			next(self::$dirty);
-		}
+		foreach($dirty as $dObj)
+			$dObj->mapper()->update($dObj);
 		
-		while($dObj = current(self::$delete)) {
-			printf("DELETE %s<br>", $dObj);
-			next(self::$delete);
-		}
+		foreach($delete as $dObj)
+			$dObj->mapper()->delete($dObj);
 	}
 
 	static function getKey() {

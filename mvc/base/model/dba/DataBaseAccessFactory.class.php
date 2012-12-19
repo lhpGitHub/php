@@ -1,7 +1,7 @@
 <?php
 class DataBaseAccessFactory {
 	
-	const NATIVE = 'native';
+	const FAKE = 'fake';
 	const PDO = 'pdo';
 	
 	static private $instance;
@@ -23,6 +23,9 @@ class DataBaseAccessFactory {
 			switch ($dbSett['drv']) {
 				case self::PDO:
 					$ins->globalAccess = new DataBaseAccessPDO();
+					break;
+				case self::FAKE:
+					$ins->globalAccess = new DataBaseAccessFAKE();
 					break;
 				default:
 					break;

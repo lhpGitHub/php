@@ -1,22 +1,18 @@
 
-- dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() i potestowac Unity of Work
+-	dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() 
+	i potestowac Unity of Work przy pomocy testow phpunit
 
-	prawie dziala, okazuje sie ze przechodzenie w petli while polaczone z usuwaniem elementow z tablicy nie dziala tak jak oczekiwalem
-	przemyslec jeszcze raz kody petli w metodzie DomainObjectWatche::performOpertaions()
+-	dodac obsluge transakcji
 
+-	dodac obsluge z konsoli
 
-- dodac obsluge transakcji
+-	dodac inny sposob laczenia z baza danych (goly mysql)
 
-- dodac obsluge z konsoli
+-	dodac druga tabele w BD
 
-- dodac inny sposob laczenia z baza danych (goly mysql)
+-	dodac join w zapytania do bazy (druga tabela telefony)
 
-- dodac druga tabele w BD
-
-- dodac join w zapytania do bazy (druga tabela telefony)
-
-- wprowadzic przestrzenie nazw i zmodyfikowac system autoload
-
+-	wprowadzic przestrzenie nazw i zmodyfikowac system autoload
 	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce
 
-- testy jednostkowe
+-	testy jednostkowe (bootstrap - dodac autoload)

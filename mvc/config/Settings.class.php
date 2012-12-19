@@ -1,10 +1,20 @@
 <?php
 class Settings {
 	
+	const TEST = 'test';
 	const DEVE = 'develop';
 	const PROD = 'production';
 
 	static $mode;
+	
+	private static $db_test = array(
+		'drv'	=> DataBaseAccessFactory::FAKE,
+		'type'	=> 'mysql',
+		'host'	=> 'localhost',
+		'db'	=> 'mvc',
+		'user'	=> 'root',
+		'pass'	=> ''
+	);
 	
 	private static $db_deve = array(
 		'drv'	=> DataBaseAccessFactory::PDO,
@@ -31,7 +41,11 @@ class Settings {
 	);
 
 	static function dbSett() {
-		return ((self::$mode === self::DEVE) ? self::$db_deve : self::$db_prod);
+		switch (self::$mode) {
+			case self::TEST: return self::$db_test;
+			case self::DEVE: return self::$db_deve;
+			case self::PROD: return self::$db_prod;
+		}
 	}
 		
 }

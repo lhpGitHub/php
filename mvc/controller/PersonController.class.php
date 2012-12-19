@@ -11,12 +11,10 @@ class PersonController extends BaseController {
 	const WRONG_PARAM	= 'wrong parameters';
 	const DB_ERROR		= 'database error';
 	
-	private $personMapper;
 	private $view;
 
 	function __construct() {
 		parent::__construct();
-		$this->personMapper = HelperFactory::getMapper('Person');
 		$this->view = new View();
 	}
 
@@ -53,7 +51,8 @@ class PersonController extends BaseController {
 		$personObject->setFirstName($fName);
 		$personObject->setLastName($lName);
 		
-		$this->personMapper->insert($personObject);
+		$mapper = HelperFactory::getMapper('Person');
+		$mapper->insert($personObject);
 	}
 
 	function actionRead() {
@@ -100,11 +99,12 @@ class PersonController extends BaseController {
 	}
 	
 	private function find($id) {
+		$mapper = HelperFactory::getMapper('Person');
 		
 		if(ParamsCleaner::isNotNull($id)) {
-			$personData = $this->personMapper->find($id);
+			$personData = $mapper->find($id);
 		} else {
-			$personData = $this->personMapper->findAll();
+			$personData = $mapper->findAll();
 		}
 		
 		if(is_null($personData)) throw new NoRecordException;
@@ -118,7 +118,8 @@ class PersonController extends BaseController {
 		try {
 			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
 			
-			$personObject = $this->personMapper->find($id);
+			$mapper = HelperFactory::getMapper('Person');
+			$personObject = $mapper->find($id);
 			
 			if(is_null($personObject)) throw new InvalidIdException;
 			
@@ -126,7 +127,7 @@ class PersonController extends BaseController {
 			
 			$personObject->setFirstName($fName);
 			$personObject->setLastName($lName);
-			$this->personMapper->update($personObject);
+			$mapper->update($personObject);
 			$this->setFlashBlockOverride('msg', self::RECORD_UPD);
 			$this->redirect('/person/read');
 			
@@ -165,7 +166,8 @@ class PersonController extends BaseController {
 		try {
 			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
 			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
-			if($this->personMapper->delete(new PersonObject($id)) !== 1) throw new InvalidIdException;
+			$mapper = HelperFactory::getMapper('Person');
+			if($mapper->delete(new PersonObject($id)) !== 1) throw new InvalidIdException;
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			
 		} catch(InvalidIdException $err) {
@@ -186,35 +188,39 @@ class PersonController extends BaseController {
 	function actionTestFunctionality() {
 		echo 'actionTestFunctionality<br><br>';
 		
+		Settings::$mode = Settings::TEST;
 		
-		$personA = new PersonObject();
-		$personA->setFirstName('unity');
-		$personA->setLastName('of work');
+		$mapper = HelperFactory::getMapper('Person');
 		
-		$personA2 = new PersonObject();
-		$personA2->setFirstName('unity2');
-		$personA2->setLastName('of work2');
+		$testData = array();
+		$testData[] = array('fName'=>'pier', 'lName'=>'pierwszy');
+		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
+		
+		$dba = DataBaseAccessFactory::globalAccess();
+		$dba->loadData($testData);
 		
 		
-//		$personB = $this->personMapper->find(1);
-//		$personB->setFirstName('A');
-//		$personB->setLastName('B');
-//		$personB = $this->personMapper->find(1);
+		
+//		$personA = new PersonObject();
+//		$personA->setFirstName('unity');
+//		$personA->setLastName('of work');
 //		
-//		$personC = $this->personMapper->find(3);
-//		$personC->setFirstName('A');
+//		$personA2 = new PersonObject();
+//		$personA2->setFirstName('unity2');
+//		$personA2->setLastName('of work2');
+//		
+//		$personA3 = new PersonObject();
+//		$personA3->setFirstName('unity3');
+//		$personA3->setLastName('of work3');
+		
+		$personA = $mapper->find(0);
+		$personA2 = $mapper->find(1);
+		
+		$personA->setFirstName('watcher');
 		
 		DomainObjectWatcher::performOperations();
-		
-//		echo '<br><br>mapper test<br><br>';
-//		
-//		
-//		$m1 = HelperFactory::getMapper('Person');
-//		print_r($m1);
-//		$m2 = $personA->mapper();
-//		print_r($m2);
-//		
-//		var_dump($m1 === $m2);
+
+		var_dump($personA, $personA2);
 	}
 	
 	private function helperTestFunctionality($id) {
