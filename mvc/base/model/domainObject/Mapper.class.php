@@ -20,7 +20,7 @@ abstract class Mapper {
 		
 		if(is_null($dmObj)) {
 			$dmObj = $this->doFindObject($id);
-			if(!is_null($dmObj)) DomainObjectWatcher::addObject($dmObj);
+			if($dmObj) DomainObjectWatcher::addObject($dmObj);
 		}
 		
 		return $dmObj;

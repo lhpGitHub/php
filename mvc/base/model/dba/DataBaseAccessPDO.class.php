@@ -18,7 +18,6 @@ class DataBaseAccessPDO extends DataBaseAccess {
 
 	protected function doExecute($sqlQuery, $values = null) {
 		try {
-			$this->clearBuffer();
 			$this->connect();
 			$stmt = $this->dbh->prepare($sqlQuery);
 			
@@ -28,7 +27,10 @@ class DataBaseAccessPDO extends DataBaseAccess {
 				$stmt->execute();
 			
 			$this->stmt = $stmt;
-			$this->setLastInsertId($this->dbh->lastInsertId());
+			
+			$lastId = $this->dbh->lastInsertId();
+			if($lastId == 0) $lastId = NULL; 
+			$this->setLastInsertId($lastId);
 			$this->setLastRowCount($stmt->rowCount());
 
 		} catch(PDOException $err) {
@@ -38,9 +40,7 @@ class DataBaseAccessPDO extends DataBaseAccess {
 	
 	protected function doResult() {		
 		try {
-			$res = $this->stmt->fetchAll(PDO::FETCH_ASSOC);
-			if(!empty($res)) $this->setResult($res);
-			
+			$this->setResult($this->stmt->fetchAll(PDO::FETCH_ASSOC));			
 		} catch(PDOException $err) {
 			throw new DataBaseException( __METHOD__ . ' ' . $err->getMessage());
 		}

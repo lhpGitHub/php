@@ -12,7 +12,7 @@ class PersonMapper extends Mapper {
 		if($this->dba->getLastRowCount() > 0) {
 			return HelperFactory::getCollection('Person', $this->dba->result(), $this);
 		} else {
-			return NULL;
+			return false;
 		}
 	}
 
@@ -25,7 +25,7 @@ class PersonMapper extends Mapper {
 			$res = $this->dba->result();
 			return $this->createObject($res[0]);
 		} else {
-			return NULL;
+			return false;
 		}
 	}
 	
@@ -33,7 +33,6 @@ class PersonMapper extends Mapper {
 		$obj = new PersonObject($raw['id']);
 		$obj->setFirstName($raw['fName']);
 		$obj->setLastName($raw['lName']);
-		
 		return $obj;
 	}
 	
@@ -42,20 +41,21 @@ class PersonMapper extends Mapper {
 		$values = array('fName' => $dmObj->getFirstName(), 'lName' => $dmObj->getLastName());
 		$this->dba->execute($sql, $values);
 		$dmObj->setId($this->dba->getLastInsertId());
+		return ($this->dba->getLastRowCount() === 1);
 	}
 	
 	protected function doUpdate(DomainObject $dmObj) {
 		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
 		$values = array('id' => $dmObj->getId(), 'fName' => $dmObj->getFirstName(), 'lName' => $dmObj->getLastName());
 		$this->dba->execute($sql, $values);
-		return $this->dba->getLastRowCount();
+		return ($this->dba->getLastRowCount() === 1);
 	}
 	
 	protected function doDelete(DomainObject $dmObj) {
 		$sql = "DELETE FROM person WHERE id = :id";
 		$values = array('id' => $dmObj->getId());
 		$this->dba->execute($sql, $values);
-		return $this->dba->getLastRowCount();
+		return ($this->dba->getLastRowCount() === 1);
 	}
 	
 	protected function getTargetClass() {

@@ -28,32 +28,16 @@ abstract class DataBaseAccess {
 		return $this->lastRowCount;
 	}
 	
-	protected function setResult(array $result) {
+	protected function setResult($result) {
 		$this->result = $result;
+	}
+	
+	protected function isResult() {
+		return (!is_null($this->result));
 	}
 
 	function result($cacheResult = false) {
 		$this->doResult();
-		$res = $this->result;
-		if(!$cacheResult) $this->clearResult();
-		return $res;
-	}
-	
-	function clearResult() {
-		$this->result = NULL;
-	}
-	
-	function clearLastInsertId() {
-		$this->lastInsertId = NULL;
-	}
-	
-	function clearLastRowCount() {
-		$this->lastRowCount = NULL;
-	}
-	
-	function clearBuffer() {
-		$this->clearResult();
-		$this->clearLastInsertId();
-		$this->clearLastRowCount();
+		return $this->result;
 	}
 }

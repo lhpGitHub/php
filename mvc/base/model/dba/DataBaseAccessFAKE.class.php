@@ -2,7 +2,7 @@
 class DataBaseAccessFAKE extends DataBaseAccess {
 	
 	private $lastInsertId = 0;
-	private $data;
+	private $data = array();
 
 	function loadData(&$data) {
 		$this->data = &$data;
@@ -12,7 +12,6 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 	function __destruct() {}
 
 	protected function doExecute($sqlQuery, $values = null) {
-		$this->clearBuffer();
 		
 		if(preg_match('/^SELECT(.)?/', $sqlQuery))
 			$this->select($values);
@@ -25,15 +24,16 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 
 	}
 	
-	protected function doResult() {		
-		
+	protected function doResult() {	
+		if(!$this->isResult())
+			throw new DataBaseException( __METHOD__ );
 	}
 	
 	private function findById($id) {
 		if(isset($this->data[$id]))
 			return array(array_merge(array('id'=>$id), $this->data[$id]));
 		else
-			return NULL;
+			return false;
 	}
 
 	private function findAll() {
@@ -45,7 +45,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 		if(!empty($res))
 			return $res;
 		else
-			return NULL;
+			return false;
 	}
 
 	private function select($val) {
@@ -57,12 +57,15 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 			$res = $this->findById($searchId);
 		}
 		
-		if(is_null($res)) {
-			$this->setLastRowCount(0);
-		} else {
+		if($res) {
 			$this->setLastRowCount(count($res));
 			$this->setResult($res);
+		} else {
+			$this->setLastRowCount(0);
+			$this->setResult(array());
 		}
+		
+		$this->setLastInsertId(NULL);
 	}
 	
 	private function insert($val) {
@@ -71,23 +74,34 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 		$this->data[$id] = $val;
 		$this->setLastInsertId($id);
 		$this->setLastRowCount(1);
+		$this->setResult(NULL);
 	}
 	
 	private function update($val) {
 		$updateId = $val['id'];
 		
-		if(!is_null($this->findById($updateId))) {
+		if($this->findById($updateId)) {
 			$this->data[$updateId] = $val;
 			$this->setLastRowCount(1);
+		} else {
+			$this->setLastRowCount(0);
 		}
+
+		$this->setLastInsertId(NULL);
+		$this->setResult(NULL);
 	}
 	
 	private function delete($val) {
 		$deleteId = $val['id'];
 		
-		if(!is_null($this->findById($deleteId))) {
+		if($this->findById($deleteId)) {
 			unset($this->data[$deleteId]);
 			$this->setLastRowCount(1);
+		} else {
+			$this->setLastRowCount(0);
 		}
+		
+		$this->setLastInsertId(NULL);
+		$this->setResult(NULL);
 	}
 }

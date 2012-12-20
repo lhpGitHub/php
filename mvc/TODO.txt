@@ -1,8 +1,28 @@
--	jest lekkie zamieszanie w DataBaseAccess w metodzie getResult() i result()
-	moze to doprowadzic do nieprzewidzianych zachowac
-	np w klasie rozszerzajacej dla PDO buforowanie wynikow opiera sie na fakcie zwracanie pustej tabeli przy ponownym wywolaniu metody fetchAll
+-	doprecyzowac jak dziala PDO tzn jakie jest lastInsertId i rowCount podczas wykonywania roznych zapytan (SELECT, INSERT, UDPATE, DELETE)
 
-	WPROWADZIC PRZEJRZYSTY MECHAZNIM BUFOROWANIA WYNIKOW!
+	mysqli moze zachowywac sie inaczej, sprawdzic to
+
+					result()			getLastRowCount()	getLastInsertId()
+		
+	find ok			return array(1),	rowCount = 1,		lastInsertId = NULL
+	find error		return array(0),	rowCount = 0,		lastInsertId = NULL
+
+	findAll ok		return array(n),	rowCount = n,		lastInsertId = NULL
+	findAll error	return array(0),	rowCount = 0,		lastInsertId = NULL
+
+	insert ok		throw exception,	rowCount = 1,		lastInsertId = n
+	insert error	throw exception,	rowCount = 0,		lastInsertId = NULL
+
+	update ok		throw exception,	rowCount = 1,		lastInsertId = NULL
+	update error	throw exception,	rowCount = 0,		lastInsertId = NULL
+
+	delete ok		throw exception,	rowCount = 1,		lastInsertId = NULL
+	delete error	throw exception,	rowCount = 0,		lastInsertId = NULL
+
+	umiescic ww schemat w dokumentacji i wygenerowac dokumentacje za pomoca phpDoc...
+	
+
+-	uzupelnic o oblsuge mysqli i potestowac za pomoca phpunit hierarchie DataBaseAccess
 
 -	dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() 
 	i potestowac Unity of Work przy pomocy testow phpunit

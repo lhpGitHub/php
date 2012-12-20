@@ -7,7 +7,7 @@ class PersonController extends BaseController {
 	const RECORD_READ	= 'success read record';
 	const RECORD_EMPTY	= 'no record found';
 
-	const WRONG_ID	= 'wrong id';
+	const WRONG_ID		= 'wrong id';
 	const WRONG_PARAM	= 'wrong parameters';
 	const DB_ERROR		= 'database error';
 	
@@ -99,6 +99,7 @@ class PersonController extends BaseController {
 	}
 	
 	private function find($id) {
+		$personData = false;
 		$mapper = HelperFactory::getMapper('Person');
 		
 		if(ParamsCleaner::isNotNull($id)) {
@@ -107,7 +108,7 @@ class PersonController extends BaseController {
 			$personData = $mapper->findAll();
 		}
 		
-		if(is_null($personData)) throw new NoRecordException;
+		if(!$personData) throw new NoRecordException;
 		
 		return $personData;
 	}
@@ -121,7 +122,7 @@ class PersonController extends BaseController {
 			$mapper = HelperFactory::getMapper('Person');
 			$personObject = $mapper->find($id);
 			
-			if(is_null($personObject)) throw new InvalidIdException;
+			if(!$personObject) throw new InvalidIdException;
 			
 			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new InvalidParamException;
 			
@@ -167,7 +168,7 @@ class PersonController extends BaseController {
 			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
 			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
 			$mapper = HelperFactory::getMapper('Person');
-			if($mapper->delete(new PersonObject($id)) !== 1) throw new InvalidIdException;
+			if(!$mapper->delete(new PersonObject($id))) throw new InvalidIdException;
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			
 		} catch(InvalidIdException $err) {
@@ -186,7 +187,7 @@ class PersonController extends BaseController {
 	}
 	
 	function actionTestFunctionality() {
-		echo 'actionTestFunctionality<br><br>';
+		echo 'actionTestFunctionality<br><br><pre>';
 		
 		Settings::$mode = Settings::TEST;
 		
@@ -221,14 +222,115 @@ class PersonController extends BaseController {
 		
 		$personA0->setFirstName('watcher');
 		
-		var_dump($testData);
+		print_r($testData);
 		
 		DomainObjectWatcher::performOperations();
 
 		//var_dump($personA0, $personA1, $personA3);
-		var_dump($testData);
+		print_r($testData);
 	}
 	
 	private function helperTestFunctionality($id) {
+	}
+	
+	function actionTestDBA() {
+		echo '=======================<test FAKE>=======================<br><br><pre>';
+		$testData = array();
+		$testData[] = array('fName'=>'pier', 'lName'=>'pierwszy');
+		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
+		
+		$dba = new DataBaseAccessFAKE();
+		$dba->loadData($testData);
+		$this->helperActionTestDBA($dba);
+		
+		echo '<br><br>=======================<test DBA>=======================<br><br><pre>';
+		$dba = new DataBaseAccessPDO();
+		$this->helperActionTestDBA($dba);
+		
+		
+		
+	}
+	
+	
+	function helperActionTestDBA(DataBaseAccess $dba) {
+		
+		$lastInsertId;
+		$lastRowCount;
+		
+		//select all
+		echo '<br><br>test findAll ok -------------------------------------------<br>';
+		$sql = 'SELECT * FROM person';
+		$dba->execute($sql);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		echo '<br><br>test findAll error -------------------------------------------<br>';
+		$sql = 'SELECT * FROM personEmpty';
+		$dba->execute($sql);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		//select by id
+		echo '<br><br>test find ok -------------------------------------------<br>';
+		$sql = 'SELECT * FROM person WHERE id = :id';
+		$val = array('id' => 1);
+		$dba->execute($sql, $val);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		echo '<br><br>test find error -------------------------------------------<br>';
+		$sql = 'SELECT * FROM person WHERE id = :id';
+		$val = array('id' => 9999);
+		$dba->execute($sql, $val);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		//insert
+		echo '<br><br>test insert ok -------------------------------------------<br>';
+		$sql = "INSERT INTO person (fName, lName) VALUES (:fName, :lName)";
+		$val = array('fName' => 'testFName', 'lName' => 'testLNAME');
+		$dba->execute($sql, $val);
+		$tmpId = $dba->getLastInsertId();
+		$this->helperTestDBA_writeStatus($dba);
+		
+		//update
+		echo '<br><br>test update ok -------------------------------------------<br>';
+		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
+		$val = array('id' => 1, 'fName' => 'testFName', 'lName' => 'testLName');
+		$dba->execute($sql, $val);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		echo '<br><br>test update error -------------------------------------------<br>';
+		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
+		$val = array('id' => 9999, 'fName' => 'testFName', 'lName' => 'testLName');
+		$dba->execute($sql, $val);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		//delete
+		echo '<br><br>test delete ok -------------------------------------------<br>';
+		$sql = "DELETE FROM person WHERE id = :id";
+		$val = array('id' => $tmpId);
+		$dba->execute($sql, $val);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		echo '<br><br>test delete error -------------------------------------------<br>';
+		$sql = "DELETE FROM person WHERE id = :id";
+		$val = array('id' => 9999);
+		$dba->execute($sql, $val);
+		$this->helperTestDBA_writeStatus($dba);
+		
+		
+	}
+	
+	private function helperTestDBA_writeStatus(DataBaseAccess $dba) {
+		
+		echo "last insert id:";
+		var_dump($dba->getLastInsertId());
+		
+		echo "last row count:{$dba->getLastRowCount()}";
+		var_dump($dba->getLastRowCount());
+		
+		try {
+			var_dump($dba->result());
+		} catch (DataBaseException $err) {
+			echo "$err<br>";
+		}
+		
 	}
 }
