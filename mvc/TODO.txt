@@ -1,3 +1,8 @@
+-	jest lekkie zamieszanie w DataBaseAccess w metodzie getResult() i result()
+	moze to doprowadzic do nieprzewidzianych zachowac
+	np w klasie rozszerzajacej dla PDO buforowanie wynikow opiera sie na fakcie zwracanie pustej tabeli przy ponownym wywolaniu metody fetchAll
+
+	WPROWADZIC PRZEJRZYSTY MECHAZNIM BUFOROWANIA WYNIKOW!
 
 -	dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() 
 	i potestowac Unity of Work przy pomocy testow phpunit

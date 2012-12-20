@@ -5,8 +5,12 @@ abstract class DataBaseAccess {
 	private $lastRowCount;
 	private $result;
 	
-	abstract function execute($sqlQuery, $values = null);
-	abstract protected function result($clearResult = true);
+	abstract protected function doExecute($sqlQuery, $values = null);
+	abstract protected function doResult();
+	
+	function execute($sqlQuery, $values = null) {
+		$this->doExecute($sqlQuery, $values);
+	}
 	
 	protected function setLastInsertId($id) {
 		$this->lastInsertId = $id;
@@ -28,10 +32,10 @@ abstract class DataBaseAccess {
 		$this->result = $result;
 	}
 
-	function getResult($clearResult = true) {
-		$this->result($clearResult);
+	function result($cacheResult = false) {
+		$this->doResult();
 		$res = $this->result;
-		if($clearResult) $this->clearResult();
+		if(!$cacheResult) $this->clearResult();
 		return $res;
 	}
 	

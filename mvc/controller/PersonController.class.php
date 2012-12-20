@@ -195,6 +195,7 @@ class PersonController extends BaseController {
 		$testData = array();
 		$testData[] = array('fName'=>'pier', 'lName'=>'pierwszy');
 		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
+		$testData[] = array('fName'=>'trz', 'lName'=>'trzeci');
 		
 		$dba = DataBaseAccessFactory::globalAccess();
 		$dba->loadData($testData);
@@ -209,18 +210,23 @@ class PersonController extends BaseController {
 //		$personA2->setFirstName('unity2');
 //		$personA2->setLastName('of work2');
 //		
-//		$personA3 = new PersonObject();
-//		$personA3->setFirstName('unity3');
-//		$personA3->setLastName('of work3');
+		$personA3 = new PersonObject();
+		$personA3->setFirstName('unity3');
+		$personA3->setLastName('of work3');
 		
-		$personA = $mapper->find(0);
-		$personA2 = $mapper->find(1);
+		$personA0 = $mapper->find(0);
+		$personA1 = $mapper->find(1);
+		$personA2 = $mapper->find(2);
+		$personA2->markDelete();
 		
-		$personA->setFirstName('watcher');
+		$personA0->setFirstName('watcher');
+		
+		var_dump($testData);
 		
 		DomainObjectWatcher::performOperations();
 
-		var_dump($personA, $personA2);
+		//var_dump($personA0, $personA1, $personA3);
+		var_dump($testData);
 	}
 	
 	private function helperTestFunctionality($id) {
