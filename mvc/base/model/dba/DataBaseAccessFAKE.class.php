@@ -1,12 +1,12 @@
 <?php
 class DataBaseAccessFAKE extends DataBaseAccess {
 	
-	private $lastInsertId = 0;
+	private $lastInsertId = 1;
 	private $data = array();
 
 	function loadData(&$data) {
 		$this->data = &$data;
-		$this->lastInsertId = count($this->data);
+		$this->lastInsertId = count($this->data)+1;
 	}
 	
 	function __destruct() {}

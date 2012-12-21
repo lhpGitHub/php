@@ -19,13 +19,12 @@ class DataBaseAccessFactory {
 	static function globalAccess() {
 		$ins = self::getInstance();
 		if(is_null($ins->globalAccess)) {
-			$dbSett = Settings::dbSett();
-			switch ($dbSett['drv']) {
-				case self::PDO:
-					$ins->globalAccess = new DataBaseAccessPDO();
-					break;
+			switch (Settings::$dataBaseAccessType) {
 				case self::FAKE:
 					$ins->globalAccess = new DataBaseAccessFAKE();
+					break;
+				case self::PDO:
+					$ins->globalAccess = new DataBaseAccessPDO();
 					break;
 				default:
 					break;

@@ -189,7 +189,7 @@ class PersonController extends BaseController {
 	function actionTestFunctionality() {
 		echo 'actionTestFunctionality<br><br><pre>';
 		
-		Settings::$mode = Settings::TEST;
+		Settings::$dataBaseAccessType = DataBaseAccessFactory::FAKE;
 		
 		$mapper = HelperFactory::getMapper('Person');
 		
@@ -234,16 +234,56 @@ class PersonController extends BaseController {
 	}
 	
 	function actionTestDBA() {
-		echo '=======================<test FAKE>=======================<br><br><pre>';
-		$testData = array();
-		$testData[] = array('fName'=>'pier', 'lName'=>'pierwszy');
+		echo '=======================test FAKE=======================<br><br><pre>';
+		$testData = array(1=>array('fName'=>'pier', 'lName'=>'pierwszy'));
 		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
 		
+	
 		$dba = new DataBaseAccessFAKE();
 		$dba->loadData($testData);
 		$this->helperActionTestDBA($dba);
 		
-		echo '<br><br>=======================<test DBA>=======================<br><br><pre>';
+		echo '<br><br>=======================test DBA=======================<br><br><pre>';
+		
+		/*--
+		-- Database: `mvc`
+		--
+
+		-- --------------------------------------------------------
+
+		--
+		-- Table structure for table `person`
+		--
+
+		CREATE TABLE IF NOT EXISTS `person` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `fName` text COLLATE macce_bin,
+		  `lName` text COLLATE macce_bin,
+		  PRIMARY KEY (`id`)
+		) ENGINE=MyISAM  DEFAULT CHARSET=macce COLLATE=macce_bin AUTO_INCREMENT=15 ;
+
+		--
+		-- Dumping data for table `person`
+		--
+
+		INSERT INTO `person` (`id`, `fName`, `lName`) VALUES
+		(1, 0x74657374464e616d653133333631, 0x746573744c4e616d653232323934),
+		(2, 0x64727567, 0x6472756769);
+
+		-- --------------------------------------------------------
+
+		--
+		-- Table structure for table `personempty`
+		--
+
+		CREATE TABLE IF NOT EXISTS `personempty` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `fName` text COLLATE macce_bin,
+		  `lName` text COLLATE macce_bin,
+		  PRIMARY KEY (`id`)
+		) ENGINE=MyISAM DEFAULT CHARSET=macce COLLATE=macce_bin AUTO_INCREMENT=1 ;*/
+		
+		
 		$dba = new DataBaseAccessPDO();
 		$this->helperActionTestDBA($dba);
 		
@@ -292,7 +332,7 @@ class PersonController extends BaseController {
 		//update
 		echo '<br><br>test update ok -------------------------------------------<br>';
 		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
-		$val = array('id' => 1, 'fName' => 'testFName', 'lName' => 'testLName');
+		$val = array('id' => 1, 'fName' => 'testFName'.rand(), 'lName' => 'testLName'.rand());
 		$dba->execute($sql, $val);
 		$this->helperTestDBA_writeStatus($dba);
 		
@@ -323,7 +363,7 @@ class PersonController extends BaseController {
 		echo "last insert id:";
 		var_dump($dba->getLastInsertId());
 		
-		echo "last row count:{$dba->getLastRowCount()}";
+		echo "last row count:";
 		var_dump($dba->getLastRowCount());
 		
 		try {

@@ -2,22 +2,23 @@
 
 	mysqli moze zachowywac sie inaczej, sprawdzic to
 
-					result()			getLastRowCount()	getLastInsertId()
+						result()			getLastRowCount()	getLastInsertId()
 		
-	find ok			return array(1),	rowCount = 1,		lastInsertId = NULL
-	find error		return array(0),	rowCount = 0,		lastInsertId = NULL
+	find ok				return array(1),	rowCount = 1,		lastInsertId = NULL
+	find error			return array(0),	rowCount = 0,		lastInsertId = NULL
 
-	findAll ok		return array(n),	rowCount = n,		lastInsertId = NULL
-	findAll error	return array(0),	rowCount = 0,		lastInsertId = NULL
+	findAll ok			return array(n),	rowCount = n,		lastInsertId = NULL
+	findAll error		return array(0),	rowCount = 0,		lastInsertId = NULL
 
-	insert ok		throw exception,	rowCount = 1,		lastInsertId = n
-	insert error	throw exception,	rowCount = 0,		lastInsertId = NULL
+	insert ok			throw exception,	rowCount = 1,		lastInsertId = n
+	insert error		throw exception,	rowCount = 0,		lastInsertId = NULL
 
-	update ok		throw exception,	rowCount = 1,		lastInsertId = NULL
-	update error	throw exception,	rowCount = 0,		lastInsertId = NULL
+	update ok			throw exception,	rowCount = 1,		lastInsertId = NULL
+	update no modify	throw exception,	rowCount = 0,		lastInsertId = NULL
+	update error		throw exception,	rowCount = 0,		lastInsertId = NULL
 
-	delete ok		throw exception,	rowCount = 1,		lastInsertId = NULL
-	delete error	throw exception,	rowCount = 0,		lastInsertId = NULL
+	delete ok			throw exception,	rowCount = 1,		lastInsertId = NULL
+	delete error		throw exception,	rowCount = 0,		lastInsertId = NULL
 
 	umiescic ww schemat w dokumentacji i wygenerowac dokumentacje za pomoca phpDoc...
 	
