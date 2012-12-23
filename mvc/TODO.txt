@@ -28,6 +28,8 @@
 -	dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() 
 	i potestowac Unity of Work przy pomocy testow phpunit
 
+-	dodac autoryzacje (jesli to ma sens uzyc wzorca dekorator do dekoracji obiektu Request) 
+
 -	dodac obsluge transakcji
 
 -	dodac obsluge z konsoli

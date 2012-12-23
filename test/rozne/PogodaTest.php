@@ -38,10 +38,7 @@ class PogodaTest extends PHPUnit_Framework_TestCase {
      * @todo   Implement testSnieg().
      */
     public function testSnieg() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
+       $this->assertFalse($this->object->snieg());
     }
 
     /**

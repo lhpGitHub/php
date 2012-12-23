@@ -49,12 +49,12 @@ class DataBaseAccessTest extends PHPUnit_Framework_TestCase {
 		$this->assertCount(0, $this->dba->result());
 	}
 	
-	public function testInsert() {
-		$sql = "INSERT INTO person (fName, lName) VALUES (:fName, :lName)";
-		$val = array('fName' => 'testFName', 'lName' => 'testLNAME');
-		$this->dba->execute($sql, $val);
-		//$this->assertNull($this->dba->getLastInsertId());
-		//$this->assertEquals(1, $this->dba->getLastRowCount());
-		//$this->assertCount(1, $this->dba->result());
-	}
+//	public function testInsert() {
+//		$sql = "INSERT INTO person (fName, lName) VALUES (:fName, :lName)";
+//		$val = array('fName' => 'testFName', 'lName' => 'testLNAME');
+//		$this->dba->execute($sql, $val);
+//		$this->assertNull($this->dba->getLastInsertId());
+//		$this->assertEquals(1, $this->dba->getLastRowCount());
+//		$this->assertCount(1, $this->dba->result());
+//	}
 }
