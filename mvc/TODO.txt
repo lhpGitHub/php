@@ -1,3 +1,6 @@
+-	w makiecie obiektu opakowujacego polaczenie z baza danych (DataBaseAccessFAKE) zapomnialem uwzglednic nazw tabel
+	utknolem na pisaniu wyrazenia regularnego parsujacego zapytania SQL
+
 -	doprecyzowac jak dziala PDO tzn jakie jest lastInsertId i rowCount podczas wykonywania roznych zapytan (SELECT, INSERT, UDPATE, DELETE)
 
 	mysqli moze zachowywac sie inaczej, sprawdzic to

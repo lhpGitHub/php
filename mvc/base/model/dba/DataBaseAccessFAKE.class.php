@@ -13,15 +13,30 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 
 	protected function doExecute($sqlQuery, $values = null) {
 		
-		if(preg_match('/^SELECT(.)?/', $sqlQuery))
-			$this->select($values);
-		else if(preg_match('/^INSERT(.)?/', $sqlQuery))
-			$this->insert($values);
-		else if(preg_match('/^UPDATE(.)?/', $sqlQuery))
-			$this->update($values);
-		else if(preg_match('/^DELETE(.)?/', $sqlQuery))
-			$this->delete($values);
+		var_dump($sqlQuery);
+		
+//		$sql = "SELECT * FROM person ORDER BY id";
+//		$sql = "INSERT INTO person (fName, lName) VALUES (:fName, :lName)";
+//		$sql = "UPDATE person SET fName=:fName, lName=:lName WHERE id=:id";
+//		$sql = "DELETE FROM person WHERE id = :id";
+//		
+		
+		preg_match('/^(SELECT|INSERT|UPDATE|DELETE)(.*)/', $sqlQuery, $matches);
+		
+		var_dump($matches);
+		
+		
+		if(preg_match('/^SELECT(.*)/', $sqlQuery)) {
+			return $this->select($values);
+		} else if(preg_match('/^INSERT(.*)/', $sqlQuery)) {
+			return $this->insert($values);
+		} else if(preg_match('/^UPDATE(.*)/', $sqlQuery)) {
+			return $this->update($values);
+		} else if(preg_match('/^DELETE(.*)/', $sqlQuery)) {
+			return $this->delete($values);
+		}
 
+		throw new DataBaseException( 'SQL QUERY parse error' );
 	}
 	
 	protected function doResult() {	
@@ -38,6 +53,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 
 	private function findAll() {
 		$res = array();
+		reset($this->data);
 		
 		while (list($id, $val) = each($this->data))
 			$res[] = array_merge(array('id'=>$id), $val);
@@ -80,7 +96,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 	private function update($val) {
 		$updateId = $val['id'];
 		
-		if($this->findById($updateId)) {
+		if($this->findById($updateId) && array_diff($this->data[$updateId], $val)) {
 			$this->data[$updateId] = $val;
 			$this->setLastRowCount(1);
 		} else {
