@@ -7,10 +7,10 @@ class DataBaseAccessFAKETest extends DataBaseAccessTest {
 		parent::__construct($name, $data, $dataName);
 		Settings::$dataBaseAccessType = DataBaseAccessFactory::FAKE;
 		
+		parent::$dba = new DataBaseAccessFAKE();
+		
 		$testData = array(1=>array('fName'=>'pier', 'lName'=>'pierwszy'));
 		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
-		
-		parent::$dba = new DataBaseAccessFAKE();
 		parent::$dba->loadData('person', $testData);
 		
 		$testDataEmpty = array();
