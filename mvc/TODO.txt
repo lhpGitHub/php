@@ -1,6 +1,3 @@
--	w makiecie obiektu opakowujacego polaczenie z baza danych (DataBaseAccessFAKE) zapomnialem uwzglednic nazw tabel
-	utknolem na pisaniu wyrazenia regularnego parsujacego zapytania SQL
-
 -	doprecyzowac jak dziala PDO tzn jakie jest lastInsertId i rowCount podczas wykonywania roznych zapytan (SELECT, INSERT, UDPATE, DELETE)
 
 	mysqli moze zachowywac sie inaczej, sprawdzic to
@@ -17,14 +14,13 @@
 	insert error		throw exception,	rowCount = 0,		lastInsertId = NULL
 
 	update ok			throw exception,	rowCount = 1,		lastInsertId = NULL
-	update no modify	throw exception,	rowCount = 0,		lastInsertId = NULL
+	update no modify	throw exception,	rowCount = 1,		lastInsertId = NULL
 	update error		throw exception,	rowCount = 0,		lastInsertId = NULL
 
 	delete ok			throw exception,	rowCount = 1,		lastInsertId = NULL
 	delete error		throw exception,	rowCount = 0,		lastInsertId = NULL
 
 	umiescic ww schemat w dokumentacji i wygenerowac dokumentacje za pomoca phpDoc...
-	
 
 -	uzupelnic o oblsuge mysqli i potestowac za pomoca phpunit hierarchie DataBaseAccess
 

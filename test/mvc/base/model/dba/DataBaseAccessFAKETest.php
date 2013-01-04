@@ -10,7 +10,10 @@ class DataBaseAccessFAKETest extends DataBaseAccessTest {
 		$testData = array(1=>array('fName'=>'pier', 'lName'=>'pierwszy'));
 		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
 		
-		$this->dba = new DataBaseAccessFAKE();
-		$this->dba->loadData($testData);
+		parent::$dba = new DataBaseAccessFAKE();
+		parent::$dba->loadData('person', $testData);
+		
+		$testDataEmpty = array();
+		parent::$dba->loadData('personEmpty', $testDataEmpty);
 	}
 }
