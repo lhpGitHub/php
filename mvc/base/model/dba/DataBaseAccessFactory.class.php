@@ -3,6 +3,7 @@ class DataBaseAccessFactory {
 	
 	const FAKE = 'fake';
 	const PDO = 'pdo';
+	const MYSQLI = 'mysqli';
 	
 	static private $instance;
 	private $globalAccess;
@@ -25,6 +26,9 @@ class DataBaseAccessFactory {
 					break;
 				case self::PDO:
 					$ins->globalAccess = new DataBaseAccessPDO();
+					break;
+				case self::MYSQLI:
+					$ins->globalAccess = new DataBaseAccessMYSQLI();
 					break;
 				default:
 					break;

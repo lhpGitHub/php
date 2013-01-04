@@ -22,6 +22,7 @@ require 'DataBaseException.class.php';
 require 'DataBaseAccessFactory.class.php';
 require 'DataBaseAccess.class.php';
 require 'DataBaseAccessPDO.class.php';
+require 'DataBaseAccessMYSQLI.class.php';
 require 'DataBaseAccessFAKE.class.php';
 
 ?>

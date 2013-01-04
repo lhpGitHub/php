@@ -32,10 +32,10 @@ CREATE TABLE IF NOT EXISTS `personempty` (
 
 require 'DataBaseAccessTest.php';
 
-class DataBaseAccessPDOTest extends DataBaseAccessTest {
+class DataBaseAccessMYSQLITest extends DataBaseAccessTest {
 
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		parent::__construct($name, $data, $dataName);
-		parent::$dba = new DataBaseAccessPDO();
+		parent::$dba = new DataBaseAccessMYSQLI();
 	}
 }

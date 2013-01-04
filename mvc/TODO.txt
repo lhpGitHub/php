@@ -1,3 +1,5 @@
+-	uzupelnic o oblsuge mysqli i potestowac za pomoca phpunit hierarchie DataBaseAccess
+
 -	doprecyzowac jak dziala PDO tzn jakie jest lastInsertId i rowCount podczas wykonywania roznych zapytan (SELECT, INSERT, UDPATE, DELETE)
 
 	mysqli moze zachowywac sie inaczej, sprawdzic to
@@ -22,24 +24,23 @@
 
 	umiescic ww schemat w dokumentacji i wygenerowac dokumentacje za pomoca phpDoc...
 
--	uzupelnic o oblsuge mysqli i potestowac za pomoca phpunit hierarchie DataBaseAccess
-
 -	dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() 
 	i potestowac Unity of Work przy pomocy testow phpunit
-
--	dodac autoryzacje (jesli to ma sens uzyc wzorca dekorator do dekoracji obiektu Request) 
-
--	dodac obsluge transakcji
-
--	dodac obsluge z konsoli
-
--	dodac inny sposob laczenia z baza danych (goly mysql)
-
--	dodac druga tabele w BD
-
--	dodac join w zapytania do bazy (druga tabela telefony)
 
 -	wprowadzic przestrzenie nazw i zmodyfikowac system autoload
 	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce
 
 -	testy jednostkowe (bootstrap - dodac autoload)
+
+-	dodac obsluge z konsoli
+
+-	dodac druga tabele w BD
+
+-	dodac join w zapytania do bazy (druga tabela telefony)
+
+-	dodac autoryzacje (jesli to ma sens uzyc wzorca dekorator do dekoracji obiektu Request) 
+
+-	dodac obsluge transakcji
+
+
+
