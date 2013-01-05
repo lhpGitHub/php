@@ -1,4 +1,4 @@
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>">
+<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 	<input type="text" name="reg" size="150" value="<?php echo $_REQUEST['reg']; ?>">
 	<input type="submit">
 </form>
@@ -8,10 +8,10 @@ header('Content-Type: text/html; charset=utf-8');
 
 
 $multiLineText = file_get_contents('wierszyk.txt');
-$signleLineText = "A skądże to, jakże to, czemu tak gna? A co to to, co to to, kto to tak pcha? Że pędzi, że wali, że bucha, buch-buch? To para gorąca wprawiła to w ruch, To para, co z kotła rurami do tłoków, A tłoki kołami ruszają z dwóch boków I gnają, i pchają, i pociąg się toczy, Bo para te tłoki wciąż tłoczy i tłoczy, I koła turkocą, i puka, i stuka to: Tak to to, tak to to, tak to to, tak to to!...";
+$signleLineText = 'A co to to, co to to, kto to tak pcha? Ze pedzi, ze wali, ze bucha, buch-buch? To para goraca wprawila to w ruch, To para, co z kotla rurami do tlokow, A tloki kolami ruszaja z dwoch bokow I gnaja, i pchaja, i pociag sie toczy, Bo para te tloki wciaz tloczy i tloczy, I kola turkoca, i puka, i stuka to: Tak to to, tak to to, tak to to, tak to to!...';
 
 echo '----------jednowierszowy ciag znakow----------<br>';
-echo $signleLineText.'<br><br>';
+echo $signleLineText.'<br><br><pre>';
 if(isset($_REQUEST['reg']) && !empty($_REQUEST['reg'])) {
 	echo pregMatch($signleLineText, $_REQUEST['reg']).'<br>';
 	echo pregMatchAll($signleLineText, $_REQUEST['reg']);

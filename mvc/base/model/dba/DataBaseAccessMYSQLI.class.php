@@ -25,22 +25,27 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 			
 			$sqlQuery = preg_replace('/:\w+/', '?', $sqlQuery);
 			$stmt = $this->dbh->prepare($sqlQuery);
+			
 			if(!$stmt)
 				throw new DataBaseException( __METHOD__ . ' ' . "Prepare failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
 
-			if(!$stmt->bind_param(.......))
-				throw new DataBaseException( __METHOD__ . ' ' . "Binding parameters failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
+			if(is_array($values)) {
+				
+				$types = $this->getParamsTypes($values);
+				$bind_params[] = $types;
+				foreach($values as &$value)
+					$bind_params[] = $value;
+				
+				var_dump($bind_params);
+				 
+				if(call_user_func_array(array($stmt,'bind_param'), $bind_params))	
+					throw new DataBaseException( __METHOD__ . ' ' . "Binding parameters failed: (" . $this->dbh->errno . ") " . $this->dbh->error). " types: " . $types;
+			}
 			
 			if(!$stmt->execute())
 				throw new DataBaseException( __METHOD__ . ' ' . "Execute failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
-
 			
-//			if(is_array($values))
-//				$stmt->execute($values);
-//			else
-//				$stmt->execute();
-//			
-//			$this->stmt = $stmt;
+			$this->stmt = $stmt;
 //			
 //			$lastId = $this->dbh->lastInsertId();
 //			if($lastId == 0) $lastId = NULL; 
@@ -58,5 +63,32 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 		} catch(PDOException $err) {
 			throw new DataBaseException( __METHOD__ . ' ' . $err->getMessage());
 		}
+	}
+	
+	private function getParamsTypes(array $params) {
+		$res = '';
+		
+		foreach($params as $val) {
+			switch (gettype($val)) {
+				case 'integer':
+					$res .= 'i';
+					break;
+
+				case 'double':
+				case 'float':
+					$res .= 'd';
+					break;
+				
+				case 'string':
+					$res .= 's';
+					break;
+				
+				default:
+					$res .= '-undefined-';
+					break;
+			}
+		}
+		
+		return $res;
 	}
 }
