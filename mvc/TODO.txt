@@ -1,5 +1,11 @@
 -	uzupelnic o oblsuge mysqli i potestowac za pomoca phpunit hierarchie DataBaseAccess
 
+	mysqli wykorzystuje inna metoda do zwracania ilosci wynikow zapytania SELECT i inna do zapytan INSERT, UPDATE, DELETE
+	czy pdo tez?
+
+	pozatym w zestawieniu nie uwzglednilem ze INSERT, UPDATE i DELETE moze zmodyfikowac wiecej niz jeden wiersz na raz!!!!
+	w zwiazku z powyzszym zestawienie jest niekompletne, klasa FAKE nie kompletna, testy niekompletne
+
 -	doprecyzowac jak dziala PDO tzn jakie jest lastInsertId i rowCount podczas wykonywania roznych zapytan (SELECT, INSERT, UDPATE, DELETE)
 
 	mysqli moze zachowywac sie inaczej, sprawdzic to
