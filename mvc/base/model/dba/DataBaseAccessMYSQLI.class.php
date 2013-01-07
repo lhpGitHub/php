@@ -9,7 +9,8 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 	}
 	
 	function __destruct() {
-		$this->dbh = null;
+		if($this->dbh)
+			$this->dbh->close();
 	}
 	
 	private function connect() {
@@ -22,49 +23,82 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 	protected function doExecute($sqlQuery, $values = null) {
 		try {
 			$this->connect();
+			$this->statementClose();
 			
 			$sqlQuery = preg_replace('/:\w+/', '?', $sqlQuery);
-			$stmt = $this->dbh->prepare($sqlQuery);
+			$this->stmt = $this->dbh->prepare($sqlQuery);
 			
-			if(!$stmt)
+			if(!$this->stmt)
 				throw new DataBaseException( __METHOD__ . ' ' . "Prepare failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
 
-			if(is_array($values)) {
-				
-				$types = $this->getParamsTypes($values);
-				$bind_params[] = $types;
-				foreach($values as &$value)
-					$bind_params[] = $value;
-				
-				var_dump($bind_params);
-				 
-				if(call_user_func_array(array($stmt,'bind_param'), $bind_params))	
-					throw new DataBaseException( __METHOD__ . ' ' . "Binding parameters failed: (" . $this->dbh->errno . ") " . $this->dbh->error). " types: " . $types;
-			}
+			if(!$this->bindParams($values))
+				throw new DataBaseException( __METHOD__ . ' ' . "Binding parameters failed: (" . $this->dbh->errno . ") " . $this->dbh->error . " types: " . $types);
 			
-			if(!$stmt->execute())
+			if(!$this->stmt->execute())
 				throw new DataBaseException( __METHOD__ . ' ' . "Execute failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
 			
-			$this->stmt = $stmt;
-//			
-//			$lastId = $this->dbh->lastInsertId();
-//			if($lastId == 0) $lastId = NULL; 
-//			$this->setLastInsertId($lastId);
-//			$this->setLastRowCount($stmt->rowCount());
-
+			
+			
+			>> tu, znalezc sposob na dynamiczny odczyt wynikow za pomoca metody fetch()
+			$this->stmt->store_result();
+			var_dump($this->stmt->fetch());
+			
+			
+			
+			
+			$lastId = $this->dbh->insert_id;
+			if($lastId == 0) $lastId = NULL; 
+			$this->setLastInsertId($lastId);
+			
+			//$lastRowCount = $this->stmt->num_rows;
+			$lastRowCount = $this->stmt->affected_rows;
+			if($lastRowCount < 0) $lastRowCount = 0;
+			$this->setLastRowCount($lastRowCount);
+			
 		} catch(mysqli_sql_exception $err) {
 			throw new DataBaseException( __METHOD__ . ' ' . $err->getMessage());
 		}
 	}
 	
 	protected function doResult() {		
-		try {
-			//$this->setResult($this->stmt->fetchAll(PDO::FETCH_ASSOC));			
-		} catch(PDOException $err) {
-			throw new DataBaseException( __METHOD__ . ' ' . $err->getMessage());
+		
+		if($result = $this->stmt->get_result()) {
+			$this->setResult($result->fetch_all(MYSQLI_ASSOC));
+			$result->free();
+		}
+		
+		$this->statementClose();
+			
+		if(!$result)
+			throw new DataBaseException( __METHOD__ . " Getting result set failed.");
+	}
+
+	private function bindParams($values) {
+		if(is_array($values)) {
+			$bind_params = array();
+			$types = $this->getParamsTypes($values);
+			$bind_params[] = $types;
+
+			foreach($values as $key => $value) {
+				$bind_params[] = &$values[$key];
+			}
+
+			if(!call_user_func_array(array($this->stmt,'bind_param'), $bind_params))	
+				return false;
+		}
+		
+		return true;
+	}
+
+
+	private function statementClose() {
+		if($this->stmt) {
+			$this->stmt->free_result();
+			$this->stmt->close();
+			$this->stmt = null;
 		}
 	}
-	
+
 	private function getParamsTypes(array $params) {
 		$res = '';
 		

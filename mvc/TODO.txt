@@ -1,35 +1,37 @@
 -	uzupelnic o oblsuge mysqli i potestowac za pomoca phpunit hierarchie DataBaseAccess
 
 	mysqli wykorzystuje inna metoda do zwracania ilosci wynikow zapytania SELECT i inna do zapytan INSERT, UPDATE, DELETE
-	czy pdo tez?
+	pdo uzywa jednej, wspolnej tj $stmt->rowCount()
+
+	odkomentowac wszystkie testy w klasy DataBaseAccessTest
 
 	pozatym w zestawieniu nie uwzglednilem ze INSERT, UPDATE i DELETE moze zmodyfikowac wiecej niz jeden wiersz na raz!!!!
-	w zwiazku z powyzszym zestawienie jest niekompletne, klasa FAKE nie kompletna, testy niekompletne
+	w zwiazku z powyzszym klasa FAKE nie kompletna i nie przechodzi wszystkich testow
 
 	jesli wykorzystywalem metody zwracajaca liczbe wierszy w klasie PersonControler lub w klasach wspolpracujacych
 	to po wprowadzeniu poprawek do heriarchi DataBaseAccess poprawic rowniez je
 
--	doprecyzowac jak dziala PDO tzn jakie jest lastInsertId i rowCount podczas wykonywania roznych zapytan (SELECT, INSERT, UDPATE, DELETE)
+	w DataBaseAccessPDO dodac sprawdzanie dostepnych sterownikow - http://pl1.php.net/manual/en/pdo.getavailabledrivers.php
 
-	mysqli moze zachowywac sie inaczej, sprawdzic to
 
-						result()			getLastRowCount()	getLastInsertId()
+										result()			getLastRowCount()	getLastInsertId()
 		
-	find ok				return array(1),	rowCount = 1,		lastInsertId = NULL
-	find error			return array(0),	rowCount = 0,		lastInsertId = NULL
+	find ok								return array(1),	rowCount = 1,		lastInsertId = NULL
+	find no matches (wrong id)			return array(0),	rowCount = 0,		lastInsertId = NULL
 
-	findAll ok			return array(n),	rowCount = n,		lastInsertId = NULL
-	findAll error		return array(0),	rowCount = 0,		lastInsertId = NULL
+	findAll ok							return array(n),	rowCount = n,		lastInsertId = NULL
+	findAll table empty					return array(0),	rowCount = 0,		lastInsertId = NULL
 
-	insert ok			throw exception,	rowCount = 1,		lastInsertId = n
-	insert error		throw exception,	rowCount = 0,		lastInsertId = NULL
+	insert ok							throw exception,	rowCount = 1,		lastInsertId = n
 
-	update ok			throw exception,	rowCount = 1,		lastInsertId = NULL
-	update no modify	throw exception,	rowCount = 1,		lastInsertId = NULL
-	update error		throw exception,	rowCount = 0,		lastInsertId = NULL
+	update 1 record						throw exception,	rowCount = 1,		lastInsertId = NULL
+	update n record						throw exception,	rowCount = n,		lastInsertId = NULL
+	update no modify					throw exception,	rowCount = 0,		lastInsertId = NULL
+	update no matches (wrong id)		throw exception,	rowCount = 0,		lastInsertId = NULL
 
-	delete ok			throw exception,	rowCount = 1,		lastInsertId = NULL
-	delete error		throw exception,	rowCount = 0,		lastInsertId = NULL
+	delete 1 record						throw exception,	rowCount = 1,		lastInsertId = NULL
+	delete n record						throw exception,	rowCount = n,		lastInsertId = NULL
+	delete no matches (wrong id)		throw exception,	rowCount = 0,		lastInsertId = NULL
 
 	umiescic ww schemat w dokumentacji i wygenerowac dokumentacje za pomoca phpDoc...
 

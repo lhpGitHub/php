@@ -9,7 +9,7 @@ class DataBaseAccessFAKETest extends DataBaseAccessTest {
 		
 		$testData = array(1=>array('fName'=>'pier', 'lName'=>'pierwszy'));
 		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
-		parent::$dba->loadData('person', $testData);
+		parent::$dba->loadData('personTest', $testData);
 		
 		$testDataEmpty = array();
 		parent::$dba->loadData('personEmpty', $testDataEmpty);

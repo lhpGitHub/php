@@ -10,7 +10,7 @@
 -- Table structure for table `person`
 --
 
-CREATE TABLE IF NOT EXISTS `person` (
+CREATE TABLE IF NOT EXISTS `personTest` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fName` text COLLATE macce_bin,
   `lName` text COLLATE macce_bin,

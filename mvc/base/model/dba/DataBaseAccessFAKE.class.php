@@ -112,7 +112,10 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 	private function update($tableName, $val) {
 		$updateId = $val['id'];
 		
-		if($this->findById($tableName, $updateId)) {
+		if(	$this->findById($tableName, $updateId &&
+			isset($this->data[$tableName][$updateId]) &&
+			array_diff($this->data[$tableName][$updateId], $val))) {
+			
 			$this->data[$tableName][$updateId] = $val;
 			$this->setLastRowCount(1);
 		} else {
