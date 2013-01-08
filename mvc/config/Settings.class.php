@@ -22,7 +22,7 @@ class Settings {
 		'pass'	=> ''
 	);
 	
-	static $dataBaseAccessType = DataBaseAccessFactory::PDO;
+	static $dataBaseAccessType = DataBaseAccessFactory::MYSQLI;
 
 	static $view = array(
 		'dir' => 'view',

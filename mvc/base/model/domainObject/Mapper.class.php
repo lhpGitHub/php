@@ -51,8 +51,8 @@ abstract class Mapper {
 	}
 	
 	function delete(DomainObject $dmObj) {
-		DomainObjectWatcher::removeObject($dmObj);
 		DomainObjectWatcher::addClean($dmObj);
+		DomainObjectWatcher::removeObject($dmObj);
 		return $this->doDelete($dmObj);
 	}
 }

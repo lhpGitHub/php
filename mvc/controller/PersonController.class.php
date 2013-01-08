@@ -1,15 +1,16 @@
 <?php
 class PersonController extends BaseController {
 	
-	const RECORD_ADD	= 'success add record';
-	const RECORD_DEL	= 'success delete record';
-	const RECORD_UPD	= 'success update record';
-	const RECORD_READ	= 'success read record';
-	const RECORD_EMPTY	= 'no record found';
+	const RECORD_ADD		= 'success add record';
+	const RECORD_DEL		= 'success delete record';
+	const RECORD_UPD		= 'success update record';
+	const RECORD_NO_MODIFY	= 'no modify record';
+	const RECORD_READ		= 'success read record';
+	const RECORD_EMPTY		= 'no record found';
 
-	const WRONG_ID		= 'wrong id';
-	const WRONG_PARAM	= 'wrong parameters';
-	const DB_ERROR		= 'database error';
+	const WRONG_ID			= 'wrong id';
+	const WRONG_PARAM		= 'wrong parameters';
+	const DB_ERROR			= 'database error';
 	
 	private $view;
 
@@ -128,8 +129,11 @@ class PersonController extends BaseController {
 			
 			$personObject->setFirstName($fName);
 			$personObject->setLastName($lName);
-			$mapper->update($personObject);
-			$this->setFlashBlockOverride('msg', self::RECORD_UPD);
+			if($mapper->update($personObject)) {
+				$this->setFlashBlockOverride('msg', self::RECORD_UPD);
+			} else {
+				$this->setFlashBlockOverride('msg', self::RECORD_NO_MODIFY);
+			}
 			$this->redirect('/person/read');
 			
 		} catch(InvalidIdException $err) {

@@ -9,6 +9,7 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 	}
 	
 	function __destruct() {
+		$this->statementClose();
 		if($this->dbh)
 			$this->dbh->close();
 	}
@@ -25,32 +26,26 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 			$this->connect();
 			$this->statementClose();
 			
+			preg_match_all('/:(\w+)/', $sqlQuery, $matches);
+			$queryFields = $matches[1];
 			$sqlQuery = preg_replace('/:\w+/', '?', $sqlQuery);
 			$this->stmt = $this->dbh->prepare($sqlQuery);
 			
 			if(!$this->stmt)
 				throw new DataBaseException( __METHOD__ . ' ' . "Prepare failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
 
-			if(!$this->bindParams($values))
+			if(!$this->bindParams($values, $queryFields))
 				throw new DataBaseException( __METHOD__ . ' ' . "Binding parameters failed: (" . $this->dbh->errno . ") " . $this->dbh->error . " types: " . $types);
 			
 			if(!$this->stmt->execute())
 				throw new DataBaseException( __METHOD__ . ' ' . "Execute failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
 			
-			
-			
-			>> tu, znalezc sposob na dynamiczny odczyt wynikow za pomoca metody fetch()
 			$this->stmt->store_result();
-			var_dump($this->stmt->fetch());
-			
-			
-			
 			
 			$lastId = $this->dbh->insert_id;
 			if($lastId == 0) $lastId = NULL; 
 			$this->setLastInsertId($lastId);
 			
-			//$lastRowCount = $this->stmt->num_rows;
 			$lastRowCount = $this->stmt->affected_rows;
 			if($lastRowCount < 0) $lastRowCount = 0;
 			$this->setLastRowCount($lastRowCount);
@@ -61,27 +56,59 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 	}
 	
 	protected function doResult() {		
+		$fetchResult = $this->stmt->fetch();
 		
-		if($result = $this->stmt->get_result()) {
-			$this->setResult($result->fetch_all(MYSQLI_ASSOC));
-			$result->free();
+		if($fetchResult === FALSE) {
+			$this->statementClose();
+			throw new DataBaseException( __METHOD__ . " Getting result set failed: (" . $this->dbh->errno . ") " . $this->dbh->error);
+		} else if(is_null($fetchResult)) {
+			$this->setResult(array());
+		} else {
+			$this->setResult($this->fetchResult());
 		}
 		
 		$this->statementClose();
+	}
+	
+	private function fetchResult() {
+		//bind params
+		$columnsName = array();
+		$comNamePref = 'col_';
+		$metadata = $this->stmt->result_metadata();
+		$fields = $metadata->fetch_fields(); 
+		
+		foreach($fields as $field) {
+			${$comNamePref.$field->name} = NULL;
+			$columnsName[$field->name] = &${$comNamePref.$field->name};
+		}
+		
+		$metadata->free();
+		call_user_func_array(array($this->stmt, 'bind_result'), $columnsName);
+
+		//read data
+		$res = array();
+		$this->stmt->data_seek(0);
+
+		while ($this->stmt->fetch()) {
+			$row = array();
+			foreach($columnsName as $colName=>$colVal)
+				$row[$colName] = $colVal;
 			
-		if(!$result)
-			throw new DataBaseException( __METHOD__ . " Getting result set failed.");
+			$res[] = $row;
+		}
+		
+		return $res;
 	}
 
-	private function bindParams($values) {
-		if(is_array($values)) {
+	private function bindParams($values, $queryFields) {
+		if(is_array($values) && is_array($queryFields)) {
+			
 			$bind_params = array();
-			$types = $this->getParamsTypes($values);
-			$bind_params[] = $types;
-
-			foreach($values as $key => $value) {
-				$bind_params[] = &$values[$key];
-			}
+			foreach($queryFields as $field)
+				$bind_params[] = &$values[$field];
+			
+			$types = $this->getParamsTypes($bind_params);
+			array_unshift($bind_params, $types);
 
 			if(!call_user_func_array(array($this->stmt,'bind_param'), $bind_params))	
 				return false;

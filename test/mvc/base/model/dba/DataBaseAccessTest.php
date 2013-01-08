@@ -60,42 +60,51 @@ class DataBaseAccessTest extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testFindAll() {
-		$sql = 'SELECT * FROM personTest';
+		$sql = 'SELECT * FROM personTest ORDER BY id';
 		self::$dba->execute($sql);
 		$this->assertNull(self::$dba->getLastInsertId());
 		$this->assertGreaterThanOrEqual(3, self::$dba->getLastRowCount());
 		$this->assertGreaterThanOrEqual(3, self::$dba->result());
 	}
-//	
-//	public function testFindAllNoResult() {
-//		$sql = 'SELECT * FROM personEmpty';
-//		self::$dba->execute($sql);
-//		$this->assertNull(self::$dba->getLastInsertId());
-//		$this->assertEquals(0, self::$dba->getLastRowCount());
-//		$this->assertCount(0, self::$dba->result());
-//	}
-//	
-//	public function testFind() {
-//		$sql = 'SELECT * FROM personTest WHERE id = :id';
-//		$val = array('id' => self::$firstRecordId);
-//		self::$dba->execute($sql, $val);
-//		$this->assertNull(self::$dba->getLastInsertId());
-//		$this->assertEquals(1, self::$dba->getLastRowCount());
-//		$this->assertCount(1, self::$dba->result());
-//	}
-//	
-//	public function testFindWrongId() {
-//		$sql = 'SELECT * FROM personTest WHERE id = :id';
-//		$val = array('id' => 9999);
-//		self::$dba->execute($sql, $val);
-//		$this->assertNull(self::$dba->getLastInsertId());
-//		$this->assertEquals(0, self::$dba->getLastRowCount());
-//		$this->assertCount(0, self::$dba->result());
-//	}
-//	
+	
+	public function testFindAllNoResult() {
+		$sql = 'SELECT * FROM personEmpty';
+		self::$dba->execute($sql);
+		$this->assertNull(self::$dba->getLastInsertId());
+		$this->assertEquals(0, self::$dba->getLastRowCount());
+		$this->assertCount(0, self::$dba->result());
+	}
+	
+	public function testFindById() {
+		$sql = 'SELECT * FROM personTest WHERE id = :id';
+		$val = array('id' => self::$firstRecordId);
+		self::$dba->execute($sql, $val);
+		$this->assertNull(self::$dba->getLastInsertId());
+		$this->assertEquals(1, self::$dba->getLastRowCount());
+		$this->assertCount(1, self::$dba->result());
+	}
+	
+	public function testFindByName() {
+		$sql = 'SELECT * FROM personTest WHERE lName = :lName';
+		$val = array('lName'=>'test');
+		self::$dba->execute($sql, $val);
+		$this->assertNull(self::$dba->getLastInsertId());
+		$this->assertEquals(3, self::$dba->getLastRowCount());
+		$this->assertCount(3, self::$dba->result());
+	}
+	
+	public function testFindWrongId() {
+		$sql = 'SELECT * FROM personTest WHERE id = :id';
+		$val = array('id' => 9999);
+		self::$dba->execute($sql, $val);
+		$this->assertNull(self::$dba->getLastInsertId());
+		$this->assertEquals(0, self::$dba->getLastRowCount());
+		$this->assertCount(0, self::$dba->result());
+	}
+	
 	public function testUpdate() {
 		$sql = "UPDATE personTest SET fName=:fName, lName=:lName WHERE id=:id";
-		$val = array('fName' => rand(), 'lName' => rand(), 'id' => self::$firstRecordId);
+		$val = array('id' => self::$firstRecordId, 'fName' => rand(), 'lName' => rand());
 		self::$dba->execute($sql, $val);
 		$this->assertNull(self::$dba->getLastInsertId());
 		$this->assertEquals(1, self::$dba->getLastRowCount());
@@ -105,7 +114,7 @@ class DataBaseAccessTest extends PHPUnit_Framework_TestCase {
 	
 	public function testUpdateWrongId() {
 		$sql = "UPDATE personTest SET fName=:fName, lName=:lName WHERE id=:id";
-		$val = array('fName' => rand(), 'lName' => rand(), 'id' => 9999);
+		$val = array('id' => 9999, 'fName' => rand(), 'lName' => rand());
 		self::$dba->execute($sql, $val);
 		$this->assertNull(self::$dba->getLastInsertId());
 		$this->assertEquals(0, self::$dba->getLastRowCount());
@@ -115,7 +124,7 @@ class DataBaseAccessTest extends PHPUnit_Framework_TestCase {
 	
 	public function testUpdateNoModify() {
 		$sql = "UPDATE personTest SET fName=:fName, lName=:lName WHERE id=:id";
-		$val = array('fName'=>'second', 'lName'=>'test', 'id' => self::$secondRecordId);
+		$val = array('id' => self::$secondRecordId, 'fName'=>'second', 'lName'=>'test');
 		self::$dba->execute($sql, $val);
 		$this->assertNull(self::$dba->getLastInsertId());
 		$this->assertEquals(0, self::$dba->getLastRowCount());

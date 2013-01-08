@@ -1,15 +1,9 @@
--	uzupelnic o oblsuge mysqli i potestowac za pomoca phpunit hierarchie DataBaseAccess
+-	potestowac za pomoca phpunit hierarchie DataBaseAccess
 
-	mysqli wykorzystuje inna metoda do zwracania ilosci wynikow zapytania SELECT i inna do zapytan INSERT, UPDATE, DELETE
-	pdo uzywa jednej, wspolnej tj $stmt->rowCount()
+	w klasie FAKE nie uwzglednilem ze INSERT, UPDATE i DELETE moze zmodyfikowac wiecej niz jeden wiersz na raz
+	w zwiazku z powyzszym klasa FAKE jest nie kompletna i nie przechodzi wszystkich testow
 
-	odkomentowac wszystkie testy w klasy DataBaseAccessTest
-
-	pozatym w zestawieniu nie uwzglednilem ze INSERT, UPDATE i DELETE moze zmodyfikowac wiecej niz jeden wiersz na raz!!!!
-	w zwiazku z powyzszym klasa FAKE nie kompletna i nie przechodzi wszystkich testow
-
-	jesli wykorzystywalem metody zwracajaca liczbe wierszy w klasie PersonControler lub w klasach wspolpracujacych
-	to po wprowadzeniu poprawek do heriarchi DataBaseAccess poprawic rowniez je
+	co z zapytaniami sql innymi niz SELECT, INSERT, UPDATE, DELETE
 
 	w DataBaseAccessPDO dodac sprawdzanie dostepnych sterownikow - http://pl1.php.net/manual/en/pdo.getavailabledrivers.php
 
@@ -35,13 +29,12 @@
 
 	umiescic ww schemat w dokumentacji i wygenerowac dokumentacje za pomoca phpDoc...
 
--	dokonczyc kod metody wykonujacej operacje na zrodle danych DomainObjectWatcher::propertyOperations() 
-	i potestowac Unity of Work przy pomocy testow phpunit
-
 -	wprowadzic przestrzenie nazw i zmodyfikowac system autoload
 	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce
 
 -	testy jednostkowe (bootstrap - dodac autoload)
+
+-	potestowac Unity of Work przy pomocy testow phpunit
 
 -	dodac obsluge z konsoli
 

@@ -15,7 +15,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 		list($queryType, $tableName) = $this->parseSqlQuery($sqlQuery);
 		
 		if(!is_null($queryType) && !is_null($tableName))
-			return $this->$queryType($tableName, $values);
+			return $this->$queryType($tableName, $values, $sqlQuery);
 
 		throw new DataBaseException( 'SQL QUERY parse error' );
 	}
@@ -80,7 +80,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 			return false;
 	}
 
-	private function select($tableName, $val) {
+	private function select($tableName, $val, $sqlQuery) {
 		$searchId = (is_array($val) && isset($val['id'])) ? $val['id'] : NULL;
 		
 		if(is_null($searchId)) {
@@ -100,7 +100,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 		$this->setLastInsertId(NULL);
 	}
 	
-	private function insert($tableName, $val) {
+	private function insert($tableName, $val, $sqlQuery) {
 		$this->lastInsertId[$tableName]++;
 		$id = $this->lastInsertId[$tableName];
 		$this->data[$tableName][$id] = $val;
@@ -109,7 +109,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 		$this->setResult(NULL);
 	}
 	
-	private function update($tableName, $val) {
+	private function update($tableName, $val, $sqlQuery) {
 		$updateId = $val['id'];
 		
 		if(	$this->findById($tableName, $updateId &&
@@ -126,7 +126,7 @@ class DataBaseAccessFAKE extends DataBaseAccess {
 		$this->setResult(NULL);
 	}
 	
-	private function delete($tableName, $val) {
+	private function delete($tableName, $val, $sqlQuery) {
 		$deleteId = $val['id'];
 		
 		if($this->findById($tableName, $deleteId)) {
