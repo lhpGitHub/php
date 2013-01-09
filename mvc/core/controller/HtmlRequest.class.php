@@ -20,8 +20,8 @@ class HtmlRequest extends BaseRequest {
 		$controlerName = array_shift($ele);
 		$actionName = array_shift($ele);
 		$this->params = $ele;
-		$this->controlerName = (empty($controlerName)) ? 'person' : $controlerName;
-		$this->actionName = (empty($actionName)) ? 'read' : $actionName;
+		$this->controlerName = (empty($controlerName)) ? Settings::$defaultController : $controlerName;
+		$this->actionName = (empty($actionName)) ? Settings::$defaultAction : $actionName;
 	}
 	
 	function error() {

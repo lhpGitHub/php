@@ -37,7 +37,7 @@ class PersonController extends BaseController {
 			$this->view->content = $this->view->getViewAsVar('personForm');
 			
 		} catch(DataBaseException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
 		}
 	
 		$this->view->render();
@@ -79,7 +79,7 @@ class PersonController extends BaseController {
 			$this->setFlashBlockOverride('msg', self::RECORD_EMPTY);
 			
 		} catch(DataBaseException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
 		}
 		
 		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
@@ -156,7 +156,7 @@ class PersonController extends BaseController {
 			$this->view->content = $this->view->getViewAsVar('personForm');
 			
 		} catch(DataBaseException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
 			
 		}
 		
@@ -179,7 +179,7 @@ class PersonController extends BaseController {
 			$this->setFlashBlockOverride('msg', self::WRONG_ID);
 			
 		} catch(DataBaseException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR . (DEBUG ? ' '.$err->getMessage() : ''));
+			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
 			
 		}
 		

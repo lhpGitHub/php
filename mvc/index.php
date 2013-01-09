@@ -1,9 +1,9 @@
 <?php
 error_reporting(E_ALL); 
-define('DEBUG', TRUE);
 setIncludePath('core', 'core/registry', 'core/controller', 'core/view', 'core/exception', 'core/model/dba', 'core/model/orm', 'app/config', 'app/controllers', 'app/views', 'app/models');
 spl_autoload_register('autoloader');
 
+Settings::$debug = TRUE;
 Settings::$mode = Settings::DEVE;
 
 $fc = FrontController::getInstance();

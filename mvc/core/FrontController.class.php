@@ -53,5 +53,5 @@ class FrontController {
 		} catch(ReflectionException $err) {
 			$this->request->error();
 		}		
-	}	
+	} 
 }
