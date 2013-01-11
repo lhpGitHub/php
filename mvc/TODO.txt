@@ -31,7 +31,8 @@
 
 -	wprowadzic przestrzenie nazw i zmodyfikowac system autoload
 	w tej chwili autoload jest w pilki index.php, nie jest to poprawne miejsce
-	zobaczyc jak wyglada plik index.php w innych frameworkach (CodeIgniter, PHP MVC Gajdy)
+	dodac klase Autoloader
+	usunac sufix .class z nazw plikow 
 
 	funkcje autoloader() i setIncludePath() zastapic ladowaniem z uzyciem przestrzeni nazw i zabrac je z index.php
 	pytanie tylko gdzie bedzie najodpowiedniejsze miejsce dla nich
