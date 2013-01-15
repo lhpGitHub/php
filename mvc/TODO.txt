@@ -1,0 +1,51 @@
+-	potestowac za pomoca phpunit hierarchie DataBaseAccess
+
+	w klasie FAKE nie uwzglednilem ze INSERT, UPDATE i DELETE moze zmodyfikowac wiecej niz jeden wiersz na raz
+	w zwiazku z powyzszym klasa FAKE jest nie kompletna i nie przechodzi wszystkich testow
+
+	co z zapytaniami sql innymi niz SELECT, INSERT, UPDATE, DELETE
+
+	w DataBaseAccessPDO dodac sprawdzanie dostepnych sterownikow - http://pl1.php.net/manual/en/pdo.getavailabledrivers.php
+
+
+										result()			getLastRowCount()	getLastInsertId()
+		
+	find ok								return array(1),	rowCount = 1,		lastInsertId = NULL
+	find no matches (wrong id)			return array(0),	rowCount = 0,		lastInsertId = NULL
+
+	findAll ok							return array(n),	rowCount = n,		lastInsertId = NULL
+	findAll table empty					return array(0),	rowCount = 0,		lastInsertId = NULL
+
+	insert ok							throw exception,	rowCount = 1,		lastInsertId = n
+
+	update 1 record						throw exception,	rowCount = 1,		lastInsertId = NULL
+	update n record						throw exception,	rowCount = n,		lastInsertId = NULL
+	update no modify					throw exception,	rowCount = 0,		lastInsertId = NULL
+	update no matches (wrong id)		throw exception,	rowCount = 0,		lastInsertId = NULL
+
+	delete 1 record						throw exception,	rowCount = 1,		lastInsertId = NULL
+	delete n record						throw exception,	rowCount = n,		lastInsertId = NULL
+	delete no matches (wrong id)		throw exception,	rowCount = 0,		lastInsertId = NULL
+
+	umiescic ww schemat w dokumentacji i wygenerowac dokumentacje za pomoca phpDoc...
+
+-	testy jednostkowe (bootstrap - dodac autoload)
+
+-	potestowac Unity of Work przy pomocy testow phpunit
+
+-	dodac obsluge z konsoli
+
+-	dodac obsluga json
+
+-	dodac druga tabele w BD
+
+-	dodac join w zapytania do bazy (druga tabela telefony)
+
+-	dodac autoryzacje (jesli to ma sens uzyc wzorca dekorator do dekoracji obiektu Request) 
+
+-	dodac obsluge transakcji
+
+-	ostylowac html uzywajac bootstrap
+
+
+
