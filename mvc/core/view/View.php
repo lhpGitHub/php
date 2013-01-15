@@ -28,7 +28,7 @@ class View {
 			extract($this->viewsData[$viewName]);
 		
 		ob_start();
-		include(Settings::$mainPath . 'app/' . Settings::$view['dir'] . '/' . $viewName . Settings::$view['ext']);
+		include(Settings::$mainPath . Settings::$view['dir'] . $viewName . Settings::$view['ext']);
 		return ob_get_clean();
 	}
 	
@@ -43,6 +43,6 @@ class View {
 		if(is_array($this->templateData))
 			extract($this->templateData);
 		
-		include(Settings::$mainPath . 'app/' . Settings::$view['dir'] . '/' . Settings::$view['layout'] . Settings::$view['ext']);
+		include(Settings::$mainPath . Settings::$view['dir'] . Settings::$view['layout'] . Settings::$view['ext']);
 	}
 }

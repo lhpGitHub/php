@@ -37,7 +37,7 @@ class Settings {
 	static $dataBaseExt = DataBaseAccessFactory::MYSQLI;
 
 	static $view = array(
-		'dir' => 'views',
+		'dir' => 'app/views/',
 		'ext' => '.html',
 		'layout' => 'layout'
 	);

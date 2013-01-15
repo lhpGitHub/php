@@ -11,8 +11,8 @@ class HtmlRequest extends BaseRequest {
 		if(count($_GET) > 0) {
 			$ele = array_values($_GET);
 		} else {
-			$absolutePath = $this->getRelativePath();
-			$uriRequest = substr($_SERVER['REQUEST_URI'], strlen($absolutePath));
+			$relativePath = $this->getRelativePath();
+			$uriRequest = substr($_SERVER['REQUEST_URI'], strlen($relativePath));
 			$ele = explode('/', strtolower(trim($uriRequest, "/")));
 		}
 		

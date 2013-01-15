@@ -1,3 +1,9 @@
+-	dodac obsluge z konsoli
+
+-	dodac obsluga json
+
+-	dodac autoryzacje (jesli to ma sens uzyc wzorca dekorator do dekoracji obiektu Request) 
+
 -	potestowac za pomoca phpunit hierarchie DataBaseAccess
 
 	w klasie FAKE nie uwzglednilem ze INSERT, UPDATE i DELETE moze zmodyfikowac wiecej niz jeden wiersz na raz
@@ -33,19 +39,10 @@
 
 -	potestowac Unity of Work przy pomocy testow phpunit
 
--	dodac obsluge z konsoli
-
--	dodac obsluga json
-
 -	dodac druga tabele w BD
 
 -	dodac join w zapytania do bazy (druga tabela telefony)
 
--	dodac autoryzacje (jesli to ma sens uzyc wzorca dekorator do dekoracji obiektu Request) 
-
 -	dodac obsluge transakcji
 
 -	ostylowac html uzywajac bootstrap
-
-
-
