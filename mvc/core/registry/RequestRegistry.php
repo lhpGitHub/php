@@ -4,6 +4,7 @@ class RequestRegistry {
 	
 	static $instance;
 	private static $request;
+	private static $auth;
 
 	private function __construct() {}
 	
@@ -21,5 +22,13 @@ class RequestRegistry {
 	
 	static function getRequest() {
 		return self::$request;
+	}
+	
+	static function setAuth(\core\auth\Auth $auth) {
+		self::$auth = $auth;
+	}
+	
+	static function getAuth() {
+		return self::$auth;
 	}
 }

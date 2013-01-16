@@ -2,7 +2,9 @@
 
 class SessionRegistry {
 	
-	static $instance;
+	private static $instance;
+	
+	private $isIni = false;
 
 	private function __construct() {}
 	
@@ -14,29 +16,48 @@ class SessionRegistry {
 		return self::$instance;
 	}
 	
-	static function setFlashVars($key, $var, $overwrite) {
-		if(!isset($_SESSION['flashVars']))
-			$_SESSION['flashVars'] = array();
+	public function ini() {
+		if(!$this->isIni) {
+			session_start();
+			$this->isIni = TRUE;
+		}
+	}
+
+	public function setFlashVars($key, $var, $overwrite) {
+		if(!isset($_SESSION['__flashVars']))
+			$_SESSION['__flashVars'] = array();
 		
 		if($overwrite) {
-			$_SESSION['flashVars'][$key] = $var;
+			$_SESSION['__flashVars'][$key] = $var;
 		} else {
-			if(!isset($_SESSION['flashVars'][$key]))
-				$_SESSION['flashVars'][$key] = $var;
+			if(!isset($_SESSION['__flashVars'][$key]))
+				$_SESSION['__flashVars'][$key] = $var;
 		}
 	}
 	
-	static function getFlashVars($key) {
-		if(isset($_SESSION['flashVars'][$key])) {
-			$var = $_SESSION['flashVars'][$key];
-			unset($_SESSION['flashVars'][$key]);
+	public function getFlashVars($key) {
+		if(isset($_SESSION['__flashVars'][$key])) {
+			$var = $_SESSION['__flashVars'][$key];
+			unset($_SESSION['__flashVars'][$key]);
 			return $var;
 		}
 		
 		return NULL;
 	}
 	
-	static function clearFlashVars() {
-		unset($_SESSION['flashVars']);
+	public function clearFlashVars() {
+		unset($_SESSION['__flashVars']);
+	}
+	
+	public function getUser() {
+		if(isset($_SESSION['__user'])) {
+			return $_SESSION['__user'];
+		}
+		
+		return NULL;
+	}
+	
+	public function setUser($user) {
+		$_SESSION['__user'] = $user;
 	}
 }

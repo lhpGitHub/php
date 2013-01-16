@@ -16,6 +16,8 @@ class Settings {
 	static $defaultAction = '';
 	static $mainPath = '';
 	static $assetsPath = '';
+	static $authEnable = TRUE;
+	static $authUserClass = 'app\models\UserObject';
 	
 	
 	private static $db_deve = array(

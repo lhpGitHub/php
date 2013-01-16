@@ -6,8 +6,9 @@ class FrontController {
 	const JSON		= 'json';
 	const CONSOLE	= 'console';
 	
-	static private $instance;
+	private static $instance;
 	
+	private $isIni = FALSE;
 	private $actionPrefix;
 	private $request;
 	
@@ -18,14 +19,23 @@ class FrontController {
 		return self::$instance;
 	}
 	
-	private function __construct() {}
+	private function __construct() {
+		
+	}
 	
+	function __destruct() {
+		\core\registry\SessionRegistry::getInstance()->clearFlashVars();
+	}
+
 	function go() {
-		session_start();
-		$this->specifySource();
-		\core\registry\RequestRegistry::setRequest($this->request);
-		$this->forward($this->request->getControlerName(), $this->request->getActionName());
-		\core\registry\SessionRegistry::clearFlashVars();
+		if(!$this->isIni) {
+			$this->isIni = true;
+			\core\registry\SessionRegistry::getInstance()->ini();
+			$this->specifyRequestClient();
+			$this->runAuthorization();
+			\core\registry\RequestRegistry::setRequest($this->request);
+			$this->forward($this->request->getControlerName(), $this->request->getActionName());
+		}
 	}
 	
 	function forward($controllerName, $actionName) {
@@ -42,8 +52,16 @@ class FrontController {
 		}		
 	}
 	
-	private function specifySource() {
-		switch ($this->detectRequestSource()) {
+	private function runAuthorization() {
+		if(\app\config\Settings::$authEnable) {
+			$auth = new \core\auth\Auth(\app\config\Settings::$authUserClass);
+			\core\registry\RequestRegistry::setAuth($auth);
+		}
+			
+	}
+
+	private function specifyRequestClient() {
+		switch ($this->detectRequestClient()) {
 			case self::JSON:
 				$this->actionPrefix = 'jsonAction';
 				$this->request = NULL;
@@ -55,8 +73,7 @@ class FrontController {
 		}
 	}
 
-
-	private function detectRequestSource() {
+	private function detectRequestClient() {
 		return self::HTML;
 	}
 }

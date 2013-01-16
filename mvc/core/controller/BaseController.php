@@ -20,14 +20,14 @@ class BaseController {
 	}
 	
 	protected function setFlash($key, $var) {
-		\core\registry\SessionRegistry::setFlashVars($key, $var, true);
+		\core\registry\SessionRegistry::getInstance()->setFlashVars($key, $var, true);
 	}
 	
 	protected function setFlashBlockOverride($key, $var) {
-		\core\registry\SessionRegistry::setFlashVars($key, $var, false);
+		\core\registry\SessionRegistry::getInstance()->setFlashVars($key, $var, false);
 	}
 	
 	protected function getFlash($key) {
-		return \core\registry\SessionRegistry::getFlashVars($key);
+		return \core\registry\SessionRegistry::getInstance()->getFlashVars($key);
 	}	
 }

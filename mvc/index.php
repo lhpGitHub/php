@@ -8,6 +8,7 @@ define('DB_EXT', 'pdo'); //[pdo, mysqli]
 define('DEBUG', TRUE);
 define('DEFAULT_CONTROLLER', 'Person');
 define('DEFAULT_ACTION', 'read');
+define('AUTH_ENABLE', TRUE);
 /*----------------------*/
 
 error_reporting(E_ALL);
@@ -21,5 +22,8 @@ Settings::$env = APP_ENV;
 Settings::$dataBaseExt = DB_EXT;
 Settings::$defaultController = DEFAULT_CONTROLLER;
 Settings::$defaultAction = DEFAULT_ACTION;
+Settings::$authEnable = AUTH_ENABLE;
 $fc = \core\FrontController::getInstance();
 $fc->go();
+
+var_dump(\core\registry\RequestRegistry::getAuth());
