@@ -4,7 +4,7 @@ class RequestRegistry {
 	
 	static $instance;
 	private static $request;
-	private static $auth;
+	private static $appController;
 
 	private function __construct() {}
 	
@@ -24,11 +24,11 @@ class RequestRegistry {
 		return self::$request;
 	}
 	
-	static function setAuth(\core\auth\Auth $auth) {
-		self::$auth = $auth;
+	static function setAppController(\core\controller\IDispatcher $appController) {
+		self::$appController = $appController;
 	}
 	
-	static function getAuth() {
-		return self::$auth;
+	static function getAppController() {
+		return self::$appController;
 	}
 }

@@ -1,19 +1,29 @@
-<?php namespace core\auth;
+<?php namespace core\controller;
 
-class Auth {
+class AuthController implements IDispatcher {
 	
+	private $appController;
 	private $user;
 
-	function __construct($userClass) {
-		if(!$this->recoverUser($userClass)) {
-			$this->createUser($userClass);
-		}
+	function __construct(IDispatcher $appController) {
+		$this->appController = $appController;
 	}
 	
 	function __destruct() {
 		\core\registry\SessionRegistry::getInstance()->setUser('User123');
 	}
-
+	
+	function dispatch($controllerName = null, $actionName = null) {
+		
+		$userClass = \app\config\Settings::$authUserClass;
+		
+		if(!$this->recoverUser($userClass)) {
+			$this->createUser($userClass);
+		}
+		
+		return $this->appController->dispatch($controllerName, $actionName);
+	}
+	
 	private function recoverUser($userClass) {
 		$user = \core\registry\SessionRegistry::getInstance()->getUser();
 		var_dump($user);

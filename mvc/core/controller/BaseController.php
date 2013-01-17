@@ -16,7 +16,7 @@ class BaseController {
 	}
 	
 	protected function forward($controllerName, $actionName) {
-		\core\FrontController::getInstance()->forward($controllerName, $actionName);
+		\core\registry\RequestRegistry::getAppController()->dispatch($controllerName, $actionName);
 	}
 	
 	protected function setFlash($key, $var) {

@@ -18,11 +18,9 @@ class HtmlRequest extends BaseRequest {
 		
 		if(count($_POST) > 0) $ele = array_merge($ele, array_values($_POST));
 		
-		$controlerName = array_shift($ele);
-		$actionName = array_shift($ele);
+		$this->controlerName = array_shift($ele);
+		$this->actionName = array_shift($ele);
 		$this->params = $ele;
-		$this->controlerName = (empty($controlerName)) ? \app\config\Settings::$defaultController : $controlerName;
-		$this->actionName = (empty($actionName)) ? \app\config\Settings::$defaultAction : $actionName;
 	}
 	
 	function error() {

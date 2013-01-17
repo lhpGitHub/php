@@ -123,7 +123,7 @@ class PersonController extends \core\controller\BaseController {
 		list($id, $fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER, ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
 		
 		try {
-			if(ParamsCleaner::isNull($id)) throw new InvalidIdException;
+			if(ParamsCleaner::isNull($id)) throw new \core\exception\InvalidIdException;
 			
 			$mapper = HelperFactory::getMapper('app\models\Person');
 			$personObject = $mapper->find($id);

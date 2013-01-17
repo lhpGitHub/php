@@ -9,8 +9,6 @@ class FrontController {
 	private static $instance;
 	
 	private $isIni = FALSE;
-	private $actionPrefix;
-	private $request;
 	
 	static function getInstance() {
 		if(!self::$instance)
@@ -20,7 +18,7 @@ class FrontController {
 	}
 	
 	private function __construct() {
-		
+		\core\registry\SessionRegistry::getInstance()->ini();
 	}
 	
 	function __destruct() {
@@ -30,50 +28,35 @@ class FrontController {
 	function go() {
 		if(!$this->isIni) {
 			$this->isIni = true;
-			\core\registry\SessionRegistry::getInstance()->ini();
-			$this->specifyRequestClient();
-			$this->runAuthorization();
-			\core\registry\RequestRegistry::setRequest($this->request);
-			$this->forward($this->request->getControlerName(), $this->request->getActionName());
+			$this->createRequestObject();
+			$this->createAppController();
+			\core\registry\RequestRegistry::getAppController()->dispatch();
 		}
 	}
 	
-	function forward($controllerName, $actionName) {
-		$controllerName	= ucfirst($controllerName.'Controller');
-		$actionName	= $this->actionPrefix.ucfirst($actionName);
-
-		try {
-			$class = 'app\controllers\\'.$controllerName;
-			$c = new \ReflectionClass($class);
-			$m = new \ReflectionMethod($class, $actionName);
-			$m->invoke($c->newInstance());
-		} catch(\ReflectionException $err) {
-			$this->request->error();
-		}		
-	}
-	
-	private function runAuthorization() {
-		if(\app\config\Settings::$authEnable) {
-			$auth = new \core\auth\Auth(\app\config\Settings::$authUserClass);
-			\core\registry\RequestRegistry::setAuth($auth);
-		}
-			
-	}
-
-	private function specifyRequestClient() {
+	private function createRequestObject() {
 		switch ($this->detectRequestClient()) {
 			case self::JSON:
-				$this->actionPrefix = 'jsonAction';
-				$this->request = NULL;
+				$this->request = \core\registry\RequestRegistry::setRequest(NULL);
 				break;	
 			
 			default:
-				$this->actionPrefix = 'action';
-				$this->request = new \core\controller\HtmlRequest();
+				$this->request = \core\registry\RequestRegistry::setRequest(new \core\controller\HtmlRequest());
 		}
 	}
-
+	
 	private function detectRequestClient() {
 		return self::HTML;
+	}
+	
+	private function createAppController() {
+		
+		$dispatcher = new \core\controller\AppController();
+		
+		if(\app\config\Settings::$authEnable) {
+			$dispatcher = new \core\controller\AuthController($dispatcher);
+		}
+		
+		\core\registry\RequestRegistry::setAppController($dispatcher);
 	}
 }

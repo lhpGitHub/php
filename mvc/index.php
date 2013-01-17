@@ -25,5 +25,3 @@ Settings::$defaultAction = DEFAULT_ACTION;
 Settings::$authEnable = AUTH_ENABLE;
 $fc = \core\FrontController::getInstance();
 $fc->go();
-
-var_dump(\core\registry\RequestRegistry::getAuth());
