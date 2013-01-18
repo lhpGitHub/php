@@ -11,8 +11,7 @@ class BaseController {
 	}
 	
 	protected function redirect($uri) {
-		header('Location: ' . $this->getRequest()->getAbsolutePath() . $uri);
-		die;
+		$this->getRequest()->redirect($uri);
 	}
 	
 	protected function forward($controllerName, $actionName) {

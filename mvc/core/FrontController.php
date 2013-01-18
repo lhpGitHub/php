@@ -2,9 +2,9 @@
 
 class FrontController {
 	
-	const HTML		= 'html';
+	const HTTP		= 'http';
 	const JSON		= 'json';
-	const CONSOLE	= 'console';
+	const CLI		= 'cli';
 	
 	private static $instance;
 	
@@ -17,27 +17,28 @@ class FrontController {
 		return self::$instance;
 	}
 	
-	private function __construct() {
-		\core\registry\SessionRegistry::getInstance()->ini();
-	}
+	private function __construct() {}
 	
-	function __destruct() {
-		\core\registry\SessionRegistry::getInstance()->clearFlashVars();
-	}
-
 	function go() {
 		if(!$this->isIni) {
 			$this->isIni = true;
 			$this->createRequestObject();
+			\core\registry\SessionRegistry::getInstance()->ini();
 			$this->createAppController();
 			\core\registry\RequestRegistry::getAppController()->dispatch();
+			\core\registry\SessionRegistry::getInstance()->clearFlashVars();
 		}
 	}
 	
 	private function createRequestObject() {
 		switch ($this->detectRequestClient()) {
+			
 			case self::JSON:
 				$this->request = \core\registry\RequestRegistry::setRequest(NULL);
+				break;	
+			
+			case self::CLI:
+				$this->request = \core\registry\RequestRegistry::setRequest(new \core\controller\CliRequest());
 				break;	
 			
 			default:
@@ -46,7 +47,12 @@ class FrontController {
 	}
 	
 	private function detectRequestClient() {
-		return self::HTML;
+		
+		if(PHP_SAPI == 'cli') {
+			return self::CLI;
+		}
+		
+		return self::HTTP;
 	}
 	
 	private function createAppController() {

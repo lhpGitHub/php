@@ -18,16 +18,48 @@ class PersonController extends \core\controller\BaseController {
 	const DB_ERROR			= 'database error';
 	
 	private $view;
+	private $requestType;
 
 	function __construct() {
 		parent::__construct();
-		$this->view = new \core\view\View();
+		
+		$this->requestType = $this->getRequestType();
+		
+		if($this->requestType == 'Http')
+			$this->view = new \core\view\View();
+	}
+	
+	private function getRequestType() {
+		if($this->getRequest() instanceof \core\controller\HtmlRequest) {
+			return 'Http';
+		} else if($this->getRequest() instanceof \core\controller\CliRequest) {
+			return 'Cli';
+		}
 	}
 
 	function actionCreate() {
+		call_user_func(array($this, 'actionCreate'.$this->requestType));
+	}
+	
+	private function actionCreateCli() {
+			
 		try {
 			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
+			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new \core\exception\InvalidParamException;
+			$this->insert($fName, $lName);
+			$this->getRequest()->setResponse(self::RECORD_ADD);
 			
+		} catch(\core\exception\InvalidParamException $err) {
+			$this->getRequest()->setResponse(self::WRONG_PARAM);
+			
+		} catch(\core\exception\DataBaseException $err) {
+			$this->getRequest()->setResponse(self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+		}
+	}
+	
+	function actionCreateHttp() {
+		try {
+			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
 			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new \core\exception\InvalidParamException;
 			$this->insert($fName, $lName);
 			$this->setFlashBlockOverride('msg', self::RECORD_ADD);
@@ -45,11 +77,7 @@ class PersonController extends \core\controller\BaseController {
 			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
 		}
 	
-		$this->view->render();
-	}
-	
-	function jsonActionCreate() {
-		
+		$this->getRequest()->setResponse($this->view->render());
 	}
 	
 	private function insert($fName, $lName) {
@@ -64,7 +92,6 @@ class PersonController extends \core\controller\BaseController {
 	function actionRead() {
 		try {
 			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
-			
 			$personData = $this->find($id);
 			$this->setFlashBlockOverride('msg', self::RECORD_READ);
 			
@@ -88,7 +115,7 @@ class PersonController extends \core\controller\BaseController {
 		}
 		
 		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
-		$this->view->render();
+		$this->getRequest()->setResponse($this->view->render());
 	}
 	
 	private function readViewHelper(&$html, $personObject) {
@@ -121,7 +148,6 @@ class PersonController extends \core\controller\BaseController {
 
 	function actionUpdate() {
 		list($id, $fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER, ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
-		
 		try {
 			if(ParamsCleaner::isNull($id)) throw new \core\exception\InvalidIdException;
 			
@@ -165,7 +191,7 @@ class PersonController extends \core\controller\BaseController {
 			
 		}
 		
-		$this->view->render();
+		$this->getRequest()->setResponse($this->view->render());
 	}
 
 	function jsonActionUpdate() {

@@ -30,4 +30,22 @@ class HtmlRequest extends BaseRequest {
 		exit();
 	}
 	
+	function getAbsolutePath() {
+		$pathinfo = pathinfo($_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']);
+		return 'http://'.$pathinfo['dirname'];
+	}
+	
+	function getRelativePath() {
+		$pathinfo = pathinfo($_SERVER['SCRIPT_NAME']);
+		return $pathinfo['dirname'];
+	}
+	
+	function redirect($uri) {
+		header('Location: ' . $this->getAbsolutePath() . $uri);
+		die;
+	}
+	
+	function setResponse($body) {
+		echo $body;
+	}
 }

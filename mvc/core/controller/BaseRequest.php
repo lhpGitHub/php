@@ -11,17 +11,11 @@ abstract class BaseRequest {
 	}
 	
 	abstract protected function ini();
+	abstract public function getAbsolutePath();
+	abstract public function getRelativePath();
+	abstract public function redirect($uri);
+	abstract public function setResponse($body);
 	abstract function error();
-	
-	function getAbsolutePath() {
-		$pathinfo = pathinfo($_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']);
-		return 'http://'.$pathinfo['dirname'];
-	}
-	
-	function getRelativePath() {
-		$pathinfo = pathinfo($_SERVER['SCRIPT_NAME']);
-		return $pathinfo['dirname'];
-	}
 	
 	function getControlerName() {
 		return $this->controlerName;

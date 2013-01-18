@@ -1,8 +1,17 @@
 -	dodac obsluge z konsoli
 
+	w konsoli jest obslugiwana sesja czy nie jest?
+	otoz jest, jesli przy kazdym wywolaniu przekaze sie sie jako pierwszy parametr SID np index.php [--sid shj934jmn23493248fksd] person read param1 param2
+
+	nie podobaja mi sie powtorzenia kodu w akcjach obslugujacych wywolania z przegladarki i z konsoli w kontrolerze PersonContrlller
+	poszukac/wymyslic inny sposob
+
 -	dodac obsluga json
 
--	dodac autoryzacje (jesli to ma sens uzyc wzorca dekorator do dekoracji obiektu Request) 
+-	dodac autoryzacje
+
+	w mechanizmie autoryzacji uwglednic jednoczesne wywolanie metody wymagajacej autoryzacji z danymi autoryzujacymi
+	(http://jrenard.info/blog/fetching-headers-sent-by-php-from-the-command-line.html)
 
 -	potestowac za pomoca phpunit hierarchie DataBaseAccess
 

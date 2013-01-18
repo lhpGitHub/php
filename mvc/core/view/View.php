@@ -43,6 +43,8 @@ class View {
 		if(is_array($this->templateData))
 			extract($this->templateData);
 		
+		ob_start();
 		include(Settings::$mainPath . Settings::$view['dir'] . Settings::$view['layout'] . Settings::$view['ext']);
+		return ob_get_clean();
 	}
 }
