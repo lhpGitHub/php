@@ -38,7 +38,9 @@ class PersonController extends \core\controller\BaseController {
 	}
 
 	function actionCreate() {
-		call_user_func(array($this, 'actionCreate'.$this->requestType));
+		$crud = new \app\controllers\person\PersonCrudControllerHtml();
+		$crud->create();
+		//call_user_func(array($this, 'actionCreate'.$this->requestType));
 	}
 	
 	private function actionCreateCli() {
@@ -57,37 +59,37 @@ class PersonController extends \core\controller\BaseController {
 		}
 	}
 	
-	function actionCreateHttp() {
-		try {
-			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
-			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new \core\exception\InvalidParamException;
-			$this->insert($fName, $lName);
-			$this->setFlashBlockOverride('msg', self::RECORD_ADD);
-			$this->redirect('/person/read');
-			
-		} catch(\core\exception\InvalidParamException $err) {
-			if(ParamsCleaner::isNotNull($fSend)) $this->setFlashBlockOverride('msg', self::WRONG_PARAM);
-			$this->view->setViewVar('personForm', 'action', $this->getRequest()->getAbsolutePath().'/person/create/');
-			$this->view->setViewVar('personForm', 'fName', $fName);
-			$this->view->setViewVar('personForm', 'lName', $lName);
-			$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/read/\">BACK</a>";
-			$this->view->content = $this->view->getViewAsVar('personForm');
-			
-		} catch(\core\exception\DataBaseException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
-		}
-	
-		$this->getRequest()->setResponse($this->view->render());
-	}
-	
-	private function insert($fName, $lName) {
-		$personObject = new \app\models\PersonObject();
-		$personObject->setFirstName($fName);
-		$personObject->setLastName($lName);
-		
-		$mapper = HelperFactory::getMapper('app\models\Person');
-		$mapper->insert($personObject);
-	}
+//	function actionCreateHttp() {
+//		try {
+//			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
+//			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new \core\exception\InvalidParamException;
+//			$this->insert($fName, $lName);
+//			$this->setFlashBlockOverride('msg', self::RECORD_ADD);
+//			$this->redirect('/person/read');
+//			
+//		} catch(\core\exception\InvalidParamException $err) {
+//			if(ParamsCleaner::isNotNull($fSend)) $this->setFlashBlockOverride('msg', self::WRONG_PARAM);
+//			$this->view->setViewVar('personForm', 'action', $this->getRequest()->getAbsolutePath().'/person/create/');
+//			$this->view->setViewVar('personForm', 'fName', $fName);
+//			$this->view->setViewVar('personForm', 'lName', $lName);
+//			$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/read/\">BACK</a>";
+//			$this->view->content = $this->view->getViewAsVar('personForm');
+//			
+//		} catch(\core\exception\DataBaseException $err) {
+//			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+//		}
+//	
+//		$this->getRequest()->setResponse($this->view->render());
+//	}
+//	
+//	private function insert($fName, $lName) {
+//		$personObject = new \app\models\person\PersonObject();
+//		$personObject->setFirstName($fName);
+//		$personObject->setLastName($lName);
+//		
+//		$mapper = HelperFactory::getMapper('app\models\person\Person');
+//		$mapper->insert($personObject);
+//	}
 
 	function actionRead() {
 		try {
@@ -97,7 +99,7 @@ class PersonController extends \core\controller\BaseController {
 			
 			$htmlCode = '';
 			
-			if($personData instanceof \app\models\PersonCollection) {
+			if($personData instanceof \app\models\person\PersonCollection) {
 				foreach($personData as $personObj)
 					$this->readViewHelper($htmlCode, $personObj);
 			} else {
@@ -133,7 +135,7 @@ class PersonController extends \core\controller\BaseController {
 	
 	private function find($id) {
 		$personData = false;
-		$mapper = HelperFactory::getMapper('app\models\Person');
+		$mapper = HelperFactory::getMapper('app\models\person\Person');
 		
 		if(ParamsCleaner::isNotNull($id)) {
 			$personData = $mapper->find($id);
@@ -151,7 +153,7 @@ class PersonController extends \core\controller\BaseController {
 		try {
 			if(ParamsCleaner::isNull($id)) throw new \core\exception\InvalidIdException;
 			
-			$mapper = HelperFactory::getMapper('app\models\Person');
+			$mapper = HelperFactory::getMapper('app\models\person\Person');
 			$personObject = $mapper->find($id);
 			
 			if(!$personObject) throw new \core\exception\InvalidIdException;
@@ -202,8 +204,8 @@ class PersonController extends \core\controller\BaseController {
 		try {
 			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
 			if(ParamsCleaner::isNull($id)) throw new \core\exception\InvalidIdException;
-			$mapper = HelperFactory::getMapper('app\models\Person');
-			if(!$mapper->delete(new \app\models\PersonObject($id))) throw new \core\exception\InvalidIdException;
+			$mapper = HelperFactory::getMapper('app\models\person\Person');
+			if(!$mapper->delete(new \app\models\person\PersonObject($id))) throw new \core\exception\InvalidIdException;
 			$this->setFlashBlockOverride('msg', self::RECORD_DEL);
 			
 		} catch(\core\exception\InvalidIdException $err) {
@@ -232,7 +234,7 @@ class PersonController extends \core\controller\BaseController {
 		
 		Settings::$dataBaseExt = \core\model\dba\DataBaseAccessFactory::FAKE;
 		
-		$mapper = HelperFactory::getMapper('app\models\Person');
+		$mapper = HelperFactory::getMapper('app\models\person\Person');
 		
 		$testData = array(1=>array('fName'=>'pier', 'lName'=>'pierwszy'));
 		$testData[] = array('fName'=>'drug', 'lName'=>'drugi');
@@ -250,7 +252,7 @@ class PersonController extends \core\controller\BaseController {
 //		$personA2->setFirstName('unity2');
 //		$personA2->setLastName('of work2');
 //		
-		$personA3 = new \app\models\PersonObject();
+		$personA3 = new \app\models\person\PersonObject();
 		$personA3->setFirstName('trz');
 		$personA3->setLastName('trzeci');
 		

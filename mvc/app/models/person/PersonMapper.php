@@ -1,4 +1,4 @@
-<?php namespace app\models;
+<?php namespace app\models\person;
 
 class PersonMapper extends \core\model\orm\Mapper {
 	
@@ -11,7 +11,7 @@ class PersonMapper extends \core\model\orm\Mapper {
 		$this->dba->execute($sql);
 		
 		if($this->dba->getLastRowCount() > 0) {
-			return \core\model\orm\HelperFactory::getCollection('app\models\Person', $this->dba->result(), $this);
+			return \core\model\orm\HelperFactory::getCollection('app\models\person\Person', $this->dba->result(), $this);
 		} else {
 			return false;
 		}

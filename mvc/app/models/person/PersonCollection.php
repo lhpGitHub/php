@@ -1,4 +1,4 @@
-<?php namespace app\models;
+<?php namespace app\models\person;
 
 class PersonCollection extends \core\model\orm\Collection {
 	

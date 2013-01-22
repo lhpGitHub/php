@@ -4,7 +4,8 @@
 	otoz jest, jesli przy kazdym wywolaniu przekaze sie sie jako pierwszy parametr SID np index.php [--sid shj934jmn23493248fksd] person read param1 param2
 
 	nie podobaja mi sie powtorzenia kodu w akcjach obslugujacych wywolania z przegladarki i z konsoli w kontrolerze PersonContrlller
-	poszukac/wymyslic inny sposob
+	DOKONCZYC CRUD CONTROLLER
+	i przeniesc wykrywanie typu zadania (Request) do klasy bazowej kontrolera
 
 -	dodac obsluga json
 

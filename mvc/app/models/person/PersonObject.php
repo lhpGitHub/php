@@ -1,4 +1,4 @@
-<?php namespace app\models;
+<?php namespace app\models\person;
 
 class PersonObject extends \core\model\orm\DomainObject {
 	
