@@ -4,6 +4,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="6">
         <file>
+            <url>mvc/controller/PersonController.class.php</url>
+            <bookmark id="1">
+                <name/>
+                <line>134</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>mvc/app/controllers/PersonController.php</url>
             <bookmark id="2">
                 <name/>
@@ -12,20 +20,12 @@
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>122</line>
+                <line>151</line>
                 <key/>
             </bookmark>
             <bookmark id="5">
                 <name/>
-                <line>137</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>mvc/controller/PersonController.class.php</url>
-            <bookmark id="1">
-                <name/>
-                <line>134</line>
+                <line>163</line>
                 <key/>
             </bookmark>
         </file>

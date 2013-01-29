@@ -4,10 +4,12 @@ use core\model\dba\DataBaseAccessFactory as DataBaseAccessFactory;
 
 class Settings {
 	
-	/*constans*/
 	const DEVE = 'develop';
 	const PROD = 'production';
-	/**/
+	
+	const USER_LEVEL_GUEST = 0;
+	const USER_LEVEL_REGIS = 1;
+	const USER_LEVEL_ADMIN = 2;
 	
 	/*settings*/
 	static $env = self::PROD;
@@ -18,7 +20,7 @@ class Settings {
 	static $assetsPath = '';
 	static $authEnable = TRUE;
 	static $authUserClass = 'app\models\UserObject';
-	
+	static $dataBaseExt = DataBaseAccessFactory::MYSQLI;
 	
 	private static $db_deve = array(
 		'type'	=> 'mysql',
@@ -35,8 +37,13 @@ class Settings {
 		'user'	=> 'root',
 		'pass'	=> ''
 	);
+
+	static $defaultRequiredUserLevel = self::USER_LEVEL_ADMIN;
 	
-	static $dataBaseExt = DataBaseAccessFactory::MYSQLI;
+	static $actionsRequiredUserLevel = array(
+		'person-read'	=> self::USER_LEVEL_GUEST,
+		'person-update'	=> self::USER_LEVEL_REGIS
+	);
 
 	static $view = array(
 		'dir' => 'app/views/',

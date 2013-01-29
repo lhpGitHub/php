@@ -26,4 +26,39 @@ abstract class PersonCrudController extends \core\controller\BaseCrudController 
 		$mapper = HelperFactory::getMapper('app\models\person\Person');
 		$mapper->insert($personObject);
 	}
+	
+	protected function readGetParam() {
+		$params = ParamsCleaner::getSanitizeParamWithKey($this->getRequest(), 
+			'id', ParamsCleaner::INTEGER);
+		
+		return $params;
+	}
+	
+	protected function readExecute(array $params) {
+		$personData = false;
+		$mapper = HelperFactory::getMapper('app\models\person\Person');
+		
+		if(ParamsCleaner::isNotNull($params['id'])) {
+			$personData = $mapper->find($params['id']);
+		} else {
+			$personData = $mapper->findAll();
+		}
+		
+		if(!$personData) throw new \core\exception\NoRecordException;
+		
+		$result = '';
+		
+		if($personData instanceof \app\models\person\PersonCollection) {
+			foreach($personData as $personObj)
+				$this->readHelper($result, $personObj);
+		} else {
+			$personObj = $personData;
+			$this->readHelper($result, $personObj);
+		}
+		
+		return $result;
+	}
+	
+	protected abstract function readHelper(&$result, \app\models\person\PersonObject $personObject);
+	
 }

@@ -38,26 +38,36 @@ class PersonController extends \core\controller\BaseController {
 	}
 
 	function actionCreate() {
-		$crud = new \app\controllers\person\PersonCrudControllerHtml();
-		$crud->create();
-		//call_user_func(array($this, 'actionCreate'.$this->requestType));
+		switch ($this->getRequestType()) {
+			case 'Http':
+				$crud = new \app\controllers\person\PersonCrudControllerHtml();
+				return $crud->create();
+				break;
+			
+			case 'Cli':
+				$crud = new \app\controllers\person\PersonCrudControllerCli();
+				return $crud->create();
+				break;
+		}
+		
+		$this->getRequest()->error();
 	}
 	
-	private function actionCreateCli() {
-			
-		try {
-			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
-			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new \core\exception\InvalidParamException;
-			$this->insert($fName, $lName);
-			$this->getRequest()->setResponse(self::RECORD_ADD);
-			
-		} catch(\core\exception\InvalidParamException $err) {
-			$this->getRequest()->setResponse(self::WRONG_PARAM);
-			
-		} catch(\core\exception\DataBaseException $err) {
-			$this->getRequest()->setResponse(self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
-		}
-	}
+//	private function actionCreateCli() {
+//			
+//		try {
+//			list($fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);
+//			if(!ParamsCleaner::isAllNotNull($fName, $lName)) throw new \core\exception\InvalidParamException;
+//			$this->insert($fName, $lName);
+//			$this->getRequest()->setResponse(self::RECORD_ADD);
+//			
+//		} catch(\core\exception\InvalidParamException $err) {
+//			$this->getRequest()->setResponse(self::WRONG_PARAM);
+//			
+//		} catch(\core\exception\DataBaseException $err) {
+//			$this->getRequest()->setResponse(self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+//		}
+//	}
 	
 //	function actionCreateHttp() {
 //		try {
@@ -92,61 +102,77 @@ class PersonController extends \core\controller\BaseController {
 //	}
 
 	function actionRead() {
-		try {
-			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
-			$personData = $this->find($id);
-			$this->setFlashBlockOverride('msg', self::RECORD_READ);
+		
+		switch ($this->getRequestType()) {
+			case 'Http':
+				$crud = new \app\controllers\person\PersonCrudControllerHtml();
+				return $crud->read();
+				break;
 			
-			$htmlCode = '';
-			
-			if($personData instanceof \app\models\person\PersonCollection) {
-				foreach($personData as $personObj)
-					$this->readViewHelper($htmlCode, $personObj);
-			} else {
-				$personObj = $personData;
-				$this->readViewHelper($htmlCode, $personObj);
-			}
-			
-			$this->view->content = $htmlCode;
-			
-		} catch(\core\exception\NoRecordException $err) {
-			$this->setFlashBlockOverride('msg', self::RECORD_EMPTY);
-			
-		} catch(\core\exception\DataBaseException $err) {
-			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+			case 'Cli':
+				$crud = new \app\controllers\person\PersonCrudControllerCli();
+				return $crud->read();
+				break;
 		}
 		
-		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
-		$this->getRequest()->setResponse($this->view->render());
+		$this->getRequest()->error();
+		
+		
+		
+		return;
+		
+//		try {
+//			list($id) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER);
+//			$personData = $this->find($id);
+//			$this->setFlashBlockOverride('msg', self::RECORD_READ);
+//			
+//			$htmlCode = '';
+//			
+//			if($personData instanceof \app\models\person\PersonCollection) {
+//				foreach($personData as $personObj)
+//					$this->readViewHelper($htmlCode, $personObj);
+//			} else {
+//				$personObj = $personData;
+//				$this->readViewHelper($htmlCode, $personObj);
+//			}
+//			
+//			$this->view->content = $htmlCode;
+//			
+//		} catch(\core\exception\NoRecordException $err) {
+//			$this->setFlashBlockOverride('msg', self::RECORD_EMPTY);
+//			
+//		} catch(\core\exception\DataBaseException $err) {
+//			$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+//		}
+		
+//		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
+//		$this->getRequest()->setResponse($this->view->render());
 	}
 	
-	private function readViewHelper(&$html, $personObject) {
-		$this->view->setViewVar('personListItem', 'id', $personObject->getId());
-		$this->view->setViewVar('personListItem', 'fName', $personObject->getFirstName());
-		$this->view->setViewVar('personListItem', 'lName', $personObject->getLastName());
-		$this->view->setViewVar('personListItem', 'aUpdate', $this->getRequest()->getAbsolutePath().'/person/update/'.$personObject->getId().'/');
-		$this->view->setViewVar('personListItem', 'aDelete', $this->getRequest()->getAbsolutePath().'/person/delete/'.$personObject->getId().'/');
-		$html .= $this->view->getViewAsVar('personListItem');
-	}
+//	private function readViewHelper(&$html, $personObject) {
+//		$this->view->setViewVar('personListItem', 'id', $personObject->getId());
+//		$this->view->setViewVar('personListItem', 'fName', $personObject->getFirstName());
+//		$this->view->setViewVar('personListItem', 'lName', $personObject->getLastName());
+//		$this->view->setViewVar('personListItem', 'aUpdate', $this->getRequest()->getAbsolutePath().'/person/update/'.$personObject->getId().'/');
+//		$this->view->setViewVar('personListItem', 'aDelete', $this->getRequest()->getAbsolutePath().'/person/delete/'.$personObject->getId().'/');
+//		$html .= $this->view->getViewAsVar('personListItem');
+//	}
 	
-	function jsonActionRead() {
-		
-	}
 	
-	private function find($id) {
-		$personData = false;
-		$mapper = HelperFactory::getMapper('app\models\person\Person');
-		
-		if(ParamsCleaner::isNotNull($id)) {
-			$personData = $mapper->find($id);
-		} else {
-			$personData = $mapper->findAll();
-		}
-		
-		if(!$personData) throw new \core\exception\NoRecordException;
-		
-		return $personData;
-	}
+//	private function find($id) {
+//		$personData = false;
+//		$mapper = HelperFactory::getMapper('app\models\person\Person');
+//		
+//		if(ParamsCleaner::isNotNull($id)) {
+//			$personData = $mapper->find($id);
+//		} else {
+//			$personData = $mapper->findAll();
+//		}
+//		
+//		if(!$personData) throw new \core\exception\NoRecordException;
+//		
+//		return $personData;
+//	}
 
 	function actionUpdate() {
 		list($id, $fName, $lName, $fSend) = ParamsCleaner::getSanitizeParam($this->getRequest(), ParamsCleaner::INTEGER, ParamsCleaner::STRING_TRIM, ParamsCleaner::STRING_TRIM, ParamsCleaner::INTEGER);

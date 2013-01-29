@@ -3,7 +3,7 @@
 /*--------config--------*/
 define('MAIN_PATH', './');
 define('ASSETS_PATH', './');
-define('APP_ENV', 'devlop'); //[develop, production]
+define('APP_ENV', 'develop'); //[develop, production]
 define('DB_EXT', 'pdo'); //[pdo, mysqli]
 define('DEBUG', TRUE);
 define('DEFAULT_CONTROLLER', 'Person');

@@ -16,7 +16,12 @@ abstract class BaseCrudController extends BaseController {
 	protected abstract function createCheckParam(array $params);
 	protected abstract function createExecute(array $params);
 	protected abstract function createParamFailed(array $params);
-	protected abstract function createDbError();
+	protected abstract function createDbError(\core\exception\DataBaseException $err);
+	
+	protected abstract function readGetParam();
+	protected abstract function readExecute(array $params);
+	protected abstract function readNoRecord();
+	protected abstract function readDbError(\core\exception\DataBaseException $err);
 	
 	public function create() {
 		try {
@@ -27,10 +32,19 @@ abstract class BaseCrudController extends BaseController {
 		} catch(\core\exception\InvalidParamException $err) {
 			$this->createParamFailed($params);
 		} catch(\core\exception\DataBaseException $err) {
-			$this->createDbError();
+			$this->createDbError($err);
 		}
 	}
 	
-	
+	public function read() {
+		try {
+			$params = $this->readGetParam();
+			$this->readExecute($params);
+		} catch(\core\exception\NoRecordException $err) {
+			$this->readNoRecord();
+		} catch(\core\exception\DataBaseException $err) {
+			$this->readDbError($err);
+		}
+	}
 	
 }
