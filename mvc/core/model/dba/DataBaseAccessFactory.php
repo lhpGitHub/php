@@ -35,6 +35,7 @@ class DataBaseAccessFactory {
 					break;
 			}
 		}
+		
 		return $ins->globalAccess;
 	}
 	

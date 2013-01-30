@@ -1,14 +1,22 @@
 <?php namespace app\controllers\person;
 
-use core\controller\ParamsCleaner as ParamsCleaner;
 use app\config\Settings as Settings;
 
 class PersonCrudControllerCli extends PersonCrudController {
 	
 	public function __construct() {
-		
+		parent::__construct();
 	}
 	
+	protected function idFailed(\core\exception\InvalidIdException $err) {
+		$this->getRequest()->setResponse(self::WRONG_ID);
+	}
+	
+	protected function dbError(\core\exception\DataBaseException $err) {
+		$this->getRequest()->setResponse(self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+	}
+	
+	/***CREATE***/
 	protected function createExecute(array $params) {
 		parent::createExecute($params);
 		$this->getRequest()->setResponse(self::RECORD_ADD);
@@ -18,10 +26,8 @@ class PersonCrudControllerCli extends PersonCrudController {
 		$this->getRequest()->setResponse(self::WRONG_PARAM);
 	}
 	
-	protected function createDbError(\core\exception\DataBaseException $err) {
-		$this->getRequest()->setResponse(self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
-	}
 	
+	/***READ***/
 	protected function readExecute(array $params) {
 		$result = self::RECORD_READ.PHP_EOL.parent::readExecute($params);
 		$this->getRequest()->setResponse($result);
@@ -38,7 +44,22 @@ class PersonCrudControllerCli extends PersonCrudController {
 		$this->getRequest()->setResponse(self::RECORD_EMPTY);
 	}
 	
-	protected function readDbError(\core\exception\DataBaseException $err) {
-		$this->getRequest()->setResponse(self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+	/***UPDATE***/
+	protected function updateExecute(array $params) {
+		if(parent::updateExecute($params)) {
+			$this->getRequest()->setResponse(self::RECORD_UPD);
+		} else {
+			$this->getRequest()->setResponse(self::RECORD_NO_MODIFY);
+		}
+	}
+	
+	protected function updateParamFailed(array $params) {
+		$this->getRequest()->setResponse(self::WRONG_PARAM);
+	}
+	
+	/***DELETE***/
+	protected function deleteExecute(array $params) {
+		parent::deleteExecute($params);
+		$this->getRequest()->setResponse(self::RECORD_DEL);
 	}
 }

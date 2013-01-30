@@ -1,11 +1,27 @@
 <?php namespace app\controllers\person;
 
 use core\controller\ParamsCleaner as ParamsCleaner;
-use core\model\orm\HelperFactory as HelperFactory;
-
 
 abstract class PersonCrudController extends \core\controller\BaseCrudController {
 	
+	protected $mapper;
+
+	function __construct() {
+		$this->mapper = \core\model\orm\HelperFactory::getMapper('app\models\person\Person');
+	}
+
+	protected function findDO($id = NULL) {
+		$personObject = (is_null($id)) ? $this->mapper->findAll() : $this->mapper->find($id);
+		return $personObject;
+	}
+
+	protected function checkId(array $params) {
+		if(ParamsCleaner::isNull($params['id'])) return FALSE;
+		$personObject = $this->findDO($params['id']);
+		return (($personObject) ? TRUE : FALSE);
+	}
+	
+	/***CREATE***/
 	protected function createGetParam() {
 		$params = ParamsCleaner::getSanitizeParamWithKey($this->getRequest(), 
 			'fName', ParamsCleaner::STRING_TRIM, 
@@ -23,10 +39,10 @@ abstract class PersonCrudController extends \core\controller\BaseCrudController 
 		$personObject = new \app\models\person\PersonObject();
 		$personObject->setFirstName($params['fName']);
 		$personObject->setLastName($params['lName']);
-		$mapper = HelperFactory::getMapper('app\models\person\Person');
-		$mapper->insert($personObject);
+		$this->mapper->insert($personObject);
 	}
 	
+	/***READ***/
 	protected function readGetParam() {
 		$params = ParamsCleaner::getSanitizeParamWithKey($this->getRequest(), 
 			'id', ParamsCleaner::INTEGER);
@@ -36,12 +52,11 @@ abstract class PersonCrudController extends \core\controller\BaseCrudController 
 	
 	protected function readExecute(array $params) {
 		$personData = false;
-		$mapper = HelperFactory::getMapper('app\models\person\Person');
-		
+
 		if(ParamsCleaner::isNotNull($params['id'])) {
-			$personData = $mapper->find($params['id']);
+			$personData = $this->findDO($params['id']);
 		} else {
-			$personData = $mapper->findAll();
+			$personData = $this->findDO();
 		}
 		
 		if(!$personData) throw new \core\exception\NoRecordException;
@@ -61,4 +76,38 @@ abstract class PersonCrudController extends \core\controller\BaseCrudController 
 	
 	protected abstract function readHelper(&$result, \app\models\person\PersonObject $personObject);
 	
+	/***UPDATE***/
+	protected function updateGetParam() {
+		$params = ParamsCleaner::getSanitizeParamWithKey($this->getRequest(), 
+			'id', ParamsCleaner::INTEGER, 
+			'fName', ParamsCleaner::STRING_TRIM, 
+			'lName', ParamsCleaner::STRING_TRIM, 
+			'fSend', ParamsCleaner::INTEGER);
+		
+		return $params;
+	}
+	
+	protected function updateCheckParam(array $params) {
+		return ParamsCleaner::isAllNotNull($params['fName'], $params['lName']);
+	}
+	
+	protected function updateExecute(array $params) {
+		$personObject = $this->findDO($params['id']);
+		$personObject->setFirstName($params['fName']);
+		$personObject->setLastName($params['lName']);
+		return $this->mapper->update($personObject);
+	}
+	
+	/***DELETE***/
+	protected function deleteGetParam() {
+		$params = ParamsCleaner::getSanitizeParamWithKey($this->getRequest(), 
+			'id', ParamsCleaner::INTEGER);
+		
+		return $params;
+	}
+	
+	protected function deleteExecute(array $params) {
+		$personObject = $this->findDO($params['id']);;
+		$this->mapper->delete($personObject);
+	}
 }

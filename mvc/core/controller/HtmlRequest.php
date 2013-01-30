@@ -1,7 +1,7 @@
 <?php namespace core\controller;
 
 class HtmlRequest extends BaseRequest {
-
+	
 	function __construct() {
 		parent::__construct();
 	}
@@ -23,6 +23,10 @@ class HtmlRequest extends BaseRequest {
 		$this->params = $ele;
 	}
 	
+	function gender() {
+		return parent::HTML;
+	}
+
 	function error() {
 		$header = 'HTTP/1.1 404 Not Found';
 		header($header);

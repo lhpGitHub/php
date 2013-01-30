@@ -14,6 +14,10 @@ class CliRequest extends BaseRequest {
 		$this->params = $_SERVER['argv'];
 	}
 	
+	function gender() {
+		return parent::CLI;
+	}
+	
 	private function restoreSession(&$argv) {
 		if(current($argv) == '--sid') {
 			array_shift($argv);

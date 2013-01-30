@@ -3,14 +3,10 @@
 	w konsoli jest obslugiwana sesja czy nie jest?
 	otoz jest, jesli przy kazdym wywolaniu przekaze sie sie jako pierwszy parametr SID np index.php [--sid shj934jmn23493248fksd] person read param1 param2
 
-	nie podobaja mi sie powtorzenia kodu w akcjach obslugujacych wywolania z przegladarki i z konsoli w kontrolerze PersonContrlller
-	DOKONCZYC CRUD CONTROLLER
-	i przeniesc wykrywanie typu zadania (Request) do klasy bazowej kontrolera
-	i usunac powtorzenia kodu w PersonController, PersonCrudControllerHtml, PersonCrudControllerCli
+-	dodac obsluga json
+
 	po dodaniu klasy PersonCrudControllerJson powtorzy sie kod niektorych metod z PersonCrudControllerCli,
 	powtarzajace sie metody przeniesc do nadklasy PersonCrudController jako domyslna implementacja metod abstrakcyjnych BaseCrudController
-
--	dodac obsluga json
 
 -	dodac autoryzacje
 

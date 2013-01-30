@@ -16,23 +16,37 @@ abstract class BaseCrudController extends BaseController {
 	protected abstract function createCheckParam(array $params);
 	protected abstract function createExecute(array $params);
 	protected abstract function createParamFailed(array $params);
-	protected abstract function createDbError(\core\exception\DataBaseException $err);
 	
 	protected abstract function readGetParam();
 	protected abstract function readExecute(array $params);
 	protected abstract function readNoRecord();
-	protected abstract function readDbError(\core\exception\DataBaseException $err);
 	
+	protected abstract function updateGetParam(); 
+	protected abstract function updateCheckParam(array $params);
+	protected abstract function updateExecute(array $params);
+	protected abstract function updateParamFailed(array $params);
+	
+	protected abstract function deleteGetParam();
+	protected abstract function deleteExecute(array $params);
+	
+	protected abstract function checkId(array $params);
+	protected abstract function idFailed(\core\exception\InvalidIdException $err);
+	protected abstract function dbError(\core\exception\DataBaseException $err);
+
 	public function create() {
 		try {
 			$params = $this->createGetParam();
-			$paramsCorrect = $this->createCheckParam($params);
-			if(!$paramsCorrect) throw new \core\exception\InvalidParamException;
-			$this->createExecute($params);			
+			
+			if(!$this->createCheckParam($params)) 
+				throw new \core\exception\InvalidParamException;
+			
+			$this->createExecute($params);	
+			
 		} catch(\core\exception\InvalidParamException $err) {
 			$this->createParamFailed($params);
+			
 		} catch(\core\exception\DataBaseException $err) {
-			$this->createDbError($err);
+			$this->dbError($err);
 		}
 	}
 	
@@ -40,10 +54,52 @@ abstract class BaseCrudController extends BaseController {
 		try {
 			$params = $this->readGetParam();
 			$this->readExecute($params);
+			
 		} catch(\core\exception\NoRecordException $err) {
 			$this->readNoRecord();
+			
 		} catch(\core\exception\DataBaseException $err) {
-			$this->readDbError($err);
+			$this->dbError($err);
+		}
+	}
+	
+	public function update() {
+		try {
+			$params = $this->updateGetParam();
+			
+			if(!$this->checkId($params))
+				throw new \core\exception\InvalidIdException;
+			
+			if(!$this->updateCheckParam($params))
+				throw new \core\exception\InvalidParamException;
+			
+			$this->updateExecute($params);
+			
+		} catch(\core\exception\InvalidIdException $err) {
+			$this->idFailed($err);
+			
+		} catch(\core\exception\InvalidParamException $err) {
+			$this->updateParamFailed($params);
+			
+		} catch(\core\exception\DataBaseException $err) {
+			$this->dbError($err);
+		}
+	}
+	
+	public function delete() {
+		try {
+			$params = $this->deleteGetParam();
+			
+			if(!$this->checkId($params)) 
+				throw new \core\exception\InvalidIdException;
+			
+			$this->deleteExecute($params);
+			
+		} catch(\core\exception\InvalidIdException $err) {
+			$this->idFailed($err);
+			
+		} catch(\core\exception\DataBaseException $err) {
+			$this->dbError($err);
 		}
 	}
 	

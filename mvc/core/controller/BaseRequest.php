@@ -2,6 +2,10 @@
 
 abstract class BaseRequest {
 
+	const HTML = 'html';
+	const CLI = 'cli';
+	const JSON = 'json';
+
 	protected $controlerName, 
 			  $actionName, 
 			  $params;
@@ -10,12 +14,13 @@ abstract class BaseRequest {
 		$this->ini();
 	}
 	
-	abstract protected function ini();
-	abstract public function getAbsolutePath();
-	abstract public function getRelativePath();
-	abstract public function redirect($uri);
-	abstract public function setResponse($body);
-	abstract function error();
+	protected abstract function ini();
+	public abstract function gender();
+	public abstract function getAbsolutePath();
+	public abstract function getRelativePath();
+	public abstract function redirect($uri);
+	public abstract function setResponse($body);
+	public abstract function error();
 	
 	function getControlerName() {
 		return $this->controlerName;
