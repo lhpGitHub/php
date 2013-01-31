@@ -8,12 +8,20 @@
 	po dodaniu klasy PersonCrudControllerJson powtorzy sie kod niektorych metod z PersonCrudControllerCli,
 	powtarzajace sie metody przeniesc do nadklasy PersonCrudController jako domyslna implementacja metod abstrakcyjnych BaseCrudController
 
+-	ulepszyc config
+
+	niepodoba mi sie polozenie klasy Settings, moze w core umiescic bazowa klase Settings z domyslnymi ustawieniami
+
 -	dodac autoryzacje
+
+	uwzglednic mozliwosc stosowania roznych sposobow przechowywania loginow i hasel
 
 	rozwiazniem jest dodanie w Settings ustawien poziomow uzytkownikow oraz zapiasania wymaganych poziomow minimalnych dla akcji
 
 	w mechanizmie autoryzacji uwglednic jednoczesne wywolanie metody wymagajacej autoryzacji z danymi autoryzujacymi
 	(http://jrenard.info/blog/fetching-headers-sent-by-php-from-the-command-line.html)
+
+-	dodac komentarze w kodzie klas i wygenerowac dokumentacje za pomoca phpdoc
 
 -	potestowac za pomoca phpunit hierarchie DataBaseAccess
 
