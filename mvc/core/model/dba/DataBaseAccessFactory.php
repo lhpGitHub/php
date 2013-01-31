@@ -21,7 +21,7 @@ class DataBaseAccessFactory {
 	static function globalAccess() {
 		$ins = self::getInstance();
 		if(is_null($ins->globalAccess)) {
-			switch (\app\config\Settings::$dataBaseExt) {
+			switch (\core\Config::get('dbExt')) {
 				case self::FAKE:
 					$ins->globalAccess = new DataBaseAccessFAKE();
 					break;

@@ -17,7 +17,7 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 	
 	private function connect() {
 		if(is_null($this->dbh)) {
-			extract(\app\config\Settings::dbSett());
+			extract(\core\Config::get('dbAccess'));
 			$this->dbh = new \mysqli($host, $user, $pass, $db);
 		}
 	}
@@ -51,7 +51,7 @@ class DataBaseAccessMYSQLI extends DataBaseAccess {
 			if($lastRowCount < 0) $lastRowCount = 0;
 			$this->setLastRowCount($lastRowCount);
 			
-		} catch(mysqli_sql_exception $err) {
+		} catch(\mysqli_sql_exception $err) {
 			throw new \core\exception\DataBaseException( __METHOD__ . ' ' . $err->getMessage());
 		}
 	}

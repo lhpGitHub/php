@@ -11,7 +11,7 @@ class DataBaseAccessPDO extends DataBaseAccess {
 	
 	private function connect() {
 		if(is_null($this->dbh)) {
-			extract(\app\config\Settings::dbSett());
+			extract(\core\Config::get('dbAccess'));
 			$this->dbh = new \PDO("$type:host=$host;dbname=$db;charset=UTF-8", $user, $pass);
 			$this->dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		}

@@ -25,12 +25,22 @@ class FrontController {
 			$this->createRequestObject();
 			\core\registry\SessionRegistry::getInstance()->ini();
 			$this->createAppController();
-			\core\registry\RequestRegistry::getAppController()->dispatch();
+			$this->dispatch();
 			\core\registry\SessionRegistry::getInstance()->clearFlashVars();
 		}
 	}
 	
-	private function createRequestObject() {
+	private function dispatch() {
+		$request = \core\registry\RequestRegistry::getRequest();
+		$controllerName = $request->getControlerName();
+		$actionName = $request->getActionName();
+		$controllerName = (empty($controllerName)) ? \core\Config::get('defaultController') : $controllerName;
+		$actionName = (empty($actionName)) ? \core\Config::get('defaultAction') : $actionName;
+
+		\core\registry\RequestRegistry::getAppController()->dispatch($controllerName, $actionName);
+	}
+
+		private function createRequestObject() {
 		switch ($this->detectRequestClient()) {
 			
 			case self::JSON:
@@ -59,7 +69,7 @@ class FrontController {
 		
 		$dispatcher = new \core\controller\AppController();
 		
-		if(\app\config\Settings::$authEnable) {
+		if(\core\Config::get('authEnable')) {
 			$dispatcher = new \core\controller\AuthController($dispatcher);
 		}
 		

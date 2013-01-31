@@ -1,27 +1,27 @@
 <?php
 
-/*--------config--------*/
+/***CONFIG***/
 define('MAIN_PATH', './');
-define('ASSETS_PATH', './');
-define('APP_ENV', 'develop'); //[develop, production]
-define('DB_EXT', 'pdo'); //[pdo, mysqli]
-define('DEBUG', TRUE);
-define('DEFAULT_CONTROLLER', 'Person');
-define('DEFAULT_ACTION', 'read');
-define('AUTH_ENABLE', TRUE);
-/*----------------------*/
+
+$settings = array(
+	'debug'		=> TRUE,
+	'defaultController' => 'Person',
+	'defaultAction' => 'read',
+	'authEnable' => TRUE,
+	'authUserClass' => 'app\models\UserObject',
+	'authUserLevelsClass' => 'app\auth\AppUserLevels',
+	'dbExt' => 'mysqli', //[pdo, mysqli]
+	'dbAccess' => array('type' => 'mysql', 'host' => 'localhost', 'db' => 'mvc', 'user' => 'root', 'pass' => ''),
+	'viewDir' => 'app/views/',
+	'viewExt' => '.html',
+	'viewLayout' => 'layout' 
+);
+/***CONFIG END***/
 
 error_reporting(E_ALL);
 require_once MAIN_PATH.'core/Autoloader.php';
 Autoloader::ini(MAIN_PATH);
-use app\config\Settings as Settings;
-Settings::$mainPath = MAIN_PATH;
-Settings::$assetsPath = ASSETS_PATH;
-Settings::$debug = DEBUG;
-Settings::$env = APP_ENV;
-Settings::$dataBaseExt = DB_EXT;
-Settings::$defaultController = DEFAULT_CONTROLLER;
-Settings::$defaultAction = DEFAULT_ACTION;
-Settings::$authEnable = AUTH_ENABLE;
+\core\Config::set('mainPath', MAIN_PATH);
+\core\Config::setSeveral($settings);
 $fc = \core\FrontController::getInstance();
 $fc->go();

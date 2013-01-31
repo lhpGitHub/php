@@ -1,7 +1,5 @@
 <?php namespace app\controllers\person;
 
-use app\config\Settings as Settings;
-
 class PersonCrudControllerCli extends PersonCrudController {
 	
 	public function __construct() {
@@ -13,7 +11,7 @@ class PersonCrudControllerCli extends PersonCrudController {
 	}
 	
 	protected function dbError(\core\exception\DataBaseException $err) {
-		$this->getRequest()->setResponse(self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+		$this->getRequest()->setResponse(self::DB_ERROR . (\core\Config::get('debug') ? ' '.$err->getMessage() : ''));
 	}
 	
 	/***CREATE***/

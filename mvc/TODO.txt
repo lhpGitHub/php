@@ -1,4 +1,4 @@
--	dodac obsluge z konsoli
+-	sesja w konsoli
 
 	w konsoli jest obslugiwana sesja czy nie jest?
 	otoz jest, jesli przy kazdym wywolaniu przekaze sie sie jako pierwszy parametr SID np index.php [--sid shj934jmn23493248fksd] person read param1 param2
@@ -10,13 +10,20 @@
 
 -	ulepszyc config
 
-	niepodoba mi sie polozenie klasy Settings, moze w core umiescic bazowa klase Settings z domyslnymi ustawieniami
+	niepodoba mi sie polozenie tablicy settings, teraz jest w pliku index.php,
+	byc moze tablica (lub jaki inny rodzaj definiowania) powinien byc umieszczony w oddzielnym pliku
 
 -	dodac autoryzacje
 
-	uwzglednic mozliwosc stosowania roznych sposobow przechowywania loginow i hasel
+	teraz autoryzacja ma pierwszenstwo nad sprawdzaniem czy dany kontoler/akcja istnieje
+	objawia sie to wyswielteniem komunikatu o braku praw dostepu zamiast 'not found' 
+	gdy bledny adres wywola uzytkownik z mniejszym poziomem uprawnien niz domyslny,
+	blad naprawia zmniejszenie poziomu uprawnien do minimum ale to nie jest rozwiazanie
 
-	rozwiazniem jest dodanie w Settings ustawien poziomow uzytkownikow oraz zapiasania wymaganych poziomow minimalnych dla akcji
+	przemyslec jak podczas tworzenia obiektu uzytkownika (i rejestracji/logowania) 
+	bedzie z obiektu typu UserLevel pobierany odpowiedni poziom uprawnien
+
+	uwzglednic mozliwosc stosowania roznych sposobow przechowywania loginow i hasel
 
 	w mechanizmie autoryzacji uwglednic jednoczesne wywolanie metody wymagajacej autoryzacji z danymi autoryzujacymi
 	(http://jrenard.info/blog/fetching-headers-sent-by-php-from-the-command-line.html)

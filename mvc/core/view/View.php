@@ -1,7 +1,5 @@
 <?php namespace core\view;
 
-use app\config\Settings as Settings;
-
 class View {
 	
 	private $templateData;
@@ -28,7 +26,7 @@ class View {
 			extract($this->viewsData[$viewName]);
 		
 		ob_start();
-		include(Settings::$mainPath . Settings::$view['dir'] . $viewName . Settings::$view['ext']);
+		include(\core\Config::get('mainPath') . \core\Config::get('viewDir') . $viewName . \core\Config::get('viewExt'));
 		return ob_get_clean();
 	}
 	
@@ -44,7 +42,7 @@ class View {
 			extract($this->templateData);
 		
 		ob_start();
-		include(Settings::$mainPath . Settings::$view['dir'] . Settings::$view['layout'] . Settings::$view['ext']);
+		include(\core\Config::get('mainPath') . \core\Config::get('viewDir') . \core\Config::get('viewLayout') . \core\Config::get('viewExt'));
 		return ob_get_clean();
 	}
 }

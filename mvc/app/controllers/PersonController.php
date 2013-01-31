@@ -49,8 +49,7 @@ class PersonController extends \core\controller\BaseController {
 //		} catch (\core\exception\FileNotExistsException $err) {
 //			echo $err->getMessage();
 //		}
-		
-		\app\config\Settings::$dataBaseExt = \core\model\dba\DataBaseAccessFactory::FAKE;
+		\core\Config::set('dbExt', \core\model\dba\DataBaseAccessFactory::FAKE);
 		
 		$mapper = \core\model\orm\HelperFactory::getMapper('app\models\person\Person');
 		

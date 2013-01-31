@@ -1,7 +1,6 @@
 <?php namespace app\controllers\person;
 
 use core\controller\ParamsCleaner as ParamsCleaner;
-use app\config\Settings as Settings;
 
 class PersonCrudControllerHtml extends PersonCrudController {
 	
@@ -18,7 +17,7 @@ class PersonCrudControllerHtml extends PersonCrudController {
 	}
 	
 	protected function dbError(\core\exception\DataBaseException $err) {
-		$this->setFlashBlockOverride('msg', self::DB_ERROR . (Settings::$debug ? ' '.$err->getMessage() : ''));
+		$this->setFlashBlockOverride('msg', self::DB_ERROR . (\core\Config::get('debug') ? ' '.$err->getMessage() : ''));
 		$this->getRequest()->setResponse($this->view->render());
 	}
 	

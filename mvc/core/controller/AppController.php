@@ -4,14 +4,7 @@ class AppController implements IDispatcher {
 	
 	function __construct() {}
 	
-	function dispatch($controllerName = null, $actionName = null) {
-		
-		$request = \core\registry\RequestRegistry::getRequest();
-		if(is_null($controllerName)) $controllerName = $request->getControlerName();
-		if(is_null($actionName)) $actionName = $request->getActionName();
-		
-		$controllerName = (empty($controllerName)) ? \app\config\Settings::$defaultController : $controllerName;
-		$actionName = (empty($actionName)) ? \app\config\Settings::$defaultAction : $actionName;
+	function dispatch($controllerName, $actionName) {
 		
 		$controllerClass = 'app\controllers\\'.ucfirst($controllerName.'Controller');
 		$actionName = 'action'.ucfirst($actionName);

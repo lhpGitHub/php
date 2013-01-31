@@ -2,6 +2,6 @@
 
 interface IDispatcher {
 
-	public function dispatch($controllerName = null, $actionName = null);
+	public function dispatch($controllerName, $actionName);
 	
 }
