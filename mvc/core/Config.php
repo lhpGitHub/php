@@ -9,7 +9,7 @@ class Config {
 		'defaultAction' => '',
 		'authEnable' => FALSE,
 		'authUserClass' => 'core\auth\User',
-		'authUserLevelsClass' => 'core\auth\DefaultUserLevels',
+		'authAccessLevelsClass' => 'core\auth\DefaultAccessLevels',
 		'dbExt' => \core\model\dba\DataBaseAccessFactory::PDO,
 		'dbAccess' => array('type' => '', 'host' => '', 'db' => '', 'user' => '', 'pass' => ''),
 		'viewDir' => 'app/views/',

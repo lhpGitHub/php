@@ -36,7 +36,7 @@ class FrontController {
 		$actionName = $request->getActionName();
 		$controllerName = (empty($controllerName)) ? \core\Config::get('defaultController') : $controllerName;
 		$actionName = (empty($actionName)) ? \core\Config::get('defaultAction') : $actionName;
-
+		
 		\core\registry\RequestRegistry::getAppController()->dispatch($controllerName, $actionName);
 	}
 
@@ -67,12 +67,12 @@ class FrontController {
 	
 	private function createAppController() {
 		
-		$dispatcher = new \core\controller\AppController();
-		
 		if(\core\Config::get('authEnable')) {
-			$dispatcher = new \core\controller\AuthController($dispatcher);
+			$appController = new \core\controller\AuthController();
+		} else {
+			$appController = new \core\controller\AppController();
 		}
 		
-		\core\registry\RequestRegistry::setAppController($dispatcher);
+		\core\registry\RequestRegistry::setAppController($appController);
 	}
 }

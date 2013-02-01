@@ -1,6 +1,6 @@
 <?php namespace core\auth;
 
-class DefaultUserLevels extends UserLevels {
+class DefaultAccessLevels extends AccessLevels {
 	
 	static $GUEST = 0;
 	static $REGIS = 1;

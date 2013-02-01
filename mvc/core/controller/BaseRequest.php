@@ -20,7 +20,8 @@ abstract class BaseRequest {
 	public abstract function getRelativePath();
 	public abstract function redirect($uri);
 	public abstract function setResponse($body);
-	public abstract function error();
+	public abstract function errorNotFound();
+	public abstract function errorUnauthorized();
 	
 	function getControlerName() {
 		return $this->controlerName;

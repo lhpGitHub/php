@@ -1,6 +1,6 @@
 <?php namespace app\auth;
 
-class AppUserLevels extends \core\auth\UserLevels {
+class AppAccessLevels extends \core\auth\AccessLevels {
 	
 	static $GUEST = 0;
 	static $ADMIN = 1;
@@ -12,8 +12,10 @@ class AppUserLevels extends \core\auth\UserLevels {
 		$actionsRequiredUserLevel = array(
 			'person-create'	=> self::$ADMIN,
 			'person-read'	=> self::$GUEST,
-			'person-update'	=> self::$ADMIN,
-			'person-delete'	=> self::$ADMIN
+			'person-update'	=> self::$GUEST,
+			'person-delete'	=> self::$ADMIN,
+			'error-401' => self::$GUEST,
+			'error-404' => self::$GUEST
 		);
 		
 		parent::__construct($defaultRequiredUserLevel, $actionsRequiredUserLevel);

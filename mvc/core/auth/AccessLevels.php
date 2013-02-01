@@ -1,6 +1,6 @@
 <?php namespace core\auth;
 
-abstract class UserLevels {
+abstract class AccessLevels {
 	
 	private $defaultRequiredUserLevel;
 	private $actionsRequiredUserLevel;

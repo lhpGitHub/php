@@ -9,7 +9,7 @@ $settings = array(
 	'defaultAction' => 'read',
 	'authEnable' => TRUE,
 	'authUserClass' => 'app\models\UserObject',
-	'authUserLevelsClass' => 'app\auth\AppUserLevels',
+	'authAccessLevelsClass' => 'app\auth\AppAccessLevels',
 	'dbExt' => 'mysqli', //[pdo, mysqli]
 	'dbAccess' => array('type' => 'mysql', 'host' => 'localhost', 'db' => 'mvc', 'user' => 'root', 'pass' => ''),
 	'viewDir' => 'app/views/',

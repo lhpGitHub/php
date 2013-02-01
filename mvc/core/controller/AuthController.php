@@ -1,14 +1,12 @@
 <?php namespace core\controller;
 
-class AuthController implements IDispatcher {
+class AuthController extends AppController {
 	
-	private $appController;
 	private $userLevels;
 	private $user;
 
-	function __construct(IDispatcher $appController) {
-		$this->appController = $appController;
-		$this->userLevels = $this->createUserLevels(\core\Config::get('authUserLevelsClass'));
+	function __construct() {
+		$this->userLevels = $this->createUserLevels(\core\Config::get('authAccessLevelsClass'));
 	}
 	
 	function __destruct() {
@@ -17,16 +15,22 @@ class AuthController implements IDispatcher {
 	
 	public function dispatch($controllerName, $actionName) {
 		
-		$userClass = \core\Config::get('authUserClass');
+		if(is_null($this->user)) {
+			$userClass = \core\Config::get('authUserClass');
+			if(!$this->recoverUser($userClass)) {
+				$this->createUser($userClass);
+			}
+		}
 		
-		if(!$this->recoverUser($userClass)) {
-			$this->createUser($userClass);
+		if(!$this->makeAction($controllerName, $actionName)) {
+			$this->invokeError();
+			return;
 		}
 		
 		if($this->checkPermissionLevel($controllerName, $actionName)) {
-			return $this->appController->dispatch($controllerName, $actionName);
+			$this->invokeAction();
 		} else {
-			die('TU obsluga braku uprawnien uzytkownika do wykonania metody');
+			\core\registry\RequestRegistry::getRequest()->errorUnauthorized();
 		}
 	}
 	
@@ -36,7 +40,7 @@ class AuthController implements IDispatcher {
 	
 	private function recoverUser($userClass) {
 		$user = \core\registry\SessionRegistry::getInstance()->getUser();
-		var_dump($user);
+		//var_dump($user);
 		return FALSE;
 	}
 	

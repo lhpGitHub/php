@@ -29,8 +29,14 @@ class CliRequest extends BaseRequest {
 	}
 
 
-	function error() {
+	function errorNotFound() {
 		$msg = 'Not Found';
+		echo $msg;
+		exit();
+	}
+	
+	function errorUnauthorized() {
+		$msg = 'Unauthorized';
 		echo $msg;
 		exit();
 	}

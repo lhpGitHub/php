@@ -27,10 +27,13 @@ class HtmlRequest extends BaseRequest {
 		return parent::HTML;
 	}
 
-	function error() {
-		$header = 'HTTP/1.1 404 Not Found';
-		header($header);
-		echo $header;
+	function errorNotFound() {
+		\core\registry\RequestRegistry::getAppController()->dispatch('error', '404');
+		exit();
+	}
+	
+	function errorUnauthorized() {
+		\core\registry\RequestRegistry::getAppController()->dispatch('error', '401');
 		exit();
 	}
 	

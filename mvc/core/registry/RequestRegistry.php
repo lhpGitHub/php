@@ -24,7 +24,7 @@ class RequestRegistry {
 		return self::$request;
 	}
 	
-	static function setAppController(\core\controller\IDispatcher $appController) {
+	static function setAppController(\core\controller\AppController $appController) {
 		self::$appController = $appController;
 	}
 	
