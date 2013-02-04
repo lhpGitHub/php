@@ -27,26 +27,6 @@ class HtmlRequest extends BaseRequest {
 		return parent::HTML;
 	}
 
-	function errorNotFound() {
-		\core\registry\RequestRegistry::getAppController()->dispatch('error', '404');
-		exit();
-	}
-	
-	function errorUnauthorized() {
-		\core\registry\RequestRegistry::getAppController()->dispatch('error', '401');
-		exit();
-	}
-	
-	function getAbsolutePath() {
-		$pathinfo = pathinfo($_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']);
-		return 'http://'.$pathinfo['dirname'];
-	}
-	
-	function getRelativePath() {
-		$pathinfo = pathinfo($_SERVER['SCRIPT_NAME']);
-		return $pathinfo['dirname'];
-	}
-	
 	function redirect($uri) {
 		header('Location: ' . $this->getAbsolutePath() . $uri);
 		die;
@@ -54,5 +34,15 @@ class HtmlRequest extends BaseRequest {
 	
 	function setResponse($body) {
 		echo $body;
+	}
+	
+	function errorNotFound() {
+		\core\registry\RequestRegistry::getAppController()->dispatchError('404');
+		exit();
+	}
+	
+	function errorUnauthorized() {
+		\core\registry\RequestRegistry::getAppController()->dispatchError('401');
+		exit();
 	}
 }

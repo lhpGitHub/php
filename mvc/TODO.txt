@@ -1,7 +1,18 @@
--	dodac obsluga json
+-	dodac obsluga rest full
+
+	w ogolnym mechanizmie personCrud zalozono ze parametry sa nienazwane a ich kolejnosc ma decydujace znaczenie,
+	paramentry przesylane jako json posiadaja klucze, tak wiec intuicyjniej by bylo gdyby w tym przypadku uzywac nazwanych parametorow
+	jak to pogodzic nie powielajac kodu?
+
+	nie podoba mi sie ze typy zadan (REQUEST_METHOD) sa nasztywno zamapowane na nazwy akcji,
+	patrz JsonRequest::handleAction i JsonRequest::ini 
 
 	po dodaniu klasy PersonCrudControllerJson powtorzy sie kod niektorych metod z PersonCrudControllerCli,
 	powtarzajace sie metody przeniesc do nadklasy PersonCrudController jako domyslna implementacja metod abstrakcyjnych BaseCrudController
+
+	potestowac wywolania uslug z poziomu js
+
+	testowanie za pomoca dodatku do firefoxa o nazwie RESTClient
 
 -	ulepszyc config
 
@@ -10,12 +21,7 @@
 
 -	dodac autoryzacje
 
-	dodalem ErrorController obslugujacy sytuacje gdy brak zasobu (404 Not Found) i gdy zabroniony dostep (401 Access denied)
-	gdy wlaczona jest autoryzacja trzeba ustawic najnizsze prawa dostepu do tego kontrolera - niedobre rozwiazanie
-	moze uda sie jakos dodac liste kontrolerow nie obejmowanych sprawdzaniem czy uzytkownik moze go wywolac?
-	jesli w aplikacji chcemy dodac wlasny ErrorController trzeba go poprostu umiescic w app/controllers/ErrorController.php - czy to jest instuicyjne?
-
-	dodac mozliwosc definiowania minimalnego poziomu dostepu jednym poleceniem dla calego kontrolera np 'error-*'
+	dodac mozliwosc definiowania minimalnego poziomu dostepu jednym poleceniem dla calego kontrolera np 'person-*'
 
 	przemyslec jak podczas tworzenia obiektu uzytkownika (i rejestracji/logowania) 
 	bedzie z obiektu typu UserLevel pobierany odpowiedni poziom uprawnien
@@ -29,7 +35,6 @@
 
 	w konsoli jest obslugiwana sesja czy nie jest?
 	otoz jest, jesli przy kazdym wywolaniu przekaze sie sie jako pierwszy parametr SID np index.php [--sid shj934jmn23493248fksd] person read param1 param2
-
 
 -	dodac komentarze w kodzie klas i wygenerowac dokumentacje za pomoca phpdoc
 

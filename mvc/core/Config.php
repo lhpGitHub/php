@@ -5,8 +5,10 @@ class Config {
 	private static $settings = array(
 		'debug' => FALSE,
 		'mainPath' => './',
+		'pathToControllers' => 'app\controllers\\',
 		'defaultController' => '',
 		'defaultAction' => '',
+		'errorController' => 'core\controller\ErrorController',
 		'authEnable' => FALSE,
 		'authUserClass' => 'core\auth\User',
 		'authAccessLevelsClass' => 'core\auth\DefaultAccessLevels',

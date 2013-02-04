@@ -5,8 +5,10 @@ define('MAIN_PATH', './');
 
 $settings = array(
 	'debug'		=> TRUE,
+	'pathToControllers' => 'app\controllers\\',
 	'defaultController' => 'Person',
 	'defaultAction' => 'read',
+	'errorController' => 'app\controllers\ErrorController',
 	'authEnable' => TRUE,
 	'authUserClass' => 'app\models\UserObject',
 	'authAccessLevelsClass' => 'app\auth\AppAccessLevels',

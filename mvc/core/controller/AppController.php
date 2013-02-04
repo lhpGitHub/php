@@ -7,39 +7,54 @@ class AppController {
 
 	function __construct() {}
 	
-	function dispatch($controllerName, $actionName) {
+	function dispatch($controller, $action) {
 		
-		if($this->makeAction($controllerName, $actionName)) {
+		if($this->makeAction($controller, $action, $useAbsolutePath)) {
 			return $this->invokeAction();
 		} else {
 			$this->invokeError();
 		}
 	}
 	
-	protected function makeAction($controllerName, $actionName) {
+	function dispatchError($action) {
+		$controller = \core\Config::get('errorController');
 		
-		if($this->searchAction('app\controllers\\', $controllerName, $actionName)) 
-			return TRUE;
+		if($this->makeAction($controller, $action)) {
+			return $this->invokeAction();
+		}
 		
-		if($this->searchAction('core\controllers\\', $controllerName, $actionName)) 
-			return TRUE;
-		
-		return FALSE;
+		throw new \core\exception\AppControllerException(sprintf('Error controller failed, controller class [%s], action [%s]', $controller, $action), 0);
 	}
 	
-	private function searchAction($pathToControllers, $controllerName, $actionName) {
+	protected function makeAction($controller, $action) {
+		list($controllerPath, $controllerName) = $this->controllerPathInfo($controller);
+
+		if(empty($controllerPath))
+			$controller = \core\Config::get('pathToControllers').ucfirst($controller.'Controller');
 		
-		$controllerName = $pathToControllers.ucfirst($controllerName.'Controller');
-		$actionName = 'action'.ucfirst($actionName);
+		$action = 'action'.ucfirst($action);
+
+		return ($this->searchAction($controller, $action));
+	}
+	
+	protected function controllerPathInfo($controllerPath) {
+		preg_match('@^((.*?)\\\?)(([^\\\]*?)(Controller)?)$@', $controllerPath, $m);
+		$path = $m[1];
+		$fullName = $m[3];
+		$name = $m[4];
+		return array($path, $fullName, $name);
 		
+	}
+
+	private function searchAction($controller, $action) {
 		try {
-			$this->controller = new \ReflectionClass($controllerName);
+			$this->controller = new \ReflectionClass($controller);
 		} catch (\core\exception\FileNotExistsException $err) {
 			return FALSE;
 		}
 		
 		try {
-			$this->action = new \ReflectionMethod($controllerName, $actionName);
+			$this->action = new \ReflectionMethod($controller, $action);
 		} catch(\ReflectionException $err) {
 			return FALSE;
 		}

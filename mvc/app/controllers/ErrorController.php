@@ -1,13 +1,13 @@
 <?php namespace app\controllers;
 
-class ErrorController extends \core\controllers\ErrorController {
+class ErrorController extends \core\controller\ErrorController {
 	
 	function __construct() {
 		parent::__construct();
 	}
 	
 	function action401() {
-		echo 'nie masz odpowiednich praw dostepu do tego zasobu';
+		echo 'nie masz odpowiednich uprawnien do tego zasobu';
 	}
 
 	function action404() {

@@ -16,12 +16,8 @@ abstract class BaseRequest {
 	
 	protected abstract function ini();
 	public abstract function gender();
-	public abstract function getAbsolutePath();
-	public abstract function getRelativePath();
 	public abstract function redirect($uri);
 	public abstract function setResponse($body);
-	public abstract function errorNotFound();
-	public abstract function errorUnauthorized();
 	
 	function getControlerName() {
 		return $this->controlerName;
@@ -40,5 +36,35 @@ abstract class BaseRequest {
 	
 	function setParam($offset, $value) {
 		$this->params[$offset] = $value;
+	}
+	
+	function getAbsolutePath() {
+		$pathinfo = pathinfo($_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']);
+		return 'http://'.$pathinfo['dirname'];
+	}
+	
+	function getRelativePath() {
+		$pathinfo = pathinfo($_SERVER['SCRIPT_NAME']);
+		return $pathinfo['dirname'];
+	}
+	
+	function errorNotFound() {
+		header('HTTP/1.1 404 Not Found');
+		exit();
+	}
+	
+	function errorUnauthorized() {
+		header('HTTP/1.1 401 Unauthorized');
+		exit();
+	}
+	
+	function errorMethodNotAllowed() {
+		header('HTTP/1.1 405 Method Not Allowed');
+		exit();
+	}
+	
+	function errorBadRequest() {
+		header('HTTP/1.1 400 Bad Request');
+		exit();
 	}
 }

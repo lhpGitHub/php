@@ -13,9 +13,7 @@ class AppAccessLevels extends \core\auth\AccessLevels {
 			'person-create'	=> self::$ADMIN,
 			'person-read'	=> self::$GUEST,
 			'person-update'	=> self::$GUEST,
-			'person-delete'	=> self::$ADMIN,
-			'error-401' => self::$GUEST,
-			'error-404' => self::$GUEST
+			'person-delete'	=> self::$ADMIN
 		);
 		
 		parent::__construct($defaultRequiredUserLevel, $actionsRequiredUserLevel);

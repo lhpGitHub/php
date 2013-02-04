@@ -28,7 +28,23 @@ class CliRequest extends BaseRequest {
 			session_id ($sid);
 	}
 
-
+	function getAbsolutePath() {
+		return NULL;
+	}
+	
+	function getRelativePath() {
+		return NULL;
+	}
+	
+	function redirect($uri) {
+		echo 'Redirect Failed';
+		die();
+	}
+	
+	function setResponse($body) {
+		printf('app [sid:%s] response: %s', session_id(), $body);
+	}
+	
 	function errorNotFound() {
 		$msg = 'Not Found';
 		echo $msg;
@@ -39,22 +55,5 @@ class CliRequest extends BaseRequest {
 		$msg = 'Unauthorized';
 		echo $msg;
 		exit();
-	}
-	
-	function getAbsolutePath() {
-		return $_SERVER['SCRIPT_NAME'];
-	}
-	
-	function getRelativePath() {
-		return $_SERVER['SCRIPT_NAME'];
-	}
-	
-	function redirect($uri) {
-		echo 'Redirect Failed';
-		die();
-	}
-	
-	function setResponse($body) {
-		printf('app [sid:%s] response: %s', session_id(), $body);
 	}
 }

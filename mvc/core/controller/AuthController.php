@@ -13,7 +13,7 @@ class AuthController extends AppController {
 		\core\registry\SessionRegistry::getInstance()->setUser('User123');
 	}
 	
-	public function dispatch($controllerName, $actionName) {
+	public function dispatch($controller, $action) {
 		
 		if(is_null($this->user)) {
 			$userClass = \core\Config::get('authUserClass');
@@ -22,12 +22,12 @@ class AuthController extends AppController {
 			}
 		}
 		
-		if(!$this->makeAction($controllerName, $actionName)) {
+		if(!$this->makeAction($controller, $action)) {
 			$this->invokeError();
 			return;
 		}
 		
-		if($this->checkPermissionLevel($controllerName, $actionName)) {
+		if($this->checkPermissionLevel($controller, $action)) {
 			$this->invokeAction();
 		} else {
 			\core\registry\RequestRegistry::getRequest()->errorUnauthorized();
@@ -62,7 +62,8 @@ class AuthController extends AppController {
 		}
 	}
 	
-	private function checkPermissionLevel($controllerName, $actionName) {
-		return $this->userLevels()->checkUserLevel($controllerName, $actionName, 'GUEST');
+	private function checkPermissionLevel($controller, $action) {
+		list($path, $fullName, $name) = $this->controllerPathInfo($controller);
+		return $this->userLevels()->checkUserLevel($name, $action, 'GUEST');
 	}
 }

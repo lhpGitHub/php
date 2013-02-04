@@ -40,11 +40,11 @@ class FrontController {
 		\core\registry\RequestRegistry::getAppController()->dispatch($controllerName, $actionName);
 	}
 
-		private function createRequestObject() {
+	private function createRequestObject() {
 		switch ($this->detectRequestClient()) {
 			
 			case self::JSON:
-				$this->request = \core\registry\RequestRegistry::setRequest(NULL);
+				$this->request = \core\registry\RequestRegistry::setRequest(new \core\controller\JsonRequest());
 				break;	
 			
 			case self::CLI:
@@ -57,9 +57,13 @@ class FrontController {
 	}
 	
 	private function detectRequestClient() {
-		
+
 		if(PHP_SAPI == 'cli') {
 			return self::CLI;
+		}
+		
+		if(isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== FALSE) {
+			return self::JSON;
 		}
 		
 		return self::HTTP;
