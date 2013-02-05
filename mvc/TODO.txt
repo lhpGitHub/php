@@ -1,8 +1,6 @@
 -	dodac obsluga rest full
 
-	w ogolnym mechanizmie personCrud zalozono ze parametry sa nienazwane a ich kolejnosc ma decydujace znaczenie,
-	paramentry przesylane jako json posiadaja klucze, tak wiec intuicyjniej by bylo gdyby w tym przypadku uzywac nazwanych parametorow
-	jak to pogodzic nie powielajac kodu?
+	dodac CRUD Controller do poprawnej, pelnej obslugi zadan
 
 	nie podoba mi sie ze typy zadan (REQUEST_METHOD) sa nasztywno zamapowane na nazwy akcji,
 	patrz JsonRequest::handleAction i JsonRequest::ini 
@@ -10,9 +8,8 @@
 	po dodaniu klasy PersonCrudControllerJson powtorzy sie kod niektorych metod z PersonCrudControllerCli,
 	powtarzajace sie metody przeniesc do nadklasy PersonCrudController jako domyslna implementacja metod abstrakcyjnych BaseCrudController
 
-	potestowac wywolania uslug z poziomu js
-
 	testowanie za pomoca dodatku do firefoxa o nazwie RESTClient
+	potestowac programem curl (dowiedziec sie jak go zainstalowac pod Winda)
 
 -	ulepszyc config
 
@@ -37,6 +34,8 @@
 	otoz jest, jesli przy kazdym wywolaniu przekaze sie sie jako pierwszy parametr SID np index.php [--sid shj934jmn23493248fksd] person read param1 param2
 
 -	dodac komentarze w kodzie klas i wygenerowac dokumentacje za pomoca phpdoc
+	
+	pierwsze komentarze dodalem w juz w klasie ParamsCleaner i czesciowo w klasie BaseRequest
 
 -	potestowac za pomoca phpunit hierarchie DataBaseAccess
 

@@ -1,6 +1,6 @@
 <?php namespace app\controllers\person;
 
-use core\controller\ParamsCleaner as ParamsCleaner;
+use lib\verifiers\ParamsCleaner as ParamsCleaner;
 
 abstract class PersonCrudController extends \core\controller\BaseCrudController {
 	

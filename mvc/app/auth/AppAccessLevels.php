@@ -10,10 +10,10 @@ class AppAccessLevels extends \core\auth\AccessLevels {
 		$defaultRequiredUserLevel = self::$ADMIN;
 		
 		$actionsRequiredUserLevel = array(
-			'person-create'	=> self::$ADMIN,
+			'person-create'	=> self::$GUEST,
 			'person-read'	=> self::$GUEST,
 			'person-update'	=> self::$GUEST,
-			'person-delete'	=> self::$ADMIN
+			'person-delete'	=> self::$GUEST
 		);
 		
 		parent::__construct($defaultRequiredUserLevel, $actionsRequiredUserLevel);

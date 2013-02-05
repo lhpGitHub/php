@@ -27,9 +27,29 @@ abstract class BaseRequest {
 		return $this->actionName;
 	}
 
-	function getParam($offset) {
-		if(isset($this->params[$offset])) {
-			return $this->params[$offset];
+	/**
+	 * zwraca wartość parametru żądania, którego wartość jest ustalana na podstawie klucza
+	 * 
+	 * klucz może być ciągiem znaków lub indeksem numerycznym
+	 * 
+	 * przykład użycia:
+	 * 
+	 * <code>
+	 * BaseRequest::getParam('nazwaKlucza');
+	 * BaseRequest::getParam(0);
+	 * </code> 
+	 * 
+	 * @param   mixed $key klucz
+	 * @return  mixed zwraca wartość parametru jeśli klucz istnieje, NULL w przeciwnym przypadku
+    */
+	function getParam($key) {
+		if(isset($this->params[$key])) {
+			return $this->params[$key];
+		} else {
+			$params = array_values($this->params);
+			if(isset($params[$key])) {
+				return $params[$key];
+			}
 		}
 		return null;
 	}

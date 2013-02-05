@@ -7,12 +7,6 @@ class JsonRequest extends BaseRequest {
 	}
 
 	protected function ini() {
-//		array_shift($_SERVER['argv']);
-//		$this->restoreSession($_SERVER['argv']);
-//		$this->controlerName = array_shift($_SERVER['argv']);
-//		$this->actionName = array_shift($_SERVER['argv']);
-//		$this->params = $_SERVER['argv'];
-		
 		if(count($_GET) > 0) {
 			$ele = array_values($_GET);
 		} else {
@@ -22,20 +16,13 @@ class JsonRequest extends BaseRequest {
 		}
 		
 		$this->controlerName = array_shift($ele);
-		if($_SERVER['REQUEST_METHOD'] === 'GET') {
-			$this->actionName = 'read';
+		if($_SERVER['REQUEST_METHOD'] == 'GET') {
 			$this->params = $ele;
+			$this->actionName = 'read';
 		} else {
+			$this->params = $this->decodeParam();
 			$this->handleAction($_SERVER['REQUEST_METHOD']);
 		}
-		
-		
-		
-		
-		
-		var_dump($this->decodeParam());
-		
-	
 	}
 	
 	private function handleAction($requestMethod) {
@@ -58,7 +45,7 @@ class JsonRequest extends BaseRequest {
 	}
 	
 	private function decodeParam() {
-		return json_decode(file_get_contents('php://input'));
+		return json_decode(file_get_contents('php://input'), TRUE);
 	}
 
 	function gender() {

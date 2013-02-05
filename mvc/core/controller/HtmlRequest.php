@@ -16,7 +16,7 @@ class HtmlRequest extends BaseRequest {
 			$ele = explode('/', strtolower(trim($uriRequest, "/")));
 		}
 		
-		if(count($_POST) > 0) $ele = array_merge($ele, array_values($_POST));
+		if(count($_POST) > 0) $ele = array_merge($ele, $_POST);
 		
 		$this->controlerName = array_shift($ele);
 		$this->actionName = array_shift($ele);

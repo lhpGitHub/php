@@ -1,5 +1,4 @@
 <?php
-
 /***CONFIG***/
 define('MAIN_PATH', './');
 
