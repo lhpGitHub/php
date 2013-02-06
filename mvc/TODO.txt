@@ -1,15 +1,24 @@
 -	dodac obsluga rest full
 
-	dodac CRUD Controller do poprawnej, pelnej obslugi zadan
+	zastanowic sie jak w poszczegolnych typach zadan najlepiej ustawiac pole naglowka content-type
+	narazie tylko dodalem abstrakcyjna metode getContentType w klasie bazowej BaseRequest i zaimplementowalem ja w podklasach
 
 	nie podoba mi sie ze typy zadan (REQUEST_METHOD) sa nasztywno zamapowane na nazwy akcji,
 	patrz JsonRequest::handleAction i JsonRequest::ini 
 
-	po dodaniu klasy PersonCrudControllerJson powtorzy sie kod niektorych metod z PersonCrudControllerCli,
-	powtarzajace sie metody przeniesc do nadklasy PersonCrudController jako domyslna implementacja metod abstrakcyjnych BaseCrudController
+	jesli w klucz parametru zadania jest np literowka, kod i tak wykona sie poprawnie
+	poniewaz zostanie podjeta druga proba odczytu parametru w ktorej kluczem bedzie index liczbowy
+	np update z parametrami: {"id":"159", "lNaAme":"zzzzz2", "fName":"aaaa2"} spowoduje ze polu 'lName'
+	zostanie przypisana wartosc "aaaa2" poniewaz ten 'brakujacy' parametr ma index liczbowy rowny 2
+	czy jest to do przyjecia?
+
+	sprawdzic czy mozna w naglowkach odpowiedzi przesylac dodatkowa wiadomosc
+	jesli tak odpowiedzi mozna uzupelnic wiadomosciami typu "wrong id", "wrong params", "database error", ...
 
 	testowanie za pomoca dodatku do firefoxa o nazwie RESTClient
 	potestowac programem curl (dowiedziec sie jak go zainstalowac pod Winda)
+
+	lista codow statusow HTTP: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 
 
 -	ulepszyc config
 

@@ -15,6 +15,10 @@ class PersonController extends \core\controller\BaseController {
 				case \core\controller\BaseRequest::CLI:
 					$this->crud = new \app\controllers\person\PersonCrudControllerCli();
 					break;
+				
+				case \core\controller\BaseRequest::JSON:
+					$this->crud = new \app\controllers\person\PersonCrudControllerJson();
+					break;
 
 				default:
 					$this->crud = new \app\controllers\person\PersonCrudControllerHtml();

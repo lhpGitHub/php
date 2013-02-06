@@ -18,7 +18,7 @@ class PersonCrudControllerHtml extends PersonCrudController {
 	
 	protected function dbError(\core\exception\DataBaseException $err) {
 		$this->setFlashBlockOverride('msg', self::DB_ERROR . (\core\Config::get('debug') ? ' '.$err->getMessage() : ''));
-		$this->getRequest()->setResponse($this->view->render());
+		$this->getRequest()->sendResponse($this->view->render());
 	}
 	
 	/***CREATE***/
@@ -37,7 +37,7 @@ class PersonCrudControllerHtml extends PersonCrudController {
 		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/read/\">BACK</a>";
 		$this->view->content = $this->view->getViewAsVar('personForm');
 		
-		$this->getRequest()->setResponse($this->view->render());
+		$this->getRequest()->sendResponse($this->view->render());
 	}
 	
 	/***READ***/
@@ -45,7 +45,7 @@ class PersonCrudControllerHtml extends PersonCrudController {
 		$this->view->content = parent::readExecute($params);
 		$this->setFlashBlockOverride('msg', self::RECORD_READ);
 		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
-		$this->getRequest()->setResponse($this->view->render());
+		$this->getRequest()->sendResponse($this->view->render());
 	}
 	
 	protected function readHelper(&$result, \app\models\person\PersonObject $personObject) {
@@ -60,7 +60,7 @@ class PersonCrudControllerHtml extends PersonCrudController {
 	protected function readNoRecord() {
 		$this->setFlashBlockOverride('msg', self::RECORD_EMPTY);
 		$this->view->menu = "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/create/\">ADD RECORD</a>";
-		$this->getRequest()->setResponse($this->view->render());
+		$this->getRequest()->sendResponse($this->view->render());
 	}
 	
 	/***UPDATE***/
@@ -91,7 +91,7 @@ class PersonCrudControllerHtml extends PersonCrudController {
 		$this->view->setViewVar('personForm', 'lName', $lName);
 		$this->view->menu= "<br/><a href=\"{$this->getRequest()->getAbsolutePath()}/person/read/\">BACK</a>";
 		$this->view->content = $this->view->getViewAsVar('personForm');
-		$this->getRequest()->setResponse($this->view->render());
+		$this->getRequest()->sendResponse($this->view->render());
 	}
 	
 	/***DELETE***/

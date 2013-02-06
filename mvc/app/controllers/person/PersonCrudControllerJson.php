@@ -1,63 +1,70 @@
 <?php namespace app\controllers\person;
 
-class PersonCrudControllerCli extends PersonCrudController {
+class PersonCrudControllerJson extends PersonCrudController {
 	
 	public function __construct() {
 		parent::__construct();
 	}
 	
 	protected function idFailed(\core\exception\InvalidIdException $err) {
-		$this->getRequest()->sendResponse(self::WRONG_ID);
+		$warning = self::WRONG_ID;
+		$this->getRequest()->errorBadRequest($warning);
 	}
 	
 	protected function dbError(\core\exception\DataBaseException $err) {
-		$this->getRequest()->sendResponse(self::DB_ERROR . (\core\Config::get('debug') ? ' '.$err->getMessage() : ''));
+		$warning = self::DB_ERROR . (\core\Config::get('debug') ? ' '.$err->getMessage() : '');
+		$this->getRequest()->errorInternalServer($warning);
 	}
 	
 	/***CREATE***/
 	protected function createExecute(array $params) {
 		parent::createExecute($params);
-		$this->getRequest()->sendResponse(self::RECORD_ADD);
+		$this->getRequest()->successCreated();
 	}
 
 	protected function createParamFailed(array $params) {
-		$this->getRequest()->sendResponse(self::WRONG_PARAM);
+		$warning = self::WRONG_PARAM;
+		$this->getRequest()->errorBadRequest($warning);
 	}
-	
 	
 	/***READ***/
 	protected function readExecute(array $params) {
-		$result = self::RECORD_READ.PHP_EOL.parent::readExecute($params);
+		$result = json_encode(parent::readExecute($params));
 		$this->getRequest()->sendResponse($result);
 	}
 	
 	protected function readHelper(&$result, \app\models\person\PersonObject $personObject) {
-		$result .= sprintf("ID:%d\t%s %s", 
-			$personObject->getId(),
-			$personObject->getFirstName(),
-			$personObject->getlastName()).PHP_EOL;
+		if(!is_array($result)) {
+			$result = array();
+		}
+		
+		$result[$personObject->getId()] = array('fName' => $personObject->getFirstName(), 'lName' => $personObject->getLastName());
 	}
 	
 	protected function readNoRecord() {
-		$this->getRequest()->sendResponse(self::RECORD_EMPTY);
+		$warning = self::RECORD_EMPTY;
+		$this->getRequest()->successNoContent($warning);
 	}
 	
 	/***UPDATE***/
 	protected function updateExecute(array $params) {
 		if(parent::updateExecute($params)) {
-			$this->getRequest()->sendResponse(self::RECORD_UPD);
+			$warning = self::RECORD_UPD;
 		} else {
-			$this->getRequest()->sendResponse(self::RECORD_NO_MODIFY);
+			$warning = self::RECORD_NO_MODIFY;
 		}
+		
+		$this->getRequest()->successOk($warning);
 	}
 	
 	protected function updateParamFailed(array $params) {
-		$this->getRequest()->sendResponse(self::WRONG_PARAM);
+		$warning = self::WRONG_PARAM;
+		$this->getRequest()->errorBadRequest($warning);
 	}
 	
 	/***DELETE***/
 	protected function deleteExecute(array $params) {
 		parent::deleteExecute($params);
-		$this->getRequest()->sendResponse(self::RECORD_DEL);
+		$this->getRequest()->successOk();
 	}
 }

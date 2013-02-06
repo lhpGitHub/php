@@ -17,7 +17,8 @@ abstract class BaseRequest {
 	protected abstract function ini();
 	public abstract function gender();
 	public abstract function redirect($uri);
-	public abstract function setResponse($body);
+	public abstract function getContentType();
+	public abstract function sendResponse($body);
 	
 	function getControlerName() {
 		return $this->controlerName;
@@ -68,23 +69,51 @@ abstract class BaseRequest {
 		return $pathinfo['dirname'];
 	}
 	
-	function errorNotFound() {
-		header('HTTP/1.1 404 Not Found');
+	function successOk($warning = null) {
+		header('HTTP/1.1 200 OK');
+		if(!is_null($warning)) header("Warning: $warning");
 		exit();
 	}
 	
-	function errorUnauthorized() {
-		header('HTTP/1.1 401 Unauthorized');
+	function successCreated($warning = null) {
+		header('HTTP/1.1 201 Created');
+		if(!is_null($warning)) header("Warning: $warning");
 		exit();
 	}
 	
-	function errorMethodNotAllowed() {
-		header('HTTP/1.1 405 Method Not Allowed');
+	function successNoContent($warning = null) {
+		header('HTTP/1.1 204 No Content');
+		if(!is_null($warning)) header("Warning: $warning");
 		exit();
 	}
 	
-	function errorBadRequest() {
+	function errorBadRequest($warning = null) {
 		header('HTTP/1.1 400 Bad Request');
+		if(!is_null($warning)) header("Warning: $warning");
+		exit();
+	}
+	
+	function errorUnauthorized($warning = null) {
+		header('HTTP/1.1 401 Unauthorized');
+		if(!is_null($warning)) header("Warning: $warning");
+		exit();
+	}
+	
+	function errorNotFound($warning = null) {
+		header('HTTP/1.1 404 Not Found');
+		if(!is_null($warning)) header("Warning: $warning");
+		exit();
+	}
+	
+	function errorMethodNotAllowed($warning = null) {
+		header('HTTP/1.1 405 Method Not Allowed');
+		if(!is_null($warning)) header("Warning: $warning");
+		exit();
+	}
+	
+	function errorInternalServer($warning = null) {
+		header('HTTP/1.1 500 Internal Server Error');
+		if(!is_null($warning)) header("Warning: $warning");
 		exit();
 	}
 }

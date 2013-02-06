@@ -26,22 +26,26 @@ class HtmlRequest extends BaseRequest {
 	function gender() {
 		return parent::HTML;
 	}
+	
+	function getContentType() {
+		return 'text/html';
+	}
 
 	function redirect($uri) {
 		header('Location: ' . $this->getAbsolutePath() . $uri);
 		die;
 	}
 	
-	function setResponse($body) {
+	function sendResponse($body) {
 		echo $body;
 	}
 	
-	function errorNotFound() {
+	function errorNotFound($warning = null) {
 		\core\registry\RequestRegistry::getAppController()->dispatchError('404');
 		exit();
 	}
 	
-	function errorUnauthorized() {
+	function errorUnauthorized($warning = null) {
 		\core\registry\RequestRegistry::getAppController()->dispatchError('401');
 		exit();
 	}

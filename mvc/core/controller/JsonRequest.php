@@ -40,24 +40,34 @@ class JsonRequest extends BaseRequest {
 				break;
 
 			default:
+				header('Allow: PUT, GET, POST, DELETE');
 				$this->errorMethodNotAllowed();
 		}
 	}
 	
 	private function decodeParam() {
-		return json_decode(file_get_contents('php://input'), TRUE);
+		$param = json_decode(file_get_contents('php://input'), TRUE);
+		
+		if(!$param)
+			$this->errorBadRequest();
+		
+		return $param;
 	}
 
 	function gender() {
 		return parent::JSON;
 	}
 	
-	function redirect($uri) {
-		echo 'Redirect Failed';
-		die();
+	function getContentType() {
+		return 'application/json';
 	}
 	
-	function setResponse($body) {
-		printf('app [sid:%s] response: %s', session_id(), $body);
+	function redirect($uri) {
+		throw new \Exception(sprintf("Redirect method not allowed in class [%s]", __CLASS__));
+	}
+	
+	function sendResponse($body) {
+		header('Content-type: application/json');
+		echo $body;
 	}
 }

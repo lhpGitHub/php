@@ -18,6 +18,10 @@ class CliRequest extends BaseRequest {
 		return parent::CLI;
 	}
 	
+	function getContentType() {
+		return 'text/plain';
+	}
+	
 	private function restoreSession(&$argv) {
 		if(current($argv) == '--sid') {
 			array_shift($argv);
@@ -37,21 +41,20 @@ class CliRequest extends BaseRequest {
 	}
 	
 	function redirect($uri) {
-		echo 'Redirect Failed';
-		die();
+		throw new \Exception(sprintf("Redirect method not allowed in class [%s]", __CLASS__));
 	}
 	
-	function setResponse($body) {
+	function sendResponse($body) {
 		printf('app [sid:%s] response: %s', session_id(), $body);
 	}
 	
-	function errorNotFound() {
+	function errorNotFound($warning = null) {
 		$msg = 'Not Found';
 		echo $msg;
 		exit();
 	}
 	
-	function errorUnauthorized() {
+	function errorUnauthorized($warning = null) {
 		$msg = 'Unauthorized';
 		echo $msg;
 		exit();
