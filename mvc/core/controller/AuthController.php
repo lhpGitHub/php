@@ -6,7 +6,7 @@ class AuthController extends AppController {
 	private $user;
 
 	function __construct() {
-		$this->userLevels = $this->createUserLevels(\core\Config::get('authAccessLevelsClass'));
+		$this->userLevels = $this->createAccessLevels(\core\Config::get('authAccessLevelsClass'));
 	}
 	
 	function __destruct() {
@@ -53,12 +53,12 @@ class AuthController extends AppController {
 		}
 	}
 	
-	private function createUserLevels($userLevelsClass) {
+	private function createAccessLevels($accessLevelsClass) {
 		try {
-			$c = new \ReflectionClass($userLevelsClass);
+			$c = new \ReflectionClass($accessLevelsClass);
 			return $c->newInstance();
 		} catch(\Exception $err) {
-			throw new \core\exception\AuthException(sprintf('Create user levels failed, class name [%s]', $userLevelsClass), 0);
+			throw new \core\exception\AuthException(sprintf('Create access levels failed, class name [%s]', $accessLevelsClass), 0);
 		}
 	}
 	
