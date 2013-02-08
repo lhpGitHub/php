@@ -6,7 +6,7 @@ abstract class BaseRequest {
 	const CLI = 'cli';
 	const JSON = 'json';
 
-	protected $controlerName, 
+	protected $controllerName, 
 			  $actionName, 
 			  $params;
 	
@@ -20,8 +20,8 @@ abstract class BaseRequest {
 	public abstract function getContentType();
 	public abstract function sendResponse($body);
 	
-	function getControlerName() {
-		return $this->controlerName;
+	function getControllerName() {
+		return $this->controllerName;
 	}
 
 	function getActionName() {

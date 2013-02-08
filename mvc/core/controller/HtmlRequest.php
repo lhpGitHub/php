@@ -18,7 +18,7 @@ class HtmlRequest extends BaseRequest {
 		
 		if(count($_POST) > 0) $ele = array_merge($ele, $_POST);
 		
-		$this->controlerName = array_shift($ele);
+		$this->controllerName = array_shift($ele);
 		$this->actionName = array_shift($ele);
 		$this->params = $ele;
 	}

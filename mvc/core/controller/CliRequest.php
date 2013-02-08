@@ -9,7 +9,7 @@ class CliRequest extends BaseRequest {
 	protected function ini() {
 		array_shift($_SERVER['argv']);
 		$this->restoreSession($_SERVER['argv']);
-		$this->controlerName = array_shift($_SERVER['argv']);
+		$this->controllerName = array_shift($_SERVER['argv']);
 		$this->actionName = array_shift($_SERVER['argv']);
 		$this->params = $_SERVER['argv'];
 	}

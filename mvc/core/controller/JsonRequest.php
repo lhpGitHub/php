@@ -15,7 +15,7 @@ class JsonRequest extends BaseRequest {
 			$ele = explode('/', strtolower(trim($uriRequest, "/")));
 		}
 		
-		$this->controlerName = array_shift($ele);
+		$this->controllerName = array_shift($ele);
 		if($_SERVER['REQUEST_METHOD'] == 'GET') {
 			$this->params = $ele;
 			$this->actionName = 'read';

@@ -12,9 +12,6 @@
 	zostanie przypisana wartosc "aaaa2" poniewaz ten 'brakujacy' parametr ma index liczbowy rowny 2
 	czy jest to do przyjecia?
 
-	sprawdzic czy mozna w naglowkach odpowiedzi przesylac dodatkowa wiadomosc
-	jesli tak odpowiedzi mozna uzupelnic wiadomosciami typu "wrong id", "wrong params", "database error", ...
-
 	testowanie za pomoca dodatku do firefoxa o nazwie RESTClient
 	potestowac programem curl (dowiedziec sie jak go zainstalowac pod Winda)
 
@@ -36,6 +33,8 @@
 
 	w mechanizmie autoryzacji uwglednic jednoczesne wywolanie metody wymagajacej autoryzacji z danymi autoryzujacymi
 	(http://jrenard.info/blog/fetching-headers-sent-by-php-from-the-command-line.html)
+
+-	obsluga widokow biblioteka SMARTY
 
 -	sesja w konsoli
 
@@ -86,8 +85,6 @@
 
 -	dodac druga tabele w BD
 
--	dodac join w zapytania do bazy (druga tabela telefony)
-
--	dodac obsluge transakcji
+-	dodac join w zapytania do bazy (druga tabela)
 
 -	ostylowac html uzywajac bootstrap

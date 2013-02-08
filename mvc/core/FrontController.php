@@ -32,7 +32,7 @@ class FrontController {
 	
 	private function dispatch() {
 		$request = \core\registry\RequestRegistry::getRequest();
-		$controllerName = $request->getControlerName();
+		$controllerName = $request->getControllerName();
 		$actionName = $request->getActionName();
 		$controllerName = (empty($controllerName)) ? \core\Config::get('defaultController') : $controllerName;
 		$actionName = (empty($actionName)) ? \core\Config::get('defaultAction') : $actionName;
