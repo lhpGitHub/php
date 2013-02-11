@@ -21,22 +21,26 @@ class DataBaseAccessFactory {
 	static function globalAccess() {
 		$ins = self::getInstance();
 		if(is_null($ins->globalAccess)) {
-			switch (\core\Config::get('dbExt')) {
-				case self::FAKE:
-					$ins->globalAccess = new DataBaseAccessFAKE();
-					break;
-				case self::PDO:
-					$ins->globalAccess = new DataBaseAccessPDO();
-					break;
-				case self::MYSQLI:
-					$ins->globalAccess = new DataBaseAccessMYSQLI();
-					break;
-				default:
-					break;
-			}
+			$ins->globalAccess = $ins->createDBA(\core\Config::get('dbExt'));
 		}
 		
 		return $ins->globalAccess;
+	}
+	
+	private function createDBA($type) {
+		switch ($type) {
+			case self::FAKE:
+				return new DataBaseAccessFAKE();
+				break;
+			case self::PDO:
+				return new DataBaseAccessPDO();
+				break;
+			case self::MYSQLI:
+				return new DataBaseAccessMYSQLI();
+				break;
+			default:
+				break;
+		}
 	}
 	
 }

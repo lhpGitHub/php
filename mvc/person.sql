@@ -42,7 +42,7 @@ INSERT INTO `person` (`id`, `fName`, `lName`) VALUES
 (2, 'fsdf', '1212'),
 (3, 'fsdf', '000'),
 (4, 'fsdf', '000'),
-(5, 'kot', 'zgube');
+(5, 'kot', 'zgubek');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

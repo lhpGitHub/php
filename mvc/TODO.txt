@@ -1,3 +1,9 @@
+-	sprawdzic czy i z jak duzo latwoscia uda sie wywolac z poziomu klienta (np przegladarki)
+	metody w kontrolerach pomocniczych
+
+	da sie np takim url - http://localhost/php/mvc/index.php?a=app\controllers\person\PersonCrudControllerHtml&b=foo
+	zadzial to pod warunkiem ze w klasie PersonCrudControllerHtml jest publiczna metoda actionFoo i ze uzytkownik ma uprawnienia do wywolania tej metody 
+
 -	dodac obsluga rest full
 
 	zastanowic sie jak w poszczegolnych typach zadan najlepiej ustawiac pole naglowka content-type

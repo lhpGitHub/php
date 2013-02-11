@@ -27,7 +27,7 @@ class AppController {
 	}
 	
 	protected function makeAction($controller, $action) {
-		list($controllerPath, $controllerName) = $this->controllerPathInfo($controller);
+		list($controllerPath) = $this->controllerPathInfo($controller);
 
 		if(empty($controllerPath))
 			$controller = \core\Config::get('pathToControllers').ucfirst($controller.'Controller');
