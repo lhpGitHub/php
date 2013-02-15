@@ -40,23 +40,17 @@ class CliRequest extends BaseRequest {
 		return NULL;
 	}
 	
-	function redirect($uri) {
-		throw new \Exception(sprintf("Redirect method not allowed in class [%s]", __CLASS__));
+	function sendResponse($body = null) {
+		parent::sendResponse(sprintf('app [sid:%s] response: %s', session_id(), $body));
 	}
 	
-	function sendResponse($body) {
-		printf('app [sid:%s] response: %s', session_id(), $body);
-	}
-	
-	function errorNotFound($warning = null) {
-		$msg = 'Not Found';
-		echo $msg;
+	function errorNotFound($info = null) {
+		echo 'Not Found';
 		exit();
 	}
 	
-	function errorUnauthorized($warning = null) {
-		$msg = 'Unauthorized';
-		echo $msg;
+	function errorUnauthorized($info = null) {
+		echo 'Unauthorized';
 		exit();
 	}
 }

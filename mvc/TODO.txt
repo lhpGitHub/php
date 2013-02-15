@@ -4,13 +4,14 @@
 	da sie np takim url - http://localhost/php/mvc/index.php?a=app\controllers\person\PersonCrudControllerHtml&b=foo
 	zadzial to pod warunkiem ze w klasie PersonCrudControllerHtml jest publiczna metoda actionFoo i ze uzytkownik ma uprawnienia do wywolania tej metody 
 
--	dodac obsluga rest full
+	przemyslec czy dodanie roznych do AppControlera strategi ladowania/dostepu do plikow kontrolerow 
+	niejako przy okazji rozwiaze powyzszy problem
 
-	zastanowic sie jak w poszczegolnych typach zadan najlepiej ustawiac pole naglowka content-type
-	narazie tylko dodalem abstrakcyjna metode getContentType w klasie bazowej BaseRequest i zaimplementowalem ja w podklasach
+-	dodac obsluga rest full
 
 	nie podoba mi sie ze typy zadan (REQUEST_METHOD) sa nasztywno zamapowane na nazwy akcji,
 	patrz JsonRequest::handleAction i JsonRequest::ini 
+	moze rozwiaze to Routing (patrz kilka punktow nizej)
 
 	jesli w klucz parametru zadania jest np literowka, kod i tak wykona sie poprawnie
 	poniewaz zostanie podjeta druga proba odczytu parametru w ktorej kluczem bedzie index liczbowy
@@ -18,8 +19,12 @@
 	zostanie przypisana wartosc "aaaa2" poniewaz ten 'brakujacy' parametr ma index liczbowy rowny 2
 	czy jest to do przyjecia?
 
-	testowanie za pomoca dodatku do firefoxa o nazwie RESTClient
+	testowanie za pomoca dodatku do firefoxa o nazwie RESTClient, 
+	ktory to dodatek niezawsze dziala zgodnie z oczekiwaniem np zawiesza sie przy probie wyswietlenia nieistniejacego rekordu
+
 	potestowac programem curl (dowiedziec sie jak go zainstalowac pod Winda)
+	curl mozna pobrac tutaj: http://curl.haxx.se/download.html i zainstalowac w sciezce systemowej
+	testy za pomoca curl w pliku curlTest.bat
 
 	lista codow statusow HTTP: http://en.wikipedia.org/wiki/List_of_HTTP_status_codes 
 
@@ -39,6 +44,12 @@
 
 	w mechanizmie autoryzacji uwglednic jednoczesne wywolanie metody wymagajacej autoryzacji z danymi autoryzujacymi
 	(http://jrenard.info/blog/fetching-headers-sent-by-php-from-the-command-line.html)
+
+-	routing
+
+	jak obsluzyc sytuacje gdy adres url bedzie musial miec bardziej zlozona postac
+	tzn nie bedzie mozna zamapowac bezposrednio pierwszy i drugi parametr na nazwe kotrolera i nazwe akcji
+	np /firma/kontakt
 
 -	obsluga widokow biblioteka SMARTY
 

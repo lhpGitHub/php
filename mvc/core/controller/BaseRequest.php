@@ -16,9 +16,7 @@ abstract class BaseRequest {
 	
 	protected abstract function ini();
 	public abstract function gender();
-	public abstract function redirect($uri);
 	public abstract function getContentType();
-	public abstract function sendResponse($body);
 	
 	function getControllerName() {
 		return $this->controllerName;
@@ -26,6 +24,12 @@ abstract class BaseRequest {
 
 	function getActionName() {
 		return $this->actionName;
+	}
+	
+	function uriExtractParams() {
+		$relativePath = $this->getRelativePath();
+		$uriRequest = substr($_SERVER['REQUEST_URI'], strlen($relativePath));
+		return explode('/', strtolower(trim($uriRequest, "/")));
 	}
 
 	/**
@@ -69,51 +73,58 @@ abstract class BaseRequest {
 		return $pathinfo['dirname'];
 	}
 	
-	function successOk($warning = null) {
-		header('HTTP/1.1 200 OK');
-		if(!is_null($warning)) header("Warning: $warning");
+	function redirect($uri) {
+		throw new \Exception(sprintf("Redirect method not allowed in class [%s]", __CLASS__));
+	}
+	
+	function sendResponse($body = null) {
+		$this->sendHeaders('HTTP/1.1 200 OK');
+		if(!is_null($body)) echo $body; 
+	}
+	
+	function successOk($info = null) {
+		$this->sendHeaders('HTTP/1.1 200 OK', $info);
 		exit();
 	}
 	
-	function successCreated($warning = null) {
-		header('HTTP/1.1 201 Created');
-		if(!is_null($warning)) header("Warning: $warning");
+	function successCreated($info = null) {
+		$this->sendHeaders('HTTP/1.1 201 Created', $info);
 		exit();
 	}
 	
-	function successNoContent($warning = null) {
-		header('HTTP/1.1 204 No Content');
-		if(!is_null($warning)) header("Warning: $warning");
+	function successNoContent($info = null) {
+		$this->sendHeaders('HTTP/1.1 204 No Content', $info);
 		exit();
 	}
 	
-	function errorBadRequest($warning = null) {
-		header('HTTP/1.1 400 Bad Request');
-		if(!is_null($warning)) header("Warning: $warning");
+	function errorBadRequest($info = null) {
+		$this->sendHeaders('HTTP/1.1 400 Bad Request', $info);
 		exit();
 	}
 	
-	function errorUnauthorized($warning = null) {
-		header('HTTP/1.1 401 Unauthorized');
-		if(!is_null($warning)) header("Warning: $warning");
+	function errorUnauthorized($info = null) {
+		$this->sendHeaders('HTTP/1.1 401 Unauthorized', $info);
 		exit();
 	}
 	
-	function errorNotFound($warning = null) {
-		header('HTTP/1.1 404 Not Found');
-		if(!is_null($warning)) header("Warning: $warning");
+	function errorNotFound($info = null) {
+		$this->sendHeaders('HTTP/1.1 404 Not Found', $info);
 		exit();
 	}
 	
-	function errorMethodNotAllowed($warning = null) {
-		header('HTTP/1.1 405 Method Not Allowed');
-		if(!is_null($warning)) header("Warning: $warning");
+	function errorMethodNotAllowed($info = null) {
+		$this->sendHeaders('HTTP/1.1 405 Method Not Allowed', $info);
 		exit();
 	}
 	
-	function errorInternalServer($warning = null) {
-		header('HTTP/1.1 500 Internal Server Error');
-		if(!is_null($warning)) header("Warning: $warning");
+	function errorInternalServer($info = null) {
+		$this->sendHeaders('HTTP/1.1 500 Internal Server Error', $info);
 		exit();
+	}
+	
+	private function sendHeaders($status, $info = null) {
+		header($status);
+		header('Content-type: ' . $this->getContentType());
+		if(!is_null($info)) header("Warning: $info");
 	}
 }

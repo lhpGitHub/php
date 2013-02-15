@@ -7,28 +7,20 @@ class JsonRequest extends BaseRequest {
 	}
 
 	protected function ini() {
-		if(count($_GET) > 0) {
-			$ele = array_values($_GET);
-		} else {
-			$relativePath = $this->getRelativePath();
-			$uriRequest = substr($_SERVER['REQUEST_URI'], strlen($relativePath));
-			$ele = explode('/', strtolower(trim($uriRequest, "/")));
-		}
-		
-		$this->controllerName = array_shift($ele);
-		if($_SERVER['REQUEST_METHOD'] == 'GET') {
-			$this->params = $ele;
-			$this->actionName = 'read';
-		} else {
-			$this->params = $this->decodeParam();
-			$this->handleAction($_SERVER['REQUEST_METHOD']);
-		}
+		$this->handleAction($_SERVER['REQUEST_METHOD']);
+		$params = $this->uriExtractParams();
+		$this->controllerName = array_shift($params);
+		$this->params = $this->decodeParam();
 	}
 	
 	private function handleAction($requestMethod) {
 		switch ($requestMethod) {
 			case 'PUT':
 				$this->actionName = 'create';
+				break;
+			
+			case 'GET':
+				$this->actionName = 'read';
 				break;
 			
 			case 'POST':
@@ -49,7 +41,7 @@ class JsonRequest extends BaseRequest {
 		$param = json_decode(file_get_contents('php://input'), TRUE);
 		
 		if(!$param)
-			$this->errorBadRequest();
+			$param = array();
 		
 		return $param;
 	}
@@ -60,14 +52,5 @@ class JsonRequest extends BaseRequest {
 	
 	function getContentType() {
 		return 'application/json';
-	}
-	
-	function redirect($uri) {
-		throw new \Exception(sprintf("Redirect method not allowed in class [%s]", __CLASS__));
-	}
-	
-	function sendResponse($body) {
-		header('Content-type: application/json');
-		echo $body;
 	}
 }

@@ -7,13 +7,13 @@ class PersonCrudControllerJson extends PersonCrudController {
 	}
 	
 	protected function idFailed(\core\exception\InvalidIdException $err) {
-		$warning = self::WRONG_ID;
-		$this->getRequest()->errorBadRequest($warning);
+		$info = self::WRONG_ID;
+		$this->getRequest()->errorBadRequest($info);
 	}
 	
 	protected function dbError(\core\exception\DataBaseException $err) {
-		$warning = self::DB_ERROR . (\core\Config::get('debug') ? ' '.$err->getMessage() : '');
-		$this->getRequest()->errorInternalServer($warning);
+		$info = self::DB_ERROR . (\core\Config::get('debug') ? ' '.$err->getMessage() : '');
+		$this->getRequest()->errorInternalServer($info);
 	}
 	
 	/***CREATE***/
@@ -23,8 +23,8 @@ class PersonCrudControllerJson extends PersonCrudController {
 	}
 
 	protected function createParamFailed(array $params) {
-		$warning = self::WRONG_PARAM;
-		$this->getRequest()->errorBadRequest($warning);
+		$info = self::WRONG_PARAM;
+		$this->getRequest()->errorBadRequest($info);
 	}
 	
 	/***READ***/
@@ -42,24 +42,24 @@ class PersonCrudControllerJson extends PersonCrudController {
 	}
 	
 	protected function readNoRecord() {
-		$warning = self::RECORD_EMPTY;
-		$this->getRequest()->successNoContent($warning);
+		$info = self::RECORD_EMPTY;
+		$this->getRequest()->successNoContent($info);
 	}
 	
 	/***UPDATE***/
 	protected function updateExecute(array $params) {
 		if(parent::updateExecute($params)) {
-			$warning = self::RECORD_UPD;
+			$info = self::RECORD_UPD;
 		} else {
-			$warning = self::RECORD_NO_MODIFY;
+			$info = self::RECORD_NO_MODIFY;
 		}
 		
-		$this->getRequest()->successOk($warning);
+		$this->getRequest()->successOk($info);
 	}
 	
 	protected function updateParamFailed(array $params) {
-		$warning = self::WRONG_PARAM;
-		$this->getRequest()->errorBadRequest($warning);
+		$info = self::WRONG_PARAM;
+		$this->getRequest()->errorBadRequest($info);
 	}
 	
 	/***DELETE***/

@@ -11,16 +11,14 @@ class HtmlRequest extends BaseRequest {
 		if(count($_GET) > 0) {
 			$ele = array_values($_GET);
 		} else {
-			$relativePath = $this->getRelativePath();
-			$uriRequest = substr($_SERVER['REQUEST_URI'], strlen($relativePath));
-			$ele = explode('/', strtolower(trim($uriRequest, "/")));
+			$params = $this->uriExtractParams();
 		}
 		
-		if(count($_POST) > 0) $ele = array_merge($ele, $_POST);
+		if(count($_POST) > 0) $params = array_merge($params, $_POST);
 		
-		$this->controllerName = array_shift($ele);
-		$this->actionName = array_shift($ele);
-		$this->params = $ele;
+		$this->controllerName = array_shift($params);
+		$this->actionName = array_shift($params);
+		$this->params = $params;
 	}
 	
 	function gender() {
@@ -34,10 +32,6 @@ class HtmlRequest extends BaseRequest {
 	function redirect($uri) {
 		header('Location: ' . $this->getAbsolutePath() . $uri);
 		die;
-	}
-	
-	function sendResponse($body) {
-		echo $body;
 	}
 	
 	function errorNotFound($warning = null) {
