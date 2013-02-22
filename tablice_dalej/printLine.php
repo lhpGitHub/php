@@ -1,24 +1,28 @@
 <?php
 
-function printLn($toPrint = '') {
+function printLn($toPrint = '', $wrapp = NULL) {
 	
 	if(is_array($toPrint)) {
 		$s = arrayToString($toPrint);
-	} else if(is_string($toPrint)) {
+	} else if(is_string($toPrint) || is_numeric($toPrint)) {
 		$s = $toPrint;
 	} else {
 		throw new Exception('content faild');
 	}
 	
-	printf('%s <br>', $s);
+	if(is_null($wrapp)) {
+		printf('%s <br>', $s);
+	}else{
+		printf('<%s>%s <br></%s>', $wrapp, $s, $wrapp);
+	}
 }
 
 function arrayToString($a) {
 	$s = '';
 
 	array_walk_recursive($a, function($val, $key) use (&$s) {
-		$s .= sprintf('k: %s, v:%s | ', $key, $val);
+		$s .= sprintf(' | [%s=>%s]', $key, $val);
 	});
 	
-	return $s;
+	return substr($s, 2);
 }
