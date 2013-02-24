@@ -65,3 +65,22 @@ function countElements($a) {
 	});
 	return $r;
 }
+
+$a = array('a', 'b', 'c', 'a', 'b', 'd');
+printLn(); printLn('usuwanie duplikatow z tablicy');
+printLn('tablica wejsciowa'); printLn($a, 'pre');
+$r = delDuplicates($a);
+printLn('tablica wyjsciowa'); printLn($r, 'pre');
+
+function delDuplicates($a) {
+	if(is_array($a)) {
+		$r = array();
+		array_walk($a, function($v) use (&$r) {
+			if(!isset($r[$v])) {
+				$r[$v] = 1;
+			}
+		});
+		return array_keys($r);
+	}
+	return FALSE;
+}

@@ -4,8 +4,6 @@ function readData() {
 	
 	$data = array();
 	
-	$data[] = 'comments';
-	
 	$data[] = array(
 		'id'=>1, 
 		'title'=>'title_1', 
